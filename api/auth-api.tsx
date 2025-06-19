@@ -26,11 +26,11 @@ export async function verifyToken() {
 export async function getProfile() {
   const res = await api.get<{
     message: Profile;
-  }>(`${API_URL}/manager/get-profile`, {
+  }>(`${API_URL}/manager/getprofile`, {
     withCredentials: true,
   });
 
-  return res.data;
+  return res.data.message;
 }
 
 export async function logoutUser() {

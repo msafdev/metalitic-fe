@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { ErrorHandling } from "@/lib/errorHandling";
+import { deleteCookie } from "cookies-next";
 
 export default function useAuthMutation() {
   const router = useRouter();
@@ -30,6 +31,8 @@ export default function useAuthMutation() {
         duration: 2000,
       });
 
+      deleteCookie("token");
+      deleteCookie("role");
       router.push("/login");
     },
     onError: (error: AxiosError<{ message: string }>) => {
