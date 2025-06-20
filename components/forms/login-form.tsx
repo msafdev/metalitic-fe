@@ -26,7 +26,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     },
     validationSchema: toFormikValidationSchema(loginSchema),
     onSubmit: async (values, { resetForm }) => {
-      console.log("tesss");
       loginMutation.mutate(values, {
         onSuccess: () => resetForm(),
       });

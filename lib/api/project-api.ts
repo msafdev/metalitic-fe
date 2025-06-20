@@ -7,7 +7,7 @@ export async function getProjects(): Promise<ProjectResponse> {
   const role = cookieStore.get("role")?.value;
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/manager/projects`,
+    `${process.env.NEXT_PUBLIC_API_URL}/manager/projects`,
     {
       method: "GET",
       headers: {

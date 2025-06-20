@@ -1,4 +1,4 @@
-import { loginUser, logoutUser } from "@/api/auth-api";
+import { loginUser, logoutUser } from "@/lib/api/auth-api";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";

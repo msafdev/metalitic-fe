@@ -1,53 +1,88 @@
 "use client";
 
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from "lucide-react";
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  Sparkles,
+} from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import useAuthMutation from "@/mutation/use-auth-mutation";
-import useProfile from "@/queries/useProfile";
+import { useQuery } from "@tanstack/react-query";
+import { getProfile } from "@/lib/api/auth-api";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar();
   const { logoutMutation } = useAuthMutation();
-  const { data: profile } = useProfile();
+
+  const { data, error } = useQuery({
+    queryKey: ["get-profile"],
+    queryFn: getProfile,
+  });
+
+  console.log("Extracted profile:", data);
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">{profile?.name.charAt(0)}</AvatarFallback>
-              </Avatar>
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              {/* <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarImage src={profile.avatar} alt={profile.name} />
+                <AvatarFallback className="rounded-lg">
+                  {data?.message.name.charAt(0)}
+                </AvatarFallback>
+              </Avatar> */}
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{profile?.name}</span>
-                <span className="truncate text-xs">{`${profile?.jabatan} (${profile?.devisi})`}</span>
+                <span className="truncate font-semibold">
+                  {data?.message?.name}
+                </span>
+                <span className="truncate text-xs">{`${data?.message.jabatan} (${data?.message.devisi})`}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg" side={isMobile ? "bottom" : "right"} align="end" sideOffset={4}>
+          <DropdownMenuContent
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            side={isMobile ? "bottom" : "right"}
+            align="end"
+            sideOffset={4}
+          >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">{profile?.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+                {/* <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage src={profile.avatar} alt={profile.name} />
+                  <AvatarFallback className="rounded-lg">
+                    {data?.message.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar> */}
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{profile?.name}</span>
-                  <span className="truncate text-xs">{`${profile?.jabatan} (${profile?.devisi})`}</span>
+                  <span className="truncate font-semibold">
+                    {data?.message.name}
+                  </span>
+                  <span className="truncate text-xs">{`${data?.message.jabatan} (${data?.message.devisi})`}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
