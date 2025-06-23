@@ -16,7 +16,13 @@ import {
   ProjectEvaluationStatus
 } from "@/lib/types/project-evaluation-type";
 import { useQuery } from "@tanstack/react-query";
-import { AlertCircle, FileText, Settings, Trash2 } from "lucide-react";
+import {
+  AlertCircle,
+  FileText,
+  FlaskConical,
+  Settings,
+  Trash2
+} from "lucide-react";
 import Link from "next/link";
 
 type Props = {
@@ -72,6 +78,13 @@ export default function ProjectEvaluationList({ idProject }: Props) {
 
   return (
     <>
+      {!projectEvaluations.length && (
+        <div className="min-h-96 text-gray-400 flex flex-col gap-2 items-center justify-center">
+          <FlaskConical size={60} />
+          <span>Belum ada pengujian</span>
+        </div>
+      )}
+
       {projectEvaluations.map((evaluation) => (
         <Card
           key={evaluation.id}

@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import FilesDropzone from "../input/files-dropzone";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import ComboboxGroup from "../input/combobox-group";
 
 type Props = {
   projectEvaluationId: string;
@@ -507,6 +508,68 @@ export default function UpdateProjectEvaluationForm({
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
+                <div className="space-y-2">
+                  <Label htmlFor="aiModelFasa">AI Model Fasa</Label>
+                  <div className="flex gap-2">
+                    <ComboboxGroup
+                      value={formik.values.aiModelFasa}
+                      items={[]}
+                      onSelect={(value) =>
+                        formik.setFieldValue("aiModelFasa", value)
+                      }
+                      noItemsFallbackText="Tidak Ditemukan"
+                      placeholder="Pilih Model"
+                    />
+                  </div>
+                  {formik.touched.aiModelFasa && formik.errors.aiModelFasa && (
+                    <ErrorInputMessage>
+                      {formik.errors.aiModelFasa}
+                    </ErrorInputMessage>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="aiModelCrack">AI Model Crack</Label>
+                  <div className="flex gap-2">
+                    <ComboboxGroup
+                      value={formik.values.aiModelCrack}
+                      items={[]}
+                      onSelect={(value) =>
+                        formik.setFieldValue("aiModelCrack", value)
+                      }
+                      noItemsFallbackText="Tidak Ditemukan"
+                      placeholder="Pilih Model"
+                    />
+                  </div>
+                  {formik.touched.aiModelCrack &&
+                    formik.errors.aiModelCrack && (
+                      <ErrorInputMessage>
+                        {formik.errors.aiModelCrack}
+                      </ErrorInputMessage>
+                    )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="aiModelDegradasi">AI Model Degradasi</Label>
+                  <div className="flex gap-2">
+                    <ComboboxGroup
+                      value={formik.values.aiModelDegradasi}
+                      items={[]}
+                      onSelect={(value) =>
+                        formik.setFieldValue("aiModelDegradasi", value)
+                      }
+                      noItemsFallbackText="Tidak Ditemukan"
+                      placeholder="Pilih Model"
+                    />
+                  </div>
+                  {formik.touched.aiModelDegradasi &&
+                    formik.errors.aiModelDegradasi && (
+                      <ErrorInputMessage>
+                        {formik.errors.aiModelDegradasi}
+                      </ErrorInputMessage>
+                    )}
+                </div>
               </div>
             </div>
           </div>

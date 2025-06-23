@@ -24,28 +24,26 @@ import {
   SidebarMenuItem,
   useSidebar
 } from "@/components/ui/sidebar";
+import useProject from "@/queries/use-project.query";
+import { Project } from "@/lib/types/project-type";
+import Link from "next/link";
 
-export function NavProjects({
-  projects
-}: {
-  projects: {
-    name: string;
-    url: string;
-  }[];
-}) {
+export function NavProjects() {
   const { isMobile } = useSidebar();
+  const { data } = useProject();
+  const projects = data?.data || ([] as Project[]);
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Proyek Terbaru</SidebarGroupLabel>
       <SidebarMenu>
         {projects.slice(0, 5).map((item, index) => (
-          <SidebarMenuItem key={item.name}>
+          <SidebarMenuItem key={item.idProject}>
             <SidebarMenuButton asChild>
-              <a href={item.url}>
+              <Link href={`/dashboard/projects/${item.idProject}`}>
                 <span className="font-mono">{index + 1}</span>
-                <span>{item.name}</span>
-              </a>
+                <span>{item.idProject}</span>
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

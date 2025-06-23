@@ -12,7 +12,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
+  SidebarRail
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -25,9 +25,9 @@ const data = {
       items: [
         {
           title: "List",
-          url: "/dashboard/users",
-        },
-      ],
+          url: "/dashboard/users"
+        }
+      ]
     },
     {
       title: "Project",
@@ -36,9 +36,9 @@ const data = {
       items: [
         {
           title: "List",
-          url: "/dashboard/projects",
-        },
-      ],
+          url: "/dashboard/projects"
+        }
+      ]
     },
     {
       title: "Models",
@@ -47,61 +47,61 @@ const data = {
       items: [
         {
           title: "Upload",
-          url: "/dashboard/data-upload",
+          url: "/dashboard/data-upload"
         },
         {
           title: "Data Anotation",
-          url: "/dashboard/data-anotation",
+          url: "/dashboard/data-anotation"
         },
         {
           title: "Dataset",
-          url: "/dashboard/dataset",
+          url: "/dashboard/dataset"
         },
         {
           title: "Training",
-          url: "/dashboard/training",
-        },
-      ],
-    },
+          url: "/dashboard/training"
+        }
+      ]
+    }
   ],
   recentProjects: [
     {
       name: "MTL-001",
-      url: "#",
+      url: "#"
     },
     {
       name: "MTL-002",
-      url: "#",
+      url: "#"
     },
     {
       name: "MTL-003",
-      url: "#",
+      url: "#"
     },
     {
       name: "MTL-004",
-      url: "#",
+      url: "#"
     },
     {
       name: "MTL-005",
-      url: "#",
+      url: "#"
     },
     {
       name: "MTL-006",
-      url: "#",
+      url: "#"
     },
     {
       name: "MTL-007",
-      url: "#",
+      url: "#"
     },
     {
       name: "MTL-008",
-      url: "#",
+      url: "#"
     },
     {
       name: "MTL-009",
-      url: "#",
-    },
-  ],
+      url: "#"
+    }
+  ]
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -118,7 +118,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.recentProjects} />
+        <NavProjects />
       </SidebarContent>
       <SidebarFooter className="sticky bottom-0 z-auto bg-inherit">
         <NavUser />
