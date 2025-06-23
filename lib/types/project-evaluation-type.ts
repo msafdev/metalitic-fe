@@ -58,7 +58,24 @@ export type CreateProjectEvaluationResponse = {
   data: ProjectEvaluation;
 };
 
-export type UpdateProjectEvaluationRequest = Omit<
-  ProjectEvaluation,
-  "_id" | "status" | "projectId" | "progress" | "missingFields"
->;
+export type UpdateProjectEvaluationRequest = {
+  id: string;
+  projectId: string;
+  nama: string;
+  tanggal: string;
+  lokasi: string;
+  area: string;
+  posisi: string;
+  material: string;
+  gritSandWhell: string;
+  etsa: string;
+  kamera: string;
+  merkMikroskop: string;
+  perbesaranMikroskop: string;
+  gambarKomponent1: File;
+  gambarKomponent2: File;
+  listGambarStrukturMikro: File[];
+  aiModelFasa: string;
+  aiModelCrack: string;
+  aiModelDegradasi: string;
+};

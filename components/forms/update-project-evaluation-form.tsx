@@ -8,7 +8,15 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import ErrorInputMessage from "../input/error-input-message";
 import { Button } from "../ui/button";
-import { CalendarIcon, Camera, FlaskConical, Save } from "lucide-react";
+import {
+  CalendarIcon,
+  Camera,
+  FlaskConical,
+  ImageUp,
+  Microscope,
+  Save,
+  TrashIcon
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getProjectEvaluationById } from "@/lib/api/project-evaluation-api";
 import { QUERIES } from "@/lib/constants/queries";
@@ -18,30 +26,32 @@ import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import FilesDropzone from "../input/files-dropzone";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 type Props = {
   projectEvaluationId: string;
 };
 
 const projectEvaluationSchema = z.object({
-  id: z.string(),
-  nama: z.string(),
-  tanggal: z.string(),
-  lokasi: z.string(),
-  area: z.string(),
-  posisi: z.string(),
-  material: z.string(),
-  gritSandWhell: z.string(),
-  etsa: z.string(),
-  kamera: z.string(),
-  merkMikroskop: z.string(),
-  perbesaranMikroskop: z.string(),
-  gambarKomponent1: z.string(),
-  gambarKomponent2: z.string(),
-  listGambarStrukturMikro: z.array(z.string()),
-  aiModelFasa: z.string(),
-  aiModelCrack: z.string(),
-  aiModelDegradasi: z.string()
+  id: z.string().optional(),
+  nama: z.string().optional(),
+  tanggal: z.string().optional(),
+  lokasi: z.string().optional(),
+  area: z.string().optional(),
+  posisi: z.string().optional(),
+  material: z.string().optional(),
+  gritSandWhell: z.string().optional(),
+  etsa: z.string().optional(),
+  kamera: z.string().optional(),
+  merkMikroskop: z.string().optional(),
+  perbesaranMikroskop: z.string().optional(),
+  gambarKomponent1: z.any().optional(),
+  gambarKomponent2: z.any().optional(),
+  listGambarStrukturMikro: z.array(z.any()).optional(),
+  aiModelFasa: z.string().optional(),
+  aiModelCrack: z.string().optional(),
+  aiModelDegradasi: z.string().optional()
 });
 
 export default function UpdateProjectEvaluationForm({
@@ -53,6 +63,21 @@ export default function UpdateProjectEvaluationForm({
   });
 
   const { updateProjectEvaluationMutation } = useProjectEvaluationMutation();
+  const [gambarKomponent1, setGambarKomponent1] = useState<
+    (File & { preview: string })[]
+  >([]);
+  const [gambarKomponent2, setGambarKomponent2] = useState<
+    (File & { preview: string })[]
+  >([]);
+  const [listGambarStrukturMikro, setListGambarStrukturMikro] = useState<
+    (File & { preview: string })[]
+  >([]);
+
+  console.log({
+    gambarKomponent1,
+    gambarKomponent2,
+    listGambarStrukturMikro
+  });
 
   const projectEvaluation = data?.data;
 
@@ -82,10 +107,27 @@ export default function UpdateProjectEvaluationForm({
     onSubmit: async (values) => {
       updateProjectEvaluationMutation.mutate({
         id: projectEvaluationId,
-        body: values
+        body: {
+          ...values,
+          projectId: projectEvaluation?.projectId as string,
+          gambarKomponent1: gambarKomponent1[0],
+          gambarKomponent2: gambarKomponent2[0],
+          listGambarStrukturMikro: listGambarStrukturMikro
+        }
       });
     }
   });
+
+  async function convertUrlToFile(
+    url: string,
+    fileName: string
+  ): Promise<File> {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const contentType = response.headers.get("Content-Type") || "image/jpeg";
+
+    return new File([blob], fileName, { type: contentType });
+  }
 
   if (!projectEvaluation || isLoading) return null;
 
@@ -333,20 +375,139 @@ export default function UpdateProjectEvaluationForm({
                 </div>
               </div>
 
-              {/* <FilesDropzone
-                files={deedOfEstablishment}
-                setFiles={setDeedOfEstablishment}
-                acceptFile={APP_CONSTANT.MERCHANT_DOCUMENT_FILE_FORMAT_ALLOWED}
-                messageHelper={
-                  APP_CONSTANT.MERCHANT_DOCUMENT_FILE_FORMAT_ALLOWED_TEXT_HELPER
-                }
-              />
-              {deedOfEstablishmentFormik.touched["file"] &&
-                deedOfEstablishmentFormik.errors["file"] && (
-                  <InputErrorMessage
-                    message={deedOfEstablishmentFormik.errors["file"] as string}
+              <div className="space-y-2">
+                <Label htmlFor="perbesaranMikroskop">Gambar Komponen</Label>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div>
+                    <FilesDropzone
+                      files={gambarKomponent1}
+                      setFiles={setGambarKomponent1}
+                    />
+                    {formik.touched.gambarKomponent1 &&
+                      formik.errors.gambarKomponent1 && (
+                        <ErrorInputMessage>
+                          {formik.errors.gambarKomponent1}
+                        </ErrorInputMessage>
+                      )}
+                  </div>
+
+                  <div>
+                    <FilesDropzone
+                      files={gambarKomponent2}
+                      setFiles={setGambarKomponent2}
+                    />
+                    {formik.touched.gambarKomponent2 &&
+                      formik.errors.gambarKomponent2 && (
+                        <ErrorInputMessage>
+                          {formik.errors.gambarKomponent2}
+                        </ErrorInputMessage>
+                      )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-50/80 rounded-xl p-6 border border-slate-200/50 mt-6">
+            <h3 className="text-xl font-bold text-slate-900 mb-8 flex items-center space-x-3">
+              <Microscope className="size-5 text-green-500" />
+              <span>Struktur Mikro</span>
+            </h3>
+
+            <div>
+              <div className="flex justify-between items-center mb-4">
+                <Label>Data Gambar Keseluruhan</Label>
+
+                <div>
+                  <span className="me-3 text-sm text-muted-foreground">
+                    {listGambarStrukturMikro.length} Gambar
+                  </span>
+                  <Button asChild type="button">
+                    <Label
+                      htmlFor="listGambarStrukturMikro"
+                      className="cursor-pointer"
+                    >
+                      Upload
+                    </Label>
+                  </Button>
+                </div>
+                <Input
+                  multiple
+                  className="hidden"
+                  type="file"
+                  name="listGambarStrukturMikro"
+                  id="listGambarStrukturMikro"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const files = e.target.files;
+                    if (!files) return;
+
+                    const fileArray = Array.from(files); // Sekarang jadi File[]
+
+                    const filesWithPreview = fileArray.map((file) =>
+                      Object.assign(file, {
+                        preview: URL.createObjectURL(file)
+                      })
+                    );
+
+                    // const fileArray = Array.from(files).map((file) => ({
+                    //   ...file,
+                    //   preview: URL.createObjectURL(file)
+                    // }));
+
+                    setListGambarStrukturMikro((prev) => [
+                      ...prev,
+                      ...filesWithPreview
+                    ]);
+                  }}
+                />
+              </div>
+
+              {!listGambarStrukturMikro.length && (
+                <div className="border border-dashed border-gray-200 rounded-xl grid gap-3 place-content-center p-12 text-center">
+                  <ImageUp
+                    size={50}
+                    className="mx-auto text-muted-foreground"
                   />
-                )} */}
+                  <p className="text-sm text-muted-foreground">
+                    Belum ada gambar yang di pilih
+                  </p>
+                </div>
+              )}
+
+              <div className="flex gap-5 overflow-x-auto">
+                {listGambarStrukturMikro.map((file, index) => (
+                  <div key={index} className="flex items-center space-x-2 mt-2">
+                    <div className="relative w-[150px] h-[150px] overflow-hidden">
+                      <Image
+                        src={file.preview}
+                        className="object-cover rounded-md"
+                        alt={file.name}
+                        fill
+                      />
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute top-1 right-1"
+                        onClick={() => {
+                          // Revoke URL to prevent memory leaks
+                          URL.revokeObjectURL(file.preview);
+
+                          // Remove file from state
+                          setListGambarStrukturMikro((prev) =>
+                            prev.filter((_, i) => i !== index)
+                          );
+                        }}
+                      >
+                        <TrashIcon className="text-red-500" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 

@@ -145,7 +145,7 @@ export default function FilesDropzone({
           <div
             {...getRootProps({
               className:
-                "dropzone bg-transparent border border-dashed rounded-lg p-5 hover:bg-primary/10 hover:border-primary w-full cursor-pointer"
+                "relative dropzone bg-transparent border border-dashed rounded-lg p-5 hover:bg-primary/10 hover:border-primary w-full cursor-pointer h-[230px] grid place-content-center"
             })}
           >
             <input {...getInputProps()} />
@@ -164,7 +164,7 @@ export default function FilesDropzone({
                 </div>
               </div>
             ) : (
-              <div className="relative flex items-center justify-center flex-wrap gap-1 min-h-[174px] max-h-[300px] overflow-auto">
+              <div className="absolute inset-0 flex items-center justify-center flex-wrap gap-1 overflow-auto">
                 <Button
                   size="icon"
                   variant="ghost"
@@ -187,8 +187,8 @@ export default function FilesDropzone({
                     <Image
                       src={file.preview}
                       alt={`attachment ${index + 1}`}
-                      width={50}
-                      height={50}
+                      width={200}
+                      height={200}
                       className="object-cover rounded overflow-hidden bg-secondary cursor-pointer border border-secondary min-w-14 aspect-square"
                       // onClick={(e) => {
                       //   e.stopPropagation();
