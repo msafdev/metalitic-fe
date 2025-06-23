@@ -1,8 +1,3 @@
-import { DataTable } from "./(table)/table";
-import { columns } from "./(table)/column";
-import { getProjects } from "@/lib/api/project-api";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,14 +6,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
-import { Project } from "@/lib/types/project-type";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@radix-ui/react-separator";
+import React from "react";
+import ProjectDetailHeader from "./components/project-detail-header";
+import ProjectEvaluationList from "./components/project-evaluation-list";
 
-export default async function Page() {
-  // const projects = await getProjects();
-  const projects = {
-    data: [] as Project[]
-  };
-
+export default function ProjectDetailPage({
+  params
+}: {
+  params: { id: string };
+}) {
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -28,22 +26,26 @@ export default async function Page() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
+                <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Users</BreadcrumbPage>
+                <BreadcrumbLink href="/dashboard/projects">
+                  Projects
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{params.id}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </header>
       <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
-        <div className="space-y-2 px-4">
-          <h2 className="text-2xl font-semibold">User List</h2>
-        </div>
-        <div className="space-y-3.5">
-          <DataTable columns={columns} data={projects.data} />
+        <div className="space-y-3.5 px-4">
+          <ProjectDetailHeader idProject={params.id} />
+          <ProjectEvaluationList idProject={params.id} />
         </div>
       </div>
     </>

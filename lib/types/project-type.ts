@@ -1,23 +1,44 @@
+import {
+  ProjectEvaluation,
+  ProjectEvaluationStatus
+} from "./project-evaluation-type";
+
 export type Project = {
   _id: string;
+  idProject: string;
   namaProject: string;
-  permintaanJasa: string;
-  sample: string;
-  tglPengujian: string;
-  lokasiPengujian: string;
-  areaPengujian: string;
-  posisiPengujian: string;
-  material: string;
-  GritSandWhell: string;
-  ETSA: string;
-  kamera: string;
-  mikrosopMerk: string;
-  mikrosopZoom: string;
-  userArrayId: string[];
+  pemintaJasa: string;
+  tanggalOrderMasuk: string;
+  penguji: string[];
+  pengujian: ProjectEvaluationSummary[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ProjectEvaluationSummary = {
+  id: string;
+  projectId: string;
+  nama: string;
+  status: ProjectEvaluationStatus;
+  progress: number;
+  missingFields: (keyof ProjectEvaluation)[];
   createdAt: string;
   updatedAt: string;
 };
 
 export type ProjectResponse = {
-  message: Project[];
+  message: string;
+  data: Project[];
+};
+
+export type DetailProjectResponse = {
+  message: string;
+  data: Project;
+};
+
+export type CreateProjectRequest = {
+  namaProject: string;
+  pemintaJasa: string;
+  tanggalOrderMasuk: string;
+  penguji: string[];
 };

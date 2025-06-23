@@ -1,10 +1,11 @@
+import { api } from "../axios";
 import { ProfileResponse } from "../types/auth-type";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function loginUser({
   username,
-  password,
+  password
 }: {
   username: string;
   password: string;
@@ -13,7 +14,7 @@ export async function loginUser({
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ username, password })
   });
 
   if (!res.ok) throw new Error("Login failed");
@@ -23,7 +24,7 @@ export async function loginUser({
 export async function verifyToken() {
   const res = await fetch(`${API_URL}/manager/authenticate`, {
     method: "GET",
-    credentials: "include",
+    credentials: "include"
   });
 
   if (!res.ok) throw new Error("Unauthorized");
@@ -31,25 +32,16 @@ export async function verifyToken() {
 }
 
 export async function getProfile(): Promise<ProfileResponse> {
-  const res = await fetch(`${API_URL}/manager/get-profile`, {
-    method: "GET",
-    credentials: "include",
+  const res = await api.get(`${API_URL}/manager/get-profile`, {
+    withCredentials: true
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch profile");
-  }
-  
-  console.log(res);
-
-  const data: ProfileResponse = await res.json();
-  return data;
+  return res.data;
 }
 
 export async function logoutUser() {
   const res = await fetch(`${API_URL}/manager/user/logout`, {
     method: "POST",
-    credentials: "include",
+    credentials: "include"
   });
 
   if (!res.ok) throw new Error("Logout failed");

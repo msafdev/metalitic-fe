@@ -7,75 +7,51 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Eye, Trash, MoreHorizontal, Download } from "lucide-react";
 import { Project } from "@/lib/types/project-type";
+import { format } from "date-fns";
+import Link from "next/link";
 
 export const columns: ColumnDef<Project>[] = [
   {
+    accessorKey: "idProject",
+    header: "ID Project",
+    cell: ({ row }) => (
+      <Link
+        href={`/dashboard/projects/${row.original.idProject}`}
+        className="font-medium hover:underline"
+      >
+        {row.original.idProject}
+      </Link>
+    )
+  },
+  {
     accessorKey: "namaProject",
-    header: "Name",
+    header: "Nama Project"
   },
   {
-    accessorKey: "permintaanJasa",
-    header: "Peminta",
-    cell: ({ row }) => {
-      const item = row.original;
-      return <span className="">{item.namaProject}</span>;
-    },
+    accessorKey: "pemintaJasa",
+    header: "Peminta Jasa"
   },
   {
-    accessorKey: "sample",
-    header: "Sample",
-    cell: ({ row }) => {
-      const item = row.original;
-      return <span className="">{item.sample}</span>;
-    },
+    accessorKey: "tanggalOrderMasuk",
+    header: "Tanggal Order Masuk"
   },
   {
-    accessorKey: "tglPengujian",
-    header: "Issued At",
-    cell: ({ row }) => {
-      const item = row.original;
-      return <span className="">{item.tglPengujian}</span>;
-    },
+    accessorKey: "createdAt",
+    header: "Dibuat",
+    cell: ({ row }) => format(row.original.createdAt, "dd/MM/yyyy HH:mm")
   },
   {
-    accessorKey: "lokasiPengujian",
-    header: "Location",
-    cell: ({ row }) => {
-      const item = row.original;
-      return <span className="">{item.lokasiPengujian}</span>;
-    },
-  },
-  {
-    accessorKey: "areaPengujian",
-    header: "Area",
-    cell: ({ row }) => {
-      const item = row.original;
-      return <span className="">{item.areaPengujian}</span>;
-    },
-  },
-  {
-    accessorKey: "posisiPengujian",
-    header: "Position",
-    cell: ({ row }) => {
-      const item = row.original;
-      return <span className="">{item.posisiPengujian}</span>;
-    },
-  },
-    {
-    accessorKey: "material",
-    header: "Position",
-    cell: ({ row }) => {
-      const item = row.original;
-      return <span className="">{item.posisiPengujian}</span>;
-    },
+    accessorKey: "updatedAt",
+    header: "Diupdate",
+    cell: ({ row }) => format(row.original.updatedAt, "dd/MM/yyyy HH:mm")
   },
   {
     id: "actions",
-    cell: () => (
+    cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon">
@@ -83,13 +59,11 @@ export const columns: ColumnDef<Project>[] = [
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>
-            <Eye className="size-3 mr-2" />
-            View
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Download className="size-3 mr-2" />
-            Download
+          <DropdownMenuItem asChild>
+            <Link href={`/dashboard/projects/${row.original.idProject}`}>
+              <Eye className="size-3 mr-2" />
+              View
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="text-red-600">
@@ -98,6 +72,6 @@ export const columns: ColumnDef<Project>[] = [
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    ),
-  },
+    )
+  }
 ];

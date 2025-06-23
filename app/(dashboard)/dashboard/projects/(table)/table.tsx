@@ -1,28 +1,34 @@
 "use client";
 
+import ProjectForm from "@/components/forms/project-form";
+import { Button } from "@/components/ui/button";
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
-
-import { Input } from "@/components/ui/input";
-import { useState, useMemo, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import Link from "next/link";
+import useModal from "@/hooks/use-modal";
+import {
+  ColumnDef,
+  TableState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable
+} from "@tanstack/react-table";
+import { Plus, Settings2 } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -31,13 +37,13 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({
   columns,
-  data,
+  data
 }: DataTableProps<TData, TValue>) {
   const [filter, setFilter] = useState("");
 
-  const tableState = useMemo(
+  const tableState: Partial<TableState> = useMemo(
     () => ({
-      globalFilter: filter,
+      globalFilter: filter
     }),
     [filter]
   );
@@ -49,7 +55,7 @@ export function DataTable<TData, TValue>({
     onGlobalFilterChange: setFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel()
   });
 
   const handlePreviousPage = useCallback(() => {
@@ -68,21 +74,25 @@ export function DataTable<TData, TValue>({
   const canNextPage = table.getCanNextPage();
   const totalRows = table.getPrePaginationRowModel().rows.length;
 
+  const { isOpen, openModal, setIsOpen } = useModal();
+
   return (
     <div className="space-y-4">
       {/* Top Toolbar */}
       <div className="flex items-center justify-between px-4 border-y py-4 gap-3 flex-wrap">
         <Input
           className="max-w-xs"
-          placeholder="Search invoice"
+          placeholder="Search Projects..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
         <div className="flex gap-3 items-center">
-          <Button className="has-[>svg]:pl-2" variant={"outline"} asChild>
-            <Link href={"/dashboard/invoices/create"}>
-              <Plus size={12} /> Create new
-            </Link>
+          <Button
+            className="has-[>svg]:pl-2"
+            variant={"outline"}
+            onClick={openModal}
+          >
+            <Plus size={12} /> Tambah Baru
           </Button>
         </div>
       </div>
@@ -164,10 +174,25 @@ export function DataTable<TData, TValue>({
             </Button>
           </div>
           <div className="text-sm">
-            Showing {rows.length} of {totalRows} invoices
+            Showing {rows.length} of {totalRows} projects
           </div>
         </div>
       </div>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent
+          aria-describedby="Modal Dialog untuk Buat Proyek Baru"
+          className="lg:min-w-[1000px] h-[80vh] lg:h-auto overflow-y-auto"
+        >
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Settings2 size={20} /> Buat Proyek Baru
+            </DialogTitle>
+          </DialogHeader>
+
+          <ProjectForm />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

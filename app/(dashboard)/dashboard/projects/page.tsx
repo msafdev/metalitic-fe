@@ -1,3 +1,5 @@
+"use client";
+
 import { DataTable } from "./(table)/table";
 import { columns } from "./(table)/column";
 import { getProjects } from "@/lib/api/project-api";
@@ -9,11 +11,19 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
+  BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import { Project } from "@/lib/types/project-type";
+import { useQuery } from "@tanstack/react-query";
+import { QUERIES } from "@/lib/constants/queries";
 
-export default async function Page() {
-  const projects = await getProjects();
+export default function Page() {
+  const { data, isLoading } = useQuery({
+    queryFn: getProjects,
+    queryKey: [QUERIES.PROJECTS]
+  });
+
+  const projects = data?.data || ([] as Project[]);
 
   return (
     <>
@@ -24,9 +34,7 @@ export default async function Page() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">
-                  Dashboard
-                </BreadcrumbLink>
+                <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
@@ -38,10 +46,10 @@ export default async function Page() {
       </header>
       <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
         <div className="space-y-2 px-4">
-          <h2 className="text-2xl font-semibold">Project List</h2>
+          <h2 className="text-2xl font-semibold">Daftar Project</h2>
         </div>
         <div className="space-y-3.5">
-          <DataTable columns={columns} data={projects.message} />
+          <DataTable columns={columns} data={projects} />
         </div>
       </div>
     </>

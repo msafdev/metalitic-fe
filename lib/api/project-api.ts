@@ -1,27 +1,37 @@
-import { cookies } from "next/headers";
-import { ProjectResponse } from "../types/project-type";
+import { api } from "../axios";
+import {
+  CreateProjectRequest,
+  DetailProjectResponse,
+  ProjectResponse
+} from "../types/project-type";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getProjects(): Promise<ProjectResponse> {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
-  const role = cookieStore.get("role")?.value;
+  const res = await api.get<ProjectResponse>(`${API_URL}/manager/projects`, {
+    withCredentials: true
+  });
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/manager/projects`,
+  return res.data;
+}
+
+export async function createProject(body: CreateProjectRequest) {
+  const res = await api.post(`${API_URL}/manager/projects`, body, {
+    withCredentials: true
+  });
+
+  return res.data;
+}
+
+export async function getProjectDetail(
+  idProject: string
+): Promise<DetailProjectResponse> {
+  const res = await api.get<DetailProjectResponse>(
+    `${API_URL}/manager/projects/${idProject}`,
     {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: `token=${token}; role=${role}`,
-      },
-      cache: "no-store",
+      withCredentials: true
     }
   );
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch projects");
-  }
-
-  const data: ProjectResponse = await res.json();
-  return data;
+  return res.data;
 }

@@ -1,12 +1,12 @@
+import { api } from "../axios";
+import { GetUsersResponse } from "../types/user-type";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getUsers() {
-  const res = await fetch(`${API_URL}/api/v1/manager/users`, {
-    method: "GET",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
+  const res = await api.get<GetUsersResponse>(`${API_URL}/manager/users`, {
+    withCredentials: true
   });
 
-  if (!res.ok) throw new Error("Login failed");
-  return res.json();
+  return res.data;
 }

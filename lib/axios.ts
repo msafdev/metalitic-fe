@@ -3,7 +3,7 @@ import { deleteCookie, getCookie } from "cookies-next";
 import { AxiosInterceptors } from "./interceptors";
 
 export const api = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: process.env.API_URL
 });
 
 api.interceptors.request.use(
@@ -32,7 +32,12 @@ api.interceptors.response.use(
     if (error.response) {
       // Server responded with a status other than 2xx
 
-      if (AxiosInterceptors.checkUnauthorizedError(error) && !window.location.href.includes("/login")) {
+      if (
+        typeof window !== "undefined" &&
+        AxiosInterceptors.checkUnauthorizedError(error) &&
+        !window.location.href.includes("/login")
+      ) {
+        console.log("UNOTOTOTOTO");
         deleteCookie("token");
         deleteCookie("user");
         window.location.href = "/login";
