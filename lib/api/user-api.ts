@@ -1,11 +1,11 @@
 import { api } from "../axios";
 import { CommonResponse } from "../types/common-type";
-import { GetUsersResponse } from "../types/user-type";
+import { UserResponse } from "../types/user-type";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getUsers() {
-  const res = await api.get<GetUsersResponse>(`${API_URL}/manager/users`, {
+  const res = await api.get<UserResponse>(`${API_URL}/manager/users`, {
     withCredentials: true
   });
 

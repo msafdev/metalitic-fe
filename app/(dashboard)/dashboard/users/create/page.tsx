@@ -1,7 +1,5 @@
 "use client";
 
-import { DataTable } from "./(table)/table";
-import { columns } from "./(table)/column";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -12,14 +10,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
-import useUser from "@/queries/use-user.query";
-import { User } from "@/lib/types/user-type";
+import { CreateUserForm } from "@/components/forms/create-user-form";
 
 export default function Page() {
-  const { data, isLoading, isError } = useUser();
-
-  const users = data?.data || ([] as User[]);
-
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -35,24 +28,19 @@ export default function Page() {
               <BreadcrumbItem>
                 <BreadcrumbPage>Users</BreadcrumbPage>
               </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Tambah</BreadcrumbPage>
+              </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </header>
-
       <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
-        <div className="space-y-2 px-4">
-          <h2 className="text-2xl font-semibold">Daftar Pengguna</h2>
+        <div className="space-y-2 px-4 pb-4 border-b">
+          <h2 className="text-2xl font-semibold">Tambah pengguna</h2>
         </div>
-
-        <div className="space-y-3.5 px-4">
-          <DataTable
-            columns={columns}
-            data={users}
-            isLoading={isLoading}
-            isError={isError}
-          />
-        </div>
+        <CreateUserForm />
       </div>
     </>
   );

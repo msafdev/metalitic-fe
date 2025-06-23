@@ -1,5 +1,5 @@
 import { api } from "../axios";
-import { ProfileResponse } from "../types/auth-type";
+import { ProfileResponse, Register } from "../types/auth-type";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -35,6 +35,21 @@ export async function loginUser({
   throw new Error("Login failed for both manager and superadmin");
 }
 
+export async function registerUser({ body }: { body: Register }) {
+  let res = await fetch(`${API_URL}/manager/register`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+
+  if (res.ok) {
+    return res.json();
+  }
+
+  throw new Error("Register failed");
+}
+
 export async function verifyToken() {
   const res = await fetch(`${API_URL}/check-auth`, {
     method: "GET",
@@ -46,9 +61,10 @@ export async function verifyToken() {
 }
 
 export async function getProfile(): Promise<ProfileResponse> {
-  const res = await api.get(`${API_URL}/manager/get-profile`, {
+  const res = await api.get(`${API_URL}/get-profile`, {
     withCredentials: true
   });
+
   return res.data;
 }
 
@@ -60,4 +76,13 @@ export async function logoutUser() {
 
   if (!res.ok) throw new Error("Logout failed");
   return res.json();
+}
+
+export async function deleteUser({ id }: { id: string }) {
+  const res = await api.delete(`${API_URL}/manager/user/delete`, {
+    withCredentials: true,
+    data: { id }
+  });
+
+  return res.data;
 }

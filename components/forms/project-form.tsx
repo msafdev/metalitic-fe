@@ -34,8 +34,8 @@ import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Separator } from "../ui/separator";
 import ServiceRequesterForm from "./service-requester-form";
-import useServiceRequesterDropdown from "@/queries/dropdown/useServiceRequesterDropdown";
-import useUserList from "@/queries/useUserList";
+import useServiceRequesterDropdown from "@/queries/dropdown/use-service.query.dropdown";
+import useUser from "@/queries/use-user.query";
 import { useState } from "react";
 import { User } from "@/lib/types/user-type";
 import ErrorInputMessage from "../input/error-input-message";
@@ -50,7 +50,7 @@ export default function ProjectForm() {
   const { isOpen, openModal, setIsOpen, closeModal } = useModal();
   const { createProjectMutation } = useProjectMutation();
   const { serviceRequestersDropdownItems } = useServiceRequesterDropdown();
-  const { testerUsers } = useUserList();
+  const { testerUsers } = useUser();
   const [selectedTesters, setSelectedTesters] = useState<User[]>([]);
 
   const getServiceRequesterById = (id: string) => {

@@ -8,7 +8,6 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    // Add authorization token or other headers
     const token = getCookie("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -30,14 +29,11 @@ api.interceptors.response.use(
   (error: AxiosError) => {
     // Handle response errors
     if (error.response) {
-      // Server responded with a status other than 2xx
-
       if (
         typeof window !== "undefined" &&
         AxiosInterceptors.checkUnauthorizedError(error) &&
         !window.location.href.includes("/login")
       ) {
-        console.log("UNOTOTOTOTO");
         deleteCookie("token");
         deleteCookie("user");
         window.location.href = "/login";

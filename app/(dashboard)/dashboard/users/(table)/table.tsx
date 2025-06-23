@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
 
 import {
@@ -15,7 +15,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
 
 import { Input } from "@/components/ui/input";
@@ -27,17 +27,21 @@ import Link from "next/link";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  isLoading?: boolean;
+  isError?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  isLoading,
+  isError
 }: DataTableProps<TData, TValue>) {
   const [filter, setFilter] = useState("");
 
   const tableState = useMemo(
     () => ({
-      globalFilter: filter,
+      globalFilter: filter
     }),
     [filter]
   );
@@ -49,7 +53,7 @@ export function DataTable<TData, TValue>({
     onGlobalFilterChange: setFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel()
   });
 
   const handlePreviousPage = useCallback(() => {
@@ -79,8 +83,8 @@ export function DataTable<TData, TValue>({
           onChange={(e) => setFilter(e.target.value)}
         />
         <div className="flex gap-3 items-center">
-          <Button className="has-[>svg]:pl-2" variant={"outline"} asChild>
-            <Link href={"/dashboard/users/create"}>
+          <Button className="has-[>svg]:pl-2" variant="outline" asChild>
+            <Link href="/dashboard/users/create">
               <Plus size={12} /> Tambah pengguna
             </Link>
           </Button>
@@ -110,7 +114,25 @@ export function DataTable<TData, TValue>({
             </TableHeader>
 
             <TableBody>
-              {rows?.length ? (
+              {isLoading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-32 text-center text-muted-foreground"
+                  >
+                    Mengambil data...
+                  </TableCell>
+                </TableRow>
+              ) : isError ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-32 text-center text-red-500"
+                  >
+                    Terjadi kesalahan saat memuat data.
+                  </TableCell>
+                </TableRow>
+              ) : rows?.length ? (
                 rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
@@ -130,9 +152,9 @@ export function DataTable<TData, TValue>({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-48  text-center"
+                    className="h-32 text-center"
                   >
-                    Tidak ada hasil.
+                    Tidak ada data ditemukan.
                   </TableCell>
                 </TableRow>
               )}
@@ -141,32 +163,34 @@ export function DataTable<TData, TValue>({
         </div>
 
         {/* Footer: Pagination */}
-        <div className="flex items-center gap-4 justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handlePreviousPage}
-              disabled={!canPreviousPage}
-            >
-              Sebelumnya
-            </Button>
-            <span>
-              {pageIndex + 1} dari {pageCount}
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleNextPage}
-              disabled={!canNextPage}
-            >
-              Selanjutnya
-            </Button>
+        {!isLoading && !isError && (
+          <div className="flex items-center gap-4 justify-between text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handlePreviousPage}
+                disabled={!canPreviousPage}
+              >
+                Sebelumnya
+              </Button>
+              <span>
+                {pageIndex + 1} dari {pageCount}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleNextPage}
+                disabled={!canNextPage}
+              >
+                Selanjutnya
+              </Button>
+            </div>
+            <div className="text-sm">
+              Menampilkan {rows.length} dari {totalRows} pengguna
+            </div>
           </div>
-          <div className="text-sm">
-            Menampilkan {rows.length} dari {totalRows} pengguna
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

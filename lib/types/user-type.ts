@@ -9,10 +9,6 @@ export type User = {
   noHp: string;
   alamat: string;
   filename: string;
-};
-
-export type GetUsersResponse = {
-  status: boolean;
   isVerify: boolean;
 };
 

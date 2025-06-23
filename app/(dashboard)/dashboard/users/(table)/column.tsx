@@ -7,11 +7,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Eye, Trash, MoreHorizontal, Download, Check } from "lucide-react";
 import { User } from "@/lib/types/user-type";
-import useAuthMutation from "@/mutation/use-auth-mutation";
 import useUserMutation from "@/mutation/use-user-mutation";
 
 export const columns: ColumnDef<User>[] = [
@@ -20,8 +19,8 @@ export const columns: ColumnDef<User>[] = [
     header: "Nama",
     cell: ({ row }) => {
       const item = row.original;
-      return <span className="">{item.name}</span>;
-    },
+      return <span className="text-nowrap">{item.name}</span>;
+    }
   },
   {
     accessorKey: "nomorInduk",
@@ -29,7 +28,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const item = row.original;
       return <span className="">{item.nomorInduk}</span>;
-    },
+    }
   },
   {
     accessorKey: "email",
@@ -37,7 +36,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const item = row.original;
       return <span className="">{item.email}</span>;
-    },
+    }
   },
   {
     accessorKey: "noHp",
@@ -45,7 +44,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const item = row.original;
       return <span className="">{item.noHp}</span>;
-    },
+    }
   },
   {
     accessorKey: "devisi",
@@ -53,7 +52,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const item = row.original;
       return <span className="">{item.devisi}</span>;
-    },
+    }
   },
   {
     accessorKey: "jabatan",
@@ -61,7 +60,7 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const item = row.original;
       return <span className="">{item.jabatan}</span>;
-    },
+    }
   },
   {
     accessorKey: "isVerify",
@@ -72,7 +71,7 @@ export const columns: ColumnDef<User>[] = [
 
       return (
         <div
-          className={`inline-flex items-center px-2.5 py-1 rounded text-xs font-medium
+          className={`inline-flex items-center px-2.5 py-1 rounded text-xs font-medium text-nowrap
           ${
             isVerified
               ? "bg-green-100 text-green-800"
@@ -82,12 +81,15 @@ export const columns: ColumnDef<User>[] = [
           {isVerified ? "Sudah Verifikasi" : "Belum Verifikasi"}
         </div>
       );
-    },
+    }
   },
   {
     id: "actions",
     cell: ({ row }) => {
       const item = row.original;
+
+      const { verifyMutation, deleteMutation } = useUserMutation();
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -100,18 +102,35 @@ export const columns: ColumnDef<User>[] = [
               <Eye className="size-3 mr-2" />
               View
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                verifyMutation.mutate({
+                  username: item.username,
+                  isVerify: true
+                });
+              }}
+              disabled={item.isVerify || verifyMutation.isPending}
+            >
               <Check className="size-3 mr-2" />
               Verifikasi
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600">
+            <DropdownMenuItem
+              className="text-red-600 cursor-pointer"
+              onClick={() => {
+                deleteMutation.mutate({
+                  id: item._id
+                });
+              }}
+              disabled={deleteMutation.isPending}
+            >
               <Trash className="size-3 mr-2" />
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
-    },
-  },
+    }
+  }
 ];
