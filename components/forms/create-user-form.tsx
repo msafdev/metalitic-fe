@@ -53,6 +53,8 @@ export function CreateUserForm({
     }
   });
 
+  console.log(formik.errors)
+
   return (
     <div className={cn("flex flex-col gap-6 px-4", className)} {...props}>
       <form onSubmit={formik.handleSubmit}>

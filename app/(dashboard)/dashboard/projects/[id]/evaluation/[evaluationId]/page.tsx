@@ -33,7 +33,7 @@ export default function DetailProjectEvaluationPage({
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="/dashboard/projects">Projects</Link>
+                  <Link href="/dashboard/projects">Proyek</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />

@@ -10,9 +10,15 @@ export type User = {
   alamat: string;
   filename: string;
   isVerify: boolean;
+  role: "superadmin" | "supervisor" | "user";
 };
 
 export type UserResponse = {
   message: string;
   data: User[];
+};
+
+export type DetailUserResponse = {
+  message: string;
+  data: User;
 };

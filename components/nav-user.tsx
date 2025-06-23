@@ -6,7 +6,7 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
-  Sparkles,
+  Sparkles
 } from "lucide-react";
 
 import {
@@ -16,13 +16,13 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
+  useSidebar
 } from "@/components/ui/sidebar";
 import useAuthMutation from "@/mutation/use-auth-mutation";
 import { useQuery } from "@tanstack/react-query";
@@ -34,7 +34,7 @@ export function NavUser() {
 
   const { data, error } = useQuery({
     queryKey: ["get-profile"],
-    queryFn: getProfile,
+    queryFn: getProfile
   });
 
   return (
@@ -56,7 +56,9 @@ export function NavUser() {
                 <span className="truncate font-semibold">
                   {data?.message?.name}
                 </span>
-                <span className="truncate text-xs">{`${data?.message.jabatan} (${data?.message.devisi})`}</span>
+                <span className="truncate text-xs capitalize">
+                  {data?.message.role}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -79,7 +81,7 @@ export function NavUser() {
                   <span className="truncate font-semibold">
                     {data?.message.name}
                   </span>
-                  <span className="truncate text-xs">{`${data?.message.jabatan} (${data?.message.devisi})`}</span>
+                  <span className="truncate text-xs">{data?.message.role}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -106,7 +108,10 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => logoutMutation.mutate()}
+            >
               <LogOut />
               Log out
             </DropdownMenuItem>

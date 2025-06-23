@@ -1,14 +1,14 @@
 "use client";
 
-import ProjectForm from "@/components/forms/project-form";
-import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable
+} from "@tanstack/react-table";
+
 import {
   Table,
   TableBody,
@@ -17,31 +17,36 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import useModal from "@/hooks/use-modal";
-import {
-  ColumnDef,
-  TableState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  useReactTable
-} from "@tanstack/react-table";
+
+import { Input } from "@/components/ui/input";
+import { useState, useMemo, useCallback } from "react";
+import { Button } from "@/components/ui/button";
 import { Plus, Settings2 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
+import ProjectForm from "@/components/forms/project-form";
+import useModal from "@/hooks/use-modal";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  isLoading?: boolean;
+  isError?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
-  data
+  data,
+  isLoading,
+  isError
 }: DataTableProps<TData, TValue>) {
   const [filter, setFilter] = useState("");
 
-  const tableState: Partial<TableState> = useMemo(
+  const tableState = useMemo(
     () => ({
       globalFilter: filter
     }),
@@ -82,7 +87,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between px-4 border-y py-4 gap-3 flex-wrap">
         <Input
           className="max-w-xs"
-          placeholder="Cari Project"
+          placeholder="Cari proyek"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
@@ -92,7 +97,7 @@ export function DataTable<TData, TValue>({
             variant={"outline"}
             onClick={openModal}
           >
-            <Plus size={12} /> Tambah Project
+            <Plus size={12} /> Tambah proyek
           </Button>
         </div>
       </div>
@@ -120,7 +125,25 @@ export function DataTable<TData, TValue>({
             </TableHeader>
 
             <TableBody>
-              {rows?.length ? (
+              {isLoading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-32 text-center text-muted-foreground"
+                  >
+                    Mengambil data...
+                  </TableCell>
+                </TableRow>
+              ) : isError ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-32 text-center text-red-500"
+                  >
+                    Terjadi kesalahan saat memuat data.
+                  </TableCell>
+                </TableRow>
+              ) : rows?.length ? (
                 rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
@@ -140,9 +163,9 @@ export function DataTable<TData, TValue>({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-48  text-center"
+                    className="h-32 text-center"
                   >
-                    No results.
+                    Tidak ada data ditemukan.
                   </TableCell>
                 </TableRow>
               )}
@@ -151,32 +174,34 @@ export function DataTable<TData, TValue>({
         </div>
 
         {/* Footer: Pagination */}
-        <div className="flex items-center gap-4 justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handlePreviousPage}
-              disabled={!canPreviousPage}
-            >
-              Previous
-            </Button>
-            <span>
-              Page {pageIndex + 1} of {pageCount}
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleNextPage}
-              disabled={!canNextPage}
-            >
-              Next
-            </Button>
+        {!isLoading && !isError && (
+          <div className="flex items-center gap-4 justify-between text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handlePreviousPage}
+                disabled={!canPreviousPage}
+              >
+                Sebelumnya
+              </Button>
+              <span>
+                {pageIndex + 1} dari {pageCount}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleNextPage}
+                disabled={!canNextPage}
+              >
+                Selanjutnya
+              </Button>
+            </div>
+            <div className="text-sm">
+              Menampilkan {rows.length} dari {totalRows} proyek
+            </div>
           </div>
-          <div className="text-sm">
-            Showing {rows.length} of {totalRows} projects
-          </div>
-        </div>
+        )}
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>

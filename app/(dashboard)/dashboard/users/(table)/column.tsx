@@ -12,6 +12,7 @@ import {
 import { Eye, Trash, MoreHorizontal, Download, Check } from "lucide-react";
 import { User } from "@/lib/types/user-type";
 import useUserMutation from "@/mutation/use-user-mutation";
+import Link from "next/link";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -98,9 +99,14 @@ export const columns: ColumnDef<User>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Eye className="size-3 mr-2" />
-              View
+            <DropdownMenuItem asChild>
+              <Link
+                href={`/dashboard/users/${item._id}`}
+                className="cursor-pointer"
+              >
+                <Eye className="size-3 mr-2" />
+                View
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"

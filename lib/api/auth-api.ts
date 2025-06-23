@@ -69,13 +69,11 @@ export async function getProfile(): Promise<ProfileResponse> {
 }
 
 export async function logoutUser() {
-  const res = await fetch(`${API_URL}/manager/user/logout`, {
-    method: "POST",
-    credentials: "include"
+  const res = await api.post(`${API_URL}/manager/logout`, null, {
+    withCredentials: true
   });
 
-  if (!res.ok) throw new Error("Logout failed");
-  return res.json();
+  return res.data;
 }
 
 export async function deleteUser({ id }: { id: string }) {

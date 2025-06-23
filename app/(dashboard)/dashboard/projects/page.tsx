@@ -16,12 +16,10 @@ import {
 import { Project } from "@/lib/types/project-type";
 import { useQuery } from "@tanstack/react-query";
 import { QUERIES } from "@/lib/constants/queries";
+import useProject from "@/queries/use-project.query";
 
 export default function Page() {
-  const { data, isLoading } = useQuery({
-    queryFn: getProjects,
-    queryKey: [QUERIES.PROJECTS]
-  });
+  const { data, isLoading, isError } = useProject();
 
   const projects = data?.data || ([] as Project[]);
 
@@ -38,7 +36,7 @@ export default function Page() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Projects</BreadcrumbPage>
+                <BreadcrumbPage>Proyek</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -49,7 +47,12 @@ export default function Page() {
           <h2 className="text-2xl font-semibold">Daftar Project</h2>
         </div>
         <div className="space-y-3.5">
-          <DataTable columns={columns} data={projects} />
+          <DataTable
+            columns={columns}
+            data={projects}
+            isLoading={isLoading}
+            isError={isError}
+          />
         </div>
       </div>
     </>

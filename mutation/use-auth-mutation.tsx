@@ -14,7 +14,7 @@ export default function useAuthMutation() {
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data, variables) => {
-      toast("Login successfull!", {
+      toast("Berhasil masuk", {
         description: `Welcome back ${variables.username}`,
         duration: 2000
       });
@@ -29,7 +29,7 @@ export default function useAuthMutation() {
   const logoutMutation = useMutation({
     mutationFn: logoutUser,
     onSuccess: (data, variables) => {
-      toast("Logout successfull!", {
+      toast("Berhasil logout", {
         duration: 2000
       });
 
@@ -38,6 +38,7 @@ export default function useAuthMutation() {
       router.push("/login");
     },
     onError: (error: AxiosError<{ message: string }>) => {
+      console.error(error);
       ErrorHandling.handle(error);
     }
   });
@@ -46,7 +47,7 @@ export default function useAuthMutation() {
     mutationFn: registerUser,
     onSuccess: (data, variables) => {
       toast("Berhasil tambah user", {
-        description: `Username ${variables.body.username}`,
+        description: `Username: ${variables.body.username}`,
         duration: 2000
       });
 

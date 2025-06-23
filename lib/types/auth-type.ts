@@ -3,6 +3,7 @@ export type Profile = {
   nomorInduk: string;
   devisi: string;
   jabatan: string;
+  role: "superadmin" | "supervisor" | "user";
 };
 
 export type ProfileResponse = {
