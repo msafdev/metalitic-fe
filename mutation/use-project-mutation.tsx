@@ -1,6 +1,6 @@
 import { createProject } from "@/lib/api/project-api";
 import { QUERIES } from "@/lib/constants/queries";
-import { ErrorHandling } from "@/lib/errorHandling";
+import { ErrorHandling } from "@/lib/error-handling";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";

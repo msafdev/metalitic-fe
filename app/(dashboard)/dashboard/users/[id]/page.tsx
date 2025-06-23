@@ -9,8 +9,7 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
 import React from "react";
-import ProjectDetailHeader from "./components/project-detail-header";
-import ProjectEvaluationList from "./components/project-evaluation-list";
+import UserDetail from "./components/user-detail";
 
 export default function ProjectDetailPage({
   params
@@ -30,9 +29,7 @@ export default function ProjectDetailPage({
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbLink href="/dashboard/projects">
-                  Proyek
-                </BreadcrumbLink>
+                <BreadcrumbLink href="/dashboard/projects">User</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
@@ -43,10 +40,10 @@ export default function ProjectDetailPage({
         </div>
       </header>
       <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
-        <div className="space-y-3.5 px-4">
-          <ProjectDetailHeader idProject={params.id} />
-          <ProjectEvaluationList idProject={params.id} />
+        <div className="space-y-2 px-4">
+          <h2 className="text-2xl font-semibold">Detail pengguna</h2>
         </div>
+        <UserDetail idUser={params.id}/>
       </div>
     </>
   );

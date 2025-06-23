@@ -1,3 +1,5 @@
+"use client";
+
 import { DataTable } from "./(table)/table";
 import { columns } from "./(table)/column";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -10,10 +12,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
-import { getUsers } from "@/lib/api/user-api";
+import useUser from "@/queries/use-user.query";
+import { User } from "@/lib/types/user-type";
 
-export default async function Page() {
-  const users = await getUsers();
+export default function Page() {
+  const { data, isLoading, isError } = useUser();
+
+  const users = data?.data || ([] as User[]);
 
   return (
     <>
@@ -34,12 +39,19 @@ export default async function Page() {
           </Breadcrumb>
         </div>
       </header>
+
       <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
         <div className="space-y-2 px-4">
-          <h2 className="text-2xl font-semibold">Daftar pengguna</h2>
+          <h2 className="text-2xl font-semibold">Daftar Pengguna</h2>
         </div>
-        <div className="space-y-3.5">
-          <DataTable columns={columns} data={users.data} />
+
+        <div className="space-y-3.5 px-4">
+          <DataTable
+            columns={columns}
+            data={users}
+            isLoading={isLoading}
+            isError={isError}
+          />
         </div>
       </div>
     </>

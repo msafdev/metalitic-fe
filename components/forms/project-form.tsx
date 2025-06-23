@@ -34,8 +34,8 @@ import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Separator } from "../ui/separator";
 import ServiceRequesterForm from "./service-requester-form";
-import useServiceRequesterDropdown from "@/queries/dropdown/useServiceRequesterDropdown";
-import useUserList from "@/queries/useUserList";
+import useServiceRequesterDropdown from "@/queries/dropdown/use-service.query.dropdown";
+import useUser from "@/queries/use-user.query";
 import { useState } from "react";
 import { User } from "@/lib/types/user-type";
 import ErrorInputMessage from "../input/error-input-message";
@@ -50,7 +50,7 @@ export default function ProjectForm() {
   const { isOpen, openModal, setIsOpen, closeModal } = useModal();
   const { createProjectMutation } = useProjectMutation();
   const { serviceRequestersDropdownItems } = useServiceRequesterDropdown();
-  const { testerUsers } = useUserList();
+  const { data } = useUser();
   const [selectedTesters, setSelectedTesters] = useState<User[]>([]);
 
   const getServiceRequesterById = (id: string) => {
@@ -94,8 +94,8 @@ export default function ProjectForm() {
   };
 
   // filter tester that already selected
-  const filteredTesters = testerUsers.filter(
-    (tester) => !selectedTesters.find((item) => item._id === tester._id)
+  const filteredTesters = data?.data?.filter(
+    (user) => !selectedTesters.find((item) => item._id === user._id)
   );
 
   return (
@@ -201,18 +201,19 @@ export default function ProjectForm() {
               variant="secondary"
               className="px-3 py-1 bg-slate-100 text-slate-700 font-semibold"
             >
-              {filteredTesters.length}
+              {filteredTesters?.length ?? 0}
             </Badge>
           </div>
 
           <div className="space-y-3 max-h-80 overflow-y-auto">
-            {!filteredTesters.length && (
-              <div className="grid place-content-center gap-4 text-sm text-muted-foreground/70 py-10">
-                <UserRoundX className="mx-auto" />
-                <div>Tidak ada penguji tersedia</div>
-              </div>
-            )}
-            {filteredTesters.map((user, index) => (
+            {!filteredTesters ||
+              (!filteredTesters.length && (
+                <div className="grid place-content-center gap-4 text-sm text-muted-foreground/70 py-10">
+                  <UserRoundX className="mx-auto" />
+                  <div>Tidak ada penguji tersedia</div>
+                </div>
+              ))}
+            {filteredTesters?.map((user, index) => (
               <div
                 key={index}
                 className="flex items-center space-x-2 py-2 px-4 hover:bg-slate-50 rounded-2xl transition-all duration-300 cursor-pointer group"

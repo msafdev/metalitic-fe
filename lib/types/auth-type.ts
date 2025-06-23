@@ -3,8 +3,21 @@ export type Profile = {
   nomorInduk: string;
   devisi: string;
   jabatan: string;
+  role: "superadmin" | "supervisor" | "user";
 };
 
 export type ProfileResponse = {
   message: Profile;
+};
+
+export type Register = {
+  username: string;
+  password: string;
+  name: string;
+  nomorInduk: string;
+  devisi: string;
+  jabatan: string;
+  email: string;
+  noHp: string;
+  alamat: string;
 };

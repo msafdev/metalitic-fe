@@ -9,14 +9,16 @@ export type User = {
   noHp: string;
   alamat: string;
   filename: string;
-};
-
-export type GetUsersResponse = {
-  status: boolean;
   isVerify: boolean;
+  role: "superadmin" | "supervisor" | "user";
 };
 
 export type UserResponse = {
   message: string;
   data: User[];
+};
+
+export type DetailUserResponse = {
+  message: string;
+  data: User;
 };

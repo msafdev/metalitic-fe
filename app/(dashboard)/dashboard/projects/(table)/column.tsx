@@ -60,7 +60,7 @@ export const columns: ColumnDef<Project>[] = [
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link href={`/dashboard/projects/${row.original.idProject}`}>
+            <Link href={`/dashboard/projects/${row.original.idProject}`} className="cursor-pointer">
               <Eye className="size-3 mr-2" />
               View
             </Link>

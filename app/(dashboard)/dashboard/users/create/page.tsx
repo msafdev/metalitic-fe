@@ -1,8 +1,5 @@
 "use client";
 
-import { DataTable } from "./(table)/table";
-import { columns } from "./(table)/column";
-import { getProjects } from "@/lib/api/project-api";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -13,16 +10,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
-import { Project } from "@/lib/types/project-type";
-import { useQuery } from "@tanstack/react-query";
-import { QUERIES } from "@/lib/constants/queries";
-import useProject from "@/queries/use-project.query";
+import { CreateUserForm } from "@/components/forms/create-user-form";
 
 export default function Page() {
-  const { data, isLoading, isError } = useProject();
-
-  const projects = data?.data || ([] as Project[]);
-
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -36,24 +26,21 @@ export default function Page() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Proyek</BreadcrumbPage>
+                <BreadcrumbPage>Users</BreadcrumbPage>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Tambah</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </header>
       <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
-        <div className="space-y-2 px-4">
-          <h2 className="text-2xl font-semibold">Daftar Project</h2>
+        <div className="space-y-2 px-4 pb-4 border-b">
+          <h2 className="text-2xl font-semibold">Tambah pengguna</h2>
         </div>
-        <div className="space-y-3.5">
-          <DataTable
-            columns={columns}
-            data={projects}
-            isLoading={isLoading}
-            isError={isError}
-          />
-        </div>
+        <CreateUserForm />
       </div>
     </>
   );

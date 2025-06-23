@@ -10,7 +10,7 @@ export class ErrorHandling {
     if (error instanceof AxiosError) {
       if (error.response?.status === 401) {
         return toast.error("Failed", {
-          description: "Please login first , " + error.response?.data.message,
+          description: "Please login first, " + error.response?.data.message,
         });
       }
 
