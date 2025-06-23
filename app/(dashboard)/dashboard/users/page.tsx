@@ -1,6 +1,5 @@
 import { DataTable } from "./(table)/table";
 import { columns } from "./(table)/column";
-import { getProjects } from "@/lib/api/project-api";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -11,13 +10,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
-import { Project } from "@/lib/types/project-type";
+import { getUsers } from "@/lib/api/user-api";
 
 export default async function Page() {
-  // const projects = await getProjects();
-  const projects = {
-    data: [] as Project[]
-  };
+  const users = await getUsers();
 
   return (
     <>
@@ -40,10 +36,10 @@ export default async function Page() {
       </header>
       <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
         <div className="space-y-2 px-4">
-          <h2 className="text-2xl font-semibold">User List</h2>
+          <h2 className="text-2xl font-semibold">Daftar pengguna</h2>
         </div>
         <div className="space-y-3.5">
-          <DataTable columns={columns} data={projects.data} />
+          <DataTable columns={columns} data={users.data} />
         </div>
       </div>
     </>

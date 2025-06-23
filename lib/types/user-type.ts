@@ -1,5 +1,6 @@
 export type User = {
   _id: string;
+  username: string;
   name: string;
   nomorInduk: string;
   devisi: string;
@@ -12,6 +13,10 @@ export type User = {
 
 export type GetUsersResponse = {
   status: boolean;
+  isVerify: boolean;
+};
+
+export type UserResponse = {
   message: string;
   data: User[];
 };

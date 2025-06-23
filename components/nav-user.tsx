@@ -9,7 +9,6 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,8 +36,6 @@ export function NavUser() {
     queryKey: ["get-profile"],
     queryFn: getProfile,
   });
-
-  console.log("Extracted profile:", data);
 
   return (
     <SidebarMenu>

@@ -82,7 +82,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between px-4 border-y py-4 gap-3 flex-wrap">
         <Input
           className="max-w-xs"
-          placeholder="Search Projects..."
+          placeholder="Cari Project"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
             variant={"outline"}
             onClick={openModal}
           >
-            <Plus size={12} /> Tambah Baru
+            <Plus size={12} /> Tambah Project
           </Button>
         </div>
       </div>

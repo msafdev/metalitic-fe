@@ -74,14 +74,14 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between px-4 border-y py-4 gap-3 flex-wrap">
         <Input
           className="max-w-xs"
-          placeholder="Search invoice"
+          placeholder="Cari pengguna"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
         <div className="flex gap-3 items-center">
           <Button className="has-[>svg]:pl-2" variant={"outline"} asChild>
-            <Link href={"/dashboard/invoices/create"}>
-              <Plus size={12} /> Create new
+            <Link href={"/dashboard/users/create"}>
+              <Plus size={12} /> Tambah pengguna
             </Link>
           </Button>
         </div>
@@ -132,7 +132,7 @@ export function DataTable<TData, TValue>({
                     colSpan={columns.length}
                     className="h-48  text-center"
                   >
-                    No results.
+                    Tidak ada hasil.
                   </TableCell>
                 </TableRow>
               )}
@@ -149,10 +149,10 @@ export function DataTable<TData, TValue>({
               onClick={handlePreviousPage}
               disabled={!canPreviousPage}
             >
-              Previous
+              Sebelumnya
             </Button>
             <span>
-              Page {pageIndex + 1} of {pageCount}
+              {pageIndex + 1} dari {pageCount}
             </span>
             <Button
               variant="ghost"
@@ -160,11 +160,11 @@ export function DataTable<TData, TValue>({
               onClick={handleNextPage}
               disabled={!canNextPage}
             >
-              Next
+              Selanjutnya
             </Button>
           </div>
           <div className="text-sm">
-            Showing {rows.length} of {totalRows} invoices
+            Menampilkan {rows.length} dari {totalRows} pengguna
           </div>
         </div>
       </div>
