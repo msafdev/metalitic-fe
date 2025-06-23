@@ -74,14 +74,14 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between px-4 border-y py-4 gap-3 flex-wrap">
         <Input
           className="max-w-xs"
-          placeholder="Search invoice"
+          placeholder="Cari proyek"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
         <div className="flex gap-3 items-center">
           <Button className="has-[>svg]:pl-2" variant={"outline"} asChild>
-            <Link href={"/dashboard/invoices/create"}>
-              <Plus size={12} /> Create new
+            <Link href={"/dashboard/projects/create"}>
+              <Plus size={12} /> Tambah proyek
             </Link>
           </Button>
         </div>

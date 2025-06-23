@@ -9,19 +9,33 @@ export async function loginUser({
   username: string;
   password: string;
 }) {
-  const res = await fetch(`${API_URL}/manager/login`, {
+  let res = await fetch(`${API_URL}/manager/login`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
 
-  if (!res.ok) throw new Error("Login failed");
-  return res.json();
+  if (res.ok) {
+    return res.json();
+  }
+
+  res = await fetch(`${API_URL}/superadmin/login`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+
+  if (res.ok) {
+    return res.json();
+  }
+
+  throw new Error("Login failed for both manager and superadmin");
 }
 
 export async function verifyToken() {
-  const res = await fetch(`${API_URL}/manager/authenticate`, {
+  const res = await fetch(`${API_URL}/check-auth`, {
     method: "GET",
     credentials: "include",
   });
@@ -31,7 +45,7 @@ export async function verifyToken() {
 }
 
 export async function getProfile(): Promise<ProfileResponse> {
-  const res = await fetch(`${API_URL}/manager/get-profile`, {
+  const res = await fetch(`${API_URL}/get-profile`, {
     method: "GET",
     credentials: "include",
   });
@@ -39,8 +53,6 @@ export async function getProfile(): Promise<ProfileResponse> {
   if (!res.ok) {
     throw new Error("Failed to fetch profile");
   }
-  
-  console.log(res);
 
   const data: ProfileResponse = await res.json();
   return data;

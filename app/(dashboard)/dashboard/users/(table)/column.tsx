@@ -9,95 +9,109 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Eye, Trash, MoreHorizontal, Download } from "lucide-react";
-import { Project } from "@/lib/types/project-type";
+import { Eye, Trash, MoreHorizontal, Download, Check } from "lucide-react";
+import { User } from "@/lib/types/user-type";
+import useAuthMutation from "@/mutation/use-auth-mutation";
+import useUserMutation from "@/mutation/use-user-mutation";
 
-export const columns: ColumnDef<Project>[] = [
+export const columns: ColumnDef<User>[] = [
   {
-    accessorKey: "namaProject",
-    header: "Name",
-  },
-  {
-    accessorKey: "permintaanJasa",
-    header: "Peminta",
+    accessorKey: "name",
+    header: "Nama",
     cell: ({ row }) => {
       const item = row.original;
-      return <span className="">{item.namaProject}</span>;
+      return <span className="">{item.name}</span>;
     },
   },
   {
-    accessorKey: "sample",
-    header: "Sample",
+    accessorKey: "nomorInduk",
+    header: "NIK",
     cell: ({ row }) => {
       const item = row.original;
-      return <span className="">{item.sample}</span>;
+      return <span className="">{item.nomorInduk}</span>;
     },
   },
   {
-    accessorKey: "tglPengujian",
-    header: "Issued At",
+    accessorKey: "email",
+    header: "Email",
     cell: ({ row }) => {
       const item = row.original;
-      return <span className="">{item.tglPengujian}</span>;
+      return <span className="">{item.email}</span>;
     },
   },
   {
-    accessorKey: "lokasiPengujian",
-    header: "Location",
+    accessorKey: "noHp",
+    header: "No. HP",
     cell: ({ row }) => {
       const item = row.original;
-      return <span className="">{item.lokasiPengujian}</span>;
+      return <span className="">{item.noHp}</span>;
     },
   },
   {
-    accessorKey: "areaPengujian",
-    header: "Area",
+    accessorKey: "devisi",
+    header: "Divisi",
     cell: ({ row }) => {
       const item = row.original;
-      return <span className="">{item.areaPengujian}</span>;
+      return <span className="">{item.devisi}</span>;
     },
   },
   {
-    accessorKey: "posisiPengujian",
-    header: "Position",
+    accessorKey: "jabatan",
+    header: "Jabatan",
     cell: ({ row }) => {
       const item = row.original;
-      return <span className="">{item.posisiPengujian}</span>;
+      return <span className="">{item.jabatan}</span>;
     },
   },
-    {
-    accessorKey: "material",
-    header: "Position",
+  {
+    accessorKey: "isVerify",
+    header: "Status",
     cell: ({ row }) => {
       const item = row.original;
-      return <span className="">{item.posisiPengujian}</span>;
+      const isVerified = item.isVerify;
+
+      return (
+        <div
+          className={`inline-flex items-center px-2.5 py-1 rounded text-xs font-medium
+          ${
+            isVerified
+              ? "bg-green-100 text-green-800"
+              : "bg-amber-100 text-amber-800"
+          }`}
+        >
+          {isVerified ? "Sudah Verifikasi" : "Belum Verifikasi"}
+        </div>
+      );
     },
   },
   {
     id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem>
-            <Eye className="size-3 mr-2" />
-            View
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Download className="size-3 mr-2" />
-            Download
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-red-600">
-            <Trash className="size-3 mr-2" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    cell: ({ row }) => {
+      const item = row.original;
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+              <Eye className="size-3 mr-2" />
+              View
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Check className="size-3 mr-2" />
+              Verifikasi
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-red-600">
+              <Trash className="size-3 mr-2" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];
