@@ -164,7 +164,7 @@ export default function FilesDropzone({
                 </div>
               </div>
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center flex-wrap gap-1 overflow-auto">
+              <div className="absolute inset-0 flex items-center justify-center flex-wrap gap-1 overflow-auto m-2">
                 <Button
                   size="icon"
                   variant="ghost"

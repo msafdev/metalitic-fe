@@ -1,32 +1,26 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
-import { cn } from "@/lib/utils";
 import useAuthMutation from "@/mutation/use-auth-mutation";
 import { useFormik } from "formik";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { Textarea } from "../ui/textarea";
-import useModal from "@/hooks/use-modal";
 import { Save } from "lucide-react";
 import { Separator } from "../ui/separator";
 import ErrorInputMessage from "../input/error-input-message";
+import usePermission from "@/hooks/use-permission";
+import ComboboxGroup from "../input/combobox-group";
+import { useState } from "react";
+import FilesDropzone from "../input/files-dropzone";
 
-const createUserSchema = z.object({
+const userSchema = z.object({
+  avatarUser: z.any().optional(),
   username: z.string({ required_error: "Required" }).min(3, "Min. 3 karakter"),
-  password: z
-    .string({ required_error: "Required" })
-    .min(6, "Min. 6 karakter"),
+  password: z.string({ required_error: "Required" }).min(6, "Min. 6 karakter"),
   name: z.string({ required_error: "Required" }).min(3, "Min. 3 karakter"),
   nomorInduk: z
     .string({ required_error: "Required" })
@@ -38,11 +32,21 @@ const createUserSchema = z.object({
     .email()
     .min(5, "Masukkan email yang valid"),
   noHp: z.string({ required_error: "Required" }).min(6, "Min. 6 karakter"),
-  alamat: z.string({ required_error: "Required" }).min(5, "Min. 5 karakter")
+  alamat: z.string({ required_error: "Required" }).min(5, "Min. 5 karakter"),
+  role: z.enum(["supervisor", "user"]).optional()
 });
 
-export default function CreateUserForm() {
+export default function CreateUserForm({
+  closeUserModal
+}: {
+  closeUserModal: () => void;
+}) {
   const { registerMutation } = useAuthMutation();
+  const { isSuperadmin } = usePermission();
+
+  const [avatarUser, setAvatarUser] = useState<(File & { preview: string })[]>(
+    []
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -54,14 +58,25 @@ export default function CreateUserForm() {
       nomorInduk: "",
       devisi: "",
       jabatan: "",
-      alamat: ""
+      alamat: "",
+      role: "user",
+      avatarUser: ""
     },
-    validationSchema: toFormikValidationSchema(createUserSchema),
+    validationSchema: toFormikValidationSchema(userSchema),
     onSubmit: async (values, { resetForm }) => {
       registerMutation.mutate(
-        { body: values },
         {
-          onSuccess: () => resetForm(),
+          body: {
+            ...values,
+            isAdmin: values.role === "supervisor" ? true : false,
+            avatarUser: avatarUser[0]
+          }
+        },
+        {
+          onSuccess: () => {
+            resetForm();
+            closeUserModal();
+          },
           onError: () => console.error("Something wrong happened")
         }
       );
@@ -71,6 +86,14 @@ export default function CreateUserForm() {
   return (
     <form onSubmit={formik.handleSubmit} noValidate>
       <div className="grid grid-cols-1 gap-4">
+        <div className="space-y-2 relative">
+          <Label htmlFor="avatarUser">Avatar</Label>
+          <FilesDropzone files={avatarUser} setFiles={setAvatarUser} />
+          {formik.touched.avatarUser && formik.errors.avatarUser && (
+            <ErrorInputMessage>{formik.errors.avatarUser}</ErrorInputMessage>
+          )}
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2 relative">
             <Label htmlFor="name">Nama User</Label>
@@ -87,6 +110,7 @@ export default function CreateUserForm() {
               </ErrorInputMessage>
             )}
           </div>
+
           <div className="space-y-2 relative">
             <Label htmlFor="username">Username</Label>
             <Input
@@ -103,6 +127,28 @@ export default function CreateUserForm() {
             )}
           </div>
         </div>
+
+        {isSuperadmin && (
+          <div className="space-y-2 relative">
+            <Label>Role</Label>
+            <ComboboxGroup
+              value={formik.values.role}
+              items={[
+                {
+                  value: "supervisor",
+                  label: "Manager"
+                },
+                {
+                  value: "user",
+                  label: "User"
+                }
+              ]}
+              onSelect={(value) => formik.setFieldValue("role", value)}
+              noItemsFallbackText="Tidak Ditemukan"
+              placeholder="Pilih Role"
+            />
+          </div>
+        )}
 
         <div className="space-y-2 relative">
           <Label htmlFor="password">Password</Label>

@@ -1,4 +1,5 @@
 import { api } from "../axios";
+import { DataTransformers } from "../data-transformer";
 import { ProfileResponse, Register } from "../types/auth-type";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -36,18 +37,16 @@ export async function loginUser({
 }
 
 export async function registerUser({ body }: { body: Register }) {
-  let res = await fetch(`${API_URL}/manager/register`, {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
+  const formData = DataTransformers.objectToFormData(body);
+
+  const res = await api.post(`${API_URL}/manager/register`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    },
+    withCredentials: true
   });
 
-  if (res.ok) {
-    return res.json();
-  }
-
-  throw new Error("Register failed");
+  return res.data;
 }
 
 export async function verifyToken() {

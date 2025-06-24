@@ -45,7 +45,7 @@ export default function Page() {
           <h2 className="text-2xl font-semibold">Daftar Pengguna</h2>
         </div>
 
-        <div className="space-y-3.5 px-4">
+        <div className="space-y-3.5">
           <DataTable
             columns={columns}
             data={users}

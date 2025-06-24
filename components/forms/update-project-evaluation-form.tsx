@@ -74,12 +74,6 @@ export default function UpdateProjectEvaluationForm({
     (File & { preview: string })[]
   >([]);
 
-  console.log({
-    gambarKomponent1,
-    gambarKomponent2,
-    listGambarStrukturMikro
-  });
-
   const projectEvaluation = data?.data;
 
   const formik = useFormik({

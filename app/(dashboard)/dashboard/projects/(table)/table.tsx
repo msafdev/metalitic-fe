@@ -80,7 +80,7 @@ export function DataTable<TData, TValue>({
   const canNextPage = table.getCanNextPage();
   const totalRows = table.getPrePaginationRowModel().rows.length;
 
-  const { isOpen, openModal, setIsOpen } = useModal();
+  const { isOpen, openModal, setIsOpen, closeModal } = useModal();
 
   return (
     <div className="space-y-4">
@@ -216,7 +216,7 @@ export function DataTable<TData, TValue>({
             </DialogTitle>
           </DialogHeader>
 
-          <CreateProjectForm />
+          <CreateProjectForm closeProjectModal={closeModal} />
         </DialogContent>
       </Dialog>
     </div>

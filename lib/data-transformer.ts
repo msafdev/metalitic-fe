@@ -11,7 +11,7 @@ export class DataTransformers {
       const value = obj[key];
       const fullKey = parentKey ? `${parentKey}[${key}]` : key;
 
-      if (!value) continue;
+      if (value === null || value === undefined) continue;
 
       if (value instanceof Date) {
         formData.append(fullKey, value.toISOString());

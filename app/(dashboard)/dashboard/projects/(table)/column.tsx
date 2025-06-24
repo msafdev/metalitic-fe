@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Eye, Trash, MoreHorizontal, Download } from "lucide-react";
 import { Project } from "@/lib/types/project-type";
-import { format } from "date-fns";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils";
+import useProjectMutation from "@/mutation/use-project-mutation";
 
 export const columns: ColumnDef<Project>[] = [
   {
@@ -37,41 +38,54 @@ export const columns: ColumnDef<Project>[] = [
   },
   {
     accessorKey: "tanggalOrderMasuk",
-    header: "Tanggal Order Masuk"
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Dibuat",
-    cell: ({ row }) => format(row.original.createdAt, "dd/MM/yyyy HH:mm")
+    header: "Tanggal Order Masuk",
+    cell: ({ row }) => formatDate(row.original.tanggalOrderMasuk, false)
   },
   {
     accessorKey: "updatedAt",
     header: "Diupdate",
-    cell: ({ row }) => format(row.original.updatedAt, "dd/MM/yyyy HH:mm")
+    cell: ({ row }) => formatDate(row.original.updatedAt)
   },
   {
     id: "actions",
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem asChild>
-            <Link href={`/dashboard/projects/${row.original.idProject}`} className="cursor-pointer">
-              <Eye className="size-3 mr-2" />
-              View
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-red-600">
-            <Trash className="size-3 mr-2" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    )
+    cell: ({ row }) => {
+      const item = row.original;
+
+      const { deleteMutation } = useProjectMutation();
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link
+                href={`/dashboard/projects/${row.original.idProject}`}
+                className="cursor-pointer"
+              >
+                <Eye className="size-3 mr-2" />
+                View
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="text-red-600 cursor-pointer"
+              onClick={() => {
+                deleteMutation.mutate({
+                  id: item._id
+                });
+              }}
+              disabled={deleteMutation.isPending}
+            >
+              <Trash className="size-3 mr-2" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    }
   }
 ];

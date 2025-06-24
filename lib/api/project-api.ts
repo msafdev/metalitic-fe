@@ -23,6 +23,15 @@ export async function createProject(body: CreateProjectRequest) {
   return res.data;
 }
 
+export async function deleteProject({ id }: { id: string }) {
+  const res = await api.delete(`${API_URL}/manager/project/delete`, {
+    withCredentials: true,
+    data: { id }
+  });
+
+  return res.data;
+}
+
 export async function getProjectDetail(
   idProject: string
 ): Promise<DetailProjectResponse> {

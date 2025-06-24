@@ -21,5 +21,7 @@ export type Register = {
   jabatan: string;
   email: string;
   noHp: string;
+  avatarUser: File;
   alamat: string;
+  isAdmin: boolean;
 };
