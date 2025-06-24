@@ -88,3 +88,42 @@ export async function deleteProjectEvaluation(id: string) {
 
   return res.data;
 }
+
+export async function deleteProjectEvaluationImageComponent1(
+  projectEvaluationId: string
+) {
+  const res = await api.delete(
+    `${API_URL}/manager/projects/evaluation/${projectEvaluationId}/image-component-1`,
+    {
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}
+
+export async function deleteProjectEvaluationImageComponent2(
+  projectEvaluationId: string
+) {
+  const res = await api.delete(
+    `${API_URL}/manager/projects/evaluation/${projectEvaluationId}/image-component-2`,
+    {
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}
+
+export async function deleteProjectEvaluationImageListMicroStructure(
+  projectEvaluationId: string
+) {
+  const res = await api.delete(
+    `${API_URL}/manager/projects/evaluation/${projectEvaluationId}/image-list-micro-structure`,
+    {
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}

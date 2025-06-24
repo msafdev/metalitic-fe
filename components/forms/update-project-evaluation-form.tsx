@@ -15,7 +15,8 @@ import {
   ImageUp,
   Microscope,
   Save,
-  TrashIcon
+  TrashIcon,
+  XIcon
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getProjectEvaluationById } from "@/lib/api/project-evaluation-api";
@@ -29,6 +30,9 @@ import FilesDropzone from "../input/files-dropzone";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import ComboboxGroup from "../input/combobox-group";
+import DropzoneContainer from "../input/dropzone-container";
+import useModal from "@/hooks/use-modal";
+import DeleteAlertDialog from "../dialog/delete-alert-dialog";
 
 type Props = {
   projectEvaluationId: string;
@@ -63,7 +67,12 @@ export default function UpdateProjectEvaluationForm({
     queryKey: [QUERIES.PROJECTS_EVALUATION, projectEvaluationId]
   });
 
-  const { updateProjectEvaluationMutation } = useProjectEvaluationMutation();
+  const {
+    updateProjectEvaluationMutation,
+    deleteProjectEvaluationImageComponent1Mutation,
+    deleteProjectEvaluationImageComponent2Mutation,
+    deleteProjectEvaluationImageListMicroStructureMutation
+  } = useProjectEvaluationMutation();
   const [gambarKomponent1, setGambarKomponent1] = useState<
     (File & { preview: string })[]
   >([]);
@@ -74,11 +83,23 @@ export default function UpdateProjectEvaluationForm({
     (File & { preview: string })[]
   >([]);
 
-  console.log({
-    gambarKomponent1,
-    gambarKomponent2,
-    listGambarStrukturMikro
-  });
+  const {
+    isOpen: isOpenDeleteGambarKomponen1,
+    setIsOpen: setIsOpenDeleteGambarKomponen1,
+    openModal: openModalDeleteGambarKomponen1
+  } = useModal();
+
+  const {
+    isOpen: isOpenDeleteGambarKomponen2,
+    setIsOpen: setIsOpenDeleteGambarKomponen2,
+    openModal: openModalDeleteGambarKomponen2
+  } = useModal();
+
+  const {
+    isOpen: isOpenDeleteGambarStrukturMikro,
+    setIsOpen: setIsOpenDeleteGambarStrukturMikro,
+    openModal: openModalDeleteGambarStrukturMikro
+  } = useModal();
 
   const projectEvaluation = data?.data;
 
@@ -380,31 +401,89 @@ export default function UpdateProjectEvaluationForm({
                 <Label htmlFor="perbesaranMikroskop">Gambar Komponen</Label>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <div>
-                    <FilesDropzone
-                      files={gambarKomponent1}
-                      setFiles={setGambarKomponent1}
-                    />
-                    {formik.touched.gambarKomponent1 &&
-                      formik.errors.gambarKomponent1 && (
-                        <ErrorInputMessage>
-                          {formik.errors.gambarKomponent1}
-                        </ErrorInputMessage>
-                      )}
-                  </div>
+                  {projectEvaluation.gambarKomponent1 ? (
+                    <DropzoneContainer>
+                      <Image
+                        src={projectEvaluation.gambarKomponent1}
+                        alt={`Gambar komponen 1`}
+                        width={200}
+                        height={200}
+                        className="object-cover rounded overflow-hidden bg-secondary cursor-pointer border border-secondary min-w-14 aspect-square"
+                        onClick={() =>
+                          window.open(
+                            projectEvaluation.gambarKomponent1,
+                            "_blank"
+                          )
+                        }
+                        tabIndex={0}
+                        style={{ objectPosition: "top" }}
+                      />
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        type="button"
+                        onClick={openModalDeleteGambarKomponen1}
+                        className="absolute top-0 right-0 rounded-full"
+                      >
+                        <TrashIcon />
+                      </Button>
+                    </DropzoneContainer>
+                  ) : (
+                    <div>
+                      <FilesDropzone
+                        files={gambarKomponent1}
+                        setFiles={setGambarKomponent1}
+                      />
+                      {formik.touched.gambarKomponent1 &&
+                        formik.errors.gambarKomponent1 && (
+                          <ErrorInputMessage>
+                            {formik.errors.gambarKomponent1}
+                          </ErrorInputMessage>
+                        )}
+                    </div>
+                  )}
 
-                  <div>
-                    <FilesDropzone
-                      files={gambarKomponent2}
-                      setFiles={setGambarKomponent2}
-                    />
-                    {formik.touched.gambarKomponent2 &&
-                      formik.errors.gambarKomponent2 && (
-                        <ErrorInputMessage>
-                          {formik.errors.gambarKomponent2}
-                        </ErrorInputMessage>
-                      )}
-                  </div>
+                  {projectEvaluation.gambarKomponent2 ? (
+                    <DropzoneContainer>
+                      <Image
+                        src={projectEvaluation.gambarKomponent2}
+                        alt={`Gambar komponen 2`}
+                        width={200}
+                        height={200}
+                        className="object-cover rounded overflow-hidden bg-secondary cursor-pointer border border-secondary min-w-14 aspect-square"
+                        onClick={() =>
+                          window.open(
+                            projectEvaluation.gambarKomponent2,
+                            "_blank"
+                          )
+                        }
+                        tabIndex={0}
+                        style={{ objectPosition: "top" }}
+                      />
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        type="button"
+                        onClick={openModalDeleteGambarKomponen2}
+                        className="absolute top-0 right-0 rounded-full"
+                      >
+                        <TrashIcon />
+                      </Button>
+                    </DropzoneContainer>
+                  ) : (
+                    <div>
+                      <FilesDropzone
+                        files={gambarKomponent2}
+                        setFiles={setGambarKomponent2}
+                      />
+                      {formik.touched.gambarKomponent2 &&
+                        formik.errors.gambarKomponent2 && (
+                          <ErrorInputMessage>
+                            {formik.errors.gambarKomponent2}
+                          </ErrorInputMessage>
+                        )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -417,21 +496,34 @@ export default function UpdateProjectEvaluationForm({
             </h3>
 
             <div>
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col md:flex-row gap-4 justify-between md:items-center mb-4">
                 <Label>Data Gambar Keseluruhan</Label>
 
-                <div>
-                  <span className="me-3 text-sm text-muted-foreground">
-                    {listGambarStrukturMikro.length} Gambar
+                <div className="flex gap-3 items-center">
+                  <span className="text-sm text-muted-foreground">
+                    {projectEvaluation.listGambarStrukturMikro.length ||
+                      listGambarStrukturMikro.length}{" "}
+                    Gambar
                   </span>
-                  <Button asChild type="button">
-                    <Label
-                      htmlFor="listGambarStrukturMikro"
-                      className="cursor-pointer"
+
+                  {projectEvaluation.listGambarStrukturMikro.length ? (
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={openModalDeleteGambarStrukturMikro}
                     >
-                      Upload
-                    </Label>
-                  </Button>
+                      Hapus Semua
+                    </Button>
+                  ) : (
+                    <Button asChild type="button">
+                      <Label
+                        htmlFor="listGambarStrukturMikro"
+                        className="cursor-pointer"
+                      >
+                        Upload
+                      </Label>
+                    </Button>
+                  )}
                 </div>
                 <Input
                   multiple
@@ -465,50 +557,78 @@ export default function UpdateProjectEvaluationForm({
                 />
               </div>
 
-              {!listGambarStrukturMikro.length && (
-                <div className="border border-dashed border-gray-200 rounded-xl grid gap-3 place-content-center p-12 text-center">
-                  <ImageUp
-                    size={50}
-                    className="mx-auto text-muted-foreground"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Belum ada gambar yang di pilih
-                  </p>
-                </div>
-              )}
-
-              <div className="flex gap-5 overflow-x-auto">
-                {listGambarStrukturMikro.map((file, index) => (
-                  <div key={index} className="flex items-center space-x-2 mt-2">
-                    <div className="relative w-[150px] h-[150px] overflow-hidden">
-                      <Image
-                        src={file.preview}
-                        className="object-cover rounded-md"
-                        alt={file.name}
-                        fill
-                      />
-
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute top-1 right-1"
-                        onClick={() => {
-                          // Revoke URL to prevent memory leaks
-                          URL.revokeObjectURL(file.preview);
-
-                          // Remove file from state
-                          setListGambarStrukturMikro((prev) =>
-                            prev.filter((_, i) => i !== index)
-                          );
-                        }}
-                      >
-                        <TrashIcon className="text-red-500" />
-                      </Button>
-                    </div>
+              {projectEvaluation.listGambarStrukturMikro.length ? (
+                <DropzoneContainer>
+                  <div className="flex items-center gap-2 overflow-x-auto">
+                    {projectEvaluation.listGambarStrukturMikro.map(
+                      (image, index) => (
+                        <div
+                          key={image}
+                          className="relative w-[150px] h-[150px] overflow-hidden"
+                        >
+                          <Image
+                            key={image}
+                            src={image}
+                            className="object-cover rounded-md"
+                            alt={`Gambar struktur mikro ${index + 1}`}
+                            fill
+                          />
+                        </div>
+                      )
+                    )}
                   </div>
-                ))}
-              </div>
+                </DropzoneContainer>
+              ) : (
+                <>
+                  {!listGambarStrukturMikro.length && (
+                    <DropzoneContainer>
+                      <ImageUp
+                        size={50}
+                        className="mx-auto text-muted-foreground mb-5"
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        Belum ada gambar yang di pilih
+                      </p>
+                    </DropzoneContainer>
+                  )}
+
+                  <div className="flex gap-5 overflow-x-auto">
+                    {listGambarStrukturMikro.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center space-x-2 mt-2"
+                      >
+                        <div className="relative w-[150px] h-[150px] overflow-hidden">
+                          <Image
+                            src={file.preview}
+                            className="object-cover rounded-md"
+                            alt={file.name}
+                            fill
+                          />
+
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-1 right-1"
+                            onClick={() => {
+                              // Revoke URL to prevent memory leaks
+                              URL.revokeObjectURL(file.preview);
+
+                              // Remove file from state
+                              setListGambarStrukturMikro((prev) =>
+                                prev.filter((_, i) => i !== index)
+                              );
+                            }}
+                          >
+                            <TrashIcon className="text-red-500" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
                 <div className="space-y-2">
@@ -516,7 +636,12 @@ export default function UpdateProjectEvaluationForm({
                   <div className="flex gap-2">
                     <ComboboxGroup
                       value={formik.values.aiModelFasa}
-                      items={[]}
+                      items={[
+                        {
+                          label: "Model 1",
+                          value: "model-1"
+                        }
+                      ]}
                       onSelect={(value) =>
                         formik.setFieldValue("aiModelFasa", value)
                       }
@@ -535,7 +660,12 @@ export default function UpdateProjectEvaluationForm({
                   <div className="flex gap-2">
                     <ComboboxGroup
                       value={formik.values.aiModelCrack}
-                      items={[]}
+                      items={[
+                        {
+                          label: "Model 1",
+                          value: "model-1"
+                        }
+                      ]}
                       onSelect={(value) =>
                         formik.setFieldValue("aiModelCrack", value)
                       }
@@ -555,7 +685,12 @@ export default function UpdateProjectEvaluationForm({
                   <div className="flex gap-2">
                     <ComboboxGroup
                       value={formik.values.aiModelDegradasi}
-                      items={[]}
+                      items={[
+                        {
+                          label: "Model 1",
+                          value: "model-1"
+                        }
+                      ]}
                       onSelect={(value) =>
                         formik.setFieldValue("aiModelDegradasi", value)
                       }
@@ -582,6 +717,45 @@ export default function UpdateProjectEvaluationForm({
           </div>
         </div>
       </form>
+
+      <DeleteAlertDialog
+        title="Yakin ingin menghapus gambar komponen 1?"
+        description="Gambar komponen 1 akan dihapus secara permanen."
+        open={isOpenDeleteGambarKomponen1}
+        setOpen={setIsOpenDeleteGambarKomponen1}
+        data={projectEvaluation.gambarKomponent1}
+        onDelete={(data) => {
+          deleteProjectEvaluationImageComponent1Mutation.mutate(
+            projectEvaluationId
+          );
+        }}
+      />
+
+      <DeleteAlertDialog
+        title="Yakin ingin menghapus gambar komponen 2?"
+        description="Gambar komponen 2 akan dihapus secara permanen."
+        open={isOpenDeleteGambarKomponen2}
+        setOpen={setIsOpenDeleteGambarKomponen2}
+        data={projectEvaluation.gambarKomponent2}
+        onDelete={(data) => {
+          deleteProjectEvaluationImageComponent2Mutation.mutate(
+            projectEvaluationId
+          );
+        }}
+      />
+
+      <DeleteAlertDialog
+        title="Yakin ingin menghapus semua gambar struktur mikro?"
+        description="Gambar list struktur mikro akan dihapus secara permanen."
+        open={isOpenDeleteGambarStrukturMikro}
+        setOpen={setIsOpenDeleteGambarStrukturMikro}
+        data={projectEvaluation.listGambarStrukturMikro}
+        onDelete={(data) => {
+          deleteProjectEvaluationImageListMicroStructureMutation.mutate(
+            projectEvaluationId
+          );
+        }}
+      />
     </div>
   );
 }
