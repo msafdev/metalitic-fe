@@ -12,7 +12,12 @@ const PasswordInput = React.forwardRef<
   const [showPassword, setShowPassword] = React.useState(false);
 
   return (
-    <div className="relative border rounded-md overflow-hidden focus-within:outline-none focus-within:ring-1 focus-within:ring-ring">
+    <div
+      className={cn(
+        "relative border rounded-md overflow-hidden focus-within:outline-none focus-within:ring-1 focus-within:ring-ring",
+        className
+      )}
+    >
       <input
         type={showPassword ? "text" : "password"}
         className={cn(

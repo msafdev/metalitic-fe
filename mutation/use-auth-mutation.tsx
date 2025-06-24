@@ -14,8 +14,8 @@ export default function useAuthMutation() {
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data, variables) => {
-      toast("Berhasil masuk", {
-        description: `Welcome back ${variables.username}`,
+      toast("✔️ Berhasil", {
+        description: `Selamat datang kembali ${variables.username}`,
         duration: 2000
       });
 
@@ -29,7 +29,8 @@ export default function useAuthMutation() {
   const logoutMutation = useMutation({
     mutationFn: logoutUser,
     onSuccess: (data, variables) => {
-      toast("Berhasil logout", {
+      toast("✔️ Berhasil", {
+        description: "Silahkan login kembali",
         duration: 2000
       });
 
@@ -46,8 +47,8 @@ export default function useAuthMutation() {
   const registerMutation = useMutation({
     mutationFn: registerUser,
     onSuccess: (data, variables) => {
-      toast("Berhasil tambah user", {
-        description: `Username: ${variables.body.username}`,
+      toast("✔️ Berhasil", {
+        description: `User ${variables.body.username} berhasil dibuat`,
         duration: 2000
       });
 

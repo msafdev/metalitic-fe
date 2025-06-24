@@ -13,6 +13,7 @@ export default function usePermission() {
   return {
     isSuperadmin,
     isSupervisor,
-    isUser
+    isUser,
+    role
   };
 }

@@ -18,17 +18,18 @@ import {
   TableRow
 } from "@/components/ui/table";
 
-import { Input } from "@/components/ui/input";
-import { useState, useMemo, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Plus, Settings2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import ProjectForm from "@/components/forms/project-form";
+
+import { Input } from "@/components/ui/input";
+import { useState, useMemo, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Plus, Settings2 } from "lucide-react";
+import CreateProjectForm from "@/components/forms/create-project-form";
 import useModal from "@/hooks/use-modal";
 
 interface DataTableProps<TData, TValue> {
@@ -207,7 +208,7 @@ export function DataTable<TData, TValue>({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent
           aria-describedby="Modal Dialog untuk Buat Proyek Baru"
-          className="lg:min-w-[1000px] h-[80vh] lg:h-auto overflow-y-auto"
+          className="w-auto max-w-2xl h-[80vh] lg:h-auto max-h-[90svh] overflow-y-auto"
         >
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -215,7 +216,7 @@ export function DataTable<TData, TValue>({
             </DialogTitle>
           </DialogHeader>
 
-          <ProjectForm />
+          <CreateProjectForm />
         </DialogContent>
       </Dialog>
     </div>

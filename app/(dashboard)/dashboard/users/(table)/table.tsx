@@ -18,11 +18,20 @@ import {
   TableRow
 } from "@/components/ui/table";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
+
 import { Input } from "@/components/ui/input";
 import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Settings2 } from "lucide-react";
 import Link from "next/link";
+import useModal from "@/hooks/use-modal";
+import CreateUserForm from "@/components/forms/create-user-form";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -72,6 +81,8 @@ export function DataTable<TData, TValue>({
   const canNextPage = table.getCanNextPage();
   const totalRows = table.getPrePaginationRowModel().rows.length;
 
+  const { isOpen, openModal, setIsOpen } = useModal();
+
   return (
     <div className="space-y-4">
       {/* Top Toolbar */}
@@ -83,10 +94,12 @@ export function DataTable<TData, TValue>({
           onChange={(e) => setFilter(e.target.value)}
         />
         <div className="flex gap-3 items-center">
-          <Button className="has-[>svg]:pl-2" variant="outline" asChild>
-            <Link href="/dashboard/users/create">
-              <Plus size={12} /> Tambah pengguna
-            </Link>
+          <Button
+            className="has-[>svg]:pl-2"
+            variant={"outline"}
+            onClick={openModal}
+          >
+            <Plus size={12} /> Tambah user
           </Button>
         </div>
       </div>
@@ -192,6 +205,21 @@ export function DataTable<TData, TValue>({
           </div>
         )}
       </div>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent
+          aria-describedby="Modal Dialog untuk Buat Proyek Baru"
+          className="w-auto max-w-2xl h-[80vh] lg:h-auto max-h-[90svh] overflow-y-auto"
+        >
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Settings2 size={20} /> Buat User Baru
+            </DialogTitle>
+          </DialogHeader>
+
+          <CreateUserForm />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

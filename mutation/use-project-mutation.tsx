@@ -13,8 +13,8 @@ export default function useProjectMutation() {
   const createProjectMutation = useMutation({
     mutationFn: createProject,
     onSuccess: (data, variables) => {
-      toast("Success", {
-        description: `Project berhasil disimpan!`
+      toast("✔️ Berhasil", {
+        description: `Proyek ${variables.namaProject} berhasil disimpan`
       });
 
       queryClient.invalidateQueries({

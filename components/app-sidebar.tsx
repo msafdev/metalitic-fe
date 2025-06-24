@@ -15,6 +15,9 @@ import {
   SidebarRail
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import useMounted from "@/hooks/use-mounted";
+import { Skeleton } from "./ui/skeleton";
+import { NavSkeleton } from "./nav-skeleton";
 
 const data = {
   navMain: [
@@ -22,6 +25,7 @@ const data = {
       title: "User",
       url: "#",
       icon: User,
+      allowedRoles: ["supervisor", "superadmin"],
       items: [
         {
           title: "List",
@@ -33,6 +37,7 @@ const data = {
       title: "Project",
       url: "#",
       icon: Settings2,
+      allowedRoles: ["supervisor", "superadmin", "user"],
       items: [
         {
           title: "List",
@@ -44,6 +49,7 @@ const data = {
       title: "Models",
       url: "#",
       icon: Bot,
+      allowedRoles: ["supervisor", "superadmin"],
       items: [
         {
           title: "Upload",
@@ -63,49 +69,12 @@ const data = {
         }
       ]
     }
-  ],
-  recentProjects: [
-    {
-      name: "MTL-001",
-      url: "#"
-    },
-    {
-      name: "MTL-002",
-      url: "#"
-    },
-    {
-      name: "MTL-003",
-      url: "#"
-    },
-    {
-      name: "MTL-004",
-      url: "#"
-    },
-    {
-      name: "MTL-005",
-      url: "#"
-    },
-    {
-      name: "MTL-006",
-      url: "#"
-    },
-    {
-      name: "MTL-007",
-      url: "#"
-    },
-    {
-      name: "MTL-008",
-      url: "#"
-    },
-    {
-      name: "MTL-009",
-      url: "#"
-    }
   ]
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isMobile = useIsMobile();
+  const { hasMounted } = useMounted();
 
   return (
     <Sidebar
@@ -117,8 +86,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <CompanyProfile />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects />
+        {!hasMounted ? (
+          <NavSkeleton />
+        ) : (
+          <>
+            <NavMain items={data.navMain} />
+            <NavProjects />
+          </>
+        )}
       </SidebarContent>
       <SidebarFooter className="sticky bottom-0 z-auto bg-inherit">
         <NavUser />

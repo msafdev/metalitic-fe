@@ -14,8 +14,8 @@ export default function useServiceRequesterMutation() {
   const createServiceRequesterMutation = useMutation({
     mutationFn: createServiceRequester,
     onSuccess: (data, variables) => {
-      toast("Success", {
-        description: `Peminta Jasa berhasil disimpan!`
+      toast("✔️ Berhasil", {
+        description: `Peminta jasa ${variables.nama} berhasil disimpan`
       });
 
       queryClient.invalidateQueries({
@@ -30,8 +30,8 @@ export default function useServiceRequesterMutation() {
   const deleteServiceRequesterMutation = useMutation({
     mutationFn: deleteServiceRequester,
     onSuccess: (data, variables) => {
-      toast("Success", {
-        description: `Peminta Jasa berhasil dihapus!`
+      toast("✔️ Berhasil", {
+        description: `Peminta jasa berhasil dihapus`
       });
 
       queryClient.invalidateQueries({

@@ -17,8 +17,8 @@ export default function useProjectEvaluationMutation() {
   const createProjectEvaluationMutation = useMutation({
     mutationFn: createProjectEvaluation,
     onSuccess: (data, variables) => {
-      toast("Success", {
-        description: `Pengujian Project berhasil disimpan!`
+      toast("✔️ Berhasil", {
+        description: `Pengujian proyek berhasil disimpan`
       });
 
       queryClient.invalidateQueries({
@@ -33,8 +33,8 @@ export default function useProjectEvaluationMutation() {
   const updateProjectEvaluationMutation = useMutation({
     mutationFn: updateProjectEvaluation,
     onSuccess: (data, variables) => {
-      toast("Success", {
-        description: `Pengujian Project berhasil diupdate!`
+      toast("✔️ Berhasil", {
+        description: `Pengujian proyek berhasil diubah`
       });
 
       queryClient.invalidateQueries({

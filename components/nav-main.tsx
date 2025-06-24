@@ -18,6 +18,7 @@ import {
   SidebarMenuSubItem
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import usePermission from "@/hooks/use-permission";
 
 export function NavMain({
   items
@@ -27,17 +28,25 @@ export function NavMain({
     url: string;
     icon?: LucideIcon;
     isActive?: boolean;
+    allowedRoles?: string[];
     items?: {
       title: string;
       url: string;
     }[];
   }[];
 }) {
+  const { role } = usePermission();
+
+  const allowedItems = items.filter((item) => {
+    if (!item.allowedRoles) return true;
+    return item.allowedRoles.includes(role);
+  });
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
+        {allowedItems.map((item) => (
           <Collapsible
             key={item.title}
             asChild

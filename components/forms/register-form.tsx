@@ -45,13 +45,13 @@ export function RegisterForm({
       try {
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        toast("Registration successful!", {
+        toast("✔️ Berhasil", {
           description: `Account created for ${values.email}`,
         });
 
         resetForm();
       } catch (err) {
-        toast("Registration failed", {
+        toast("❌ Gagal", {
           description: "An unexpected error occurred.",
         });
       }

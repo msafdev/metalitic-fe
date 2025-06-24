@@ -14,7 +14,7 @@ export default function useUserMutation() {
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: (data, variables) => {
-      toast("Berhasil menghapus akun", {
+      toast("✔️ Berhasil", {
         description: `Hapus akun dengan id: ${variables.id}`,
         duration: 2000
       });
@@ -30,7 +30,7 @@ export default function useUserMutation() {
   const verifyMutation = useMutation({
     mutationFn: verifyUser,
     onSuccess: (data, variables) => {
-      toast("Berhasil verifikasi", {
+      toast("✔️ Berhasil", {
         description: `Verifikasi akun dengan username: ${variables.username}`,
         duration: 2000
       });

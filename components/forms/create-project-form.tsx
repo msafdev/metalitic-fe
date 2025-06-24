@@ -46,7 +46,7 @@ const projectSchema = z.object({
   tanggalOrderMasuk: z.string({ required_error: "Required" })
 });
 
-export default function ProjectForm() {
+export default function CreateProjectForm() {
   const { isOpen, openModal, setIsOpen, closeModal } = useModal();
   const { createProjectMutation } = useProjectMutation();
   const { serviceRequestersDropdownItems } = useServiceRequesterDropdown();
@@ -75,7 +75,6 @@ export default function ProjectForm() {
     }
   });
 
-  // Get nama jabatan
   const getPositionLabel = (jabatan: string) => {
     if (!jabatan || jabatan === "-") return "Tidak Ada Jabatan";
     return jabatan;
@@ -93,7 +92,6 @@ export default function ProjectForm() {
     );
   };
 
-  // filter tester that already selected
   const filteredTesters = data?.data?.filter(
     (user) => !selectedTesters.find((item) => item._id === user._id)
   );
@@ -101,7 +99,7 @@ export default function ProjectForm() {
   return (
     <form onSubmit={formik.handleSubmit} noValidate>
       <div className="grid grid-cols-1 gap-4">
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
           <Label htmlFor="namaProject">Nama Project</Label>
           <Input
             placeholder="Nama Project"
@@ -111,11 +109,13 @@ export default function ProjectForm() {
             value={formik.values.namaProject}
           />
           {formik.touched.namaProject && formik.errors.namaProject && (
-            <ErrorInputMessage>{formik.errors.namaProject}</ErrorInputMessage>
+            <ErrorInputMessage className="text-red-600  bg-background pointer-events-none absolute text-xs px-1 -bottom-2 left-2">
+              {formik.errors.namaProject}
+            </ErrorInputMessage>
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
           <Label htmlFor="pemintaJasa">Peminta Jasa</Label>
           <div className="flex gap-2">
             <ComboboxGroup
@@ -126,16 +126,18 @@ export default function ProjectForm() {
               placeholder="Pilih Peminta Jasa"
             />
 
-            <Button variant="outline" onClick={openModal}>
+            <Button variant="outline" size="icon" onClick={openModal}>
               <Plus />
             </Button>
           </div>
           {formik.touched.pemintaJasa && formik.errors.pemintaJasa && (
-            <ErrorInputMessage>{formik.errors.pemintaJasa}</ErrorInputMessage>
+            <ErrorInputMessage className="text-red-600  bg-background pointer-events-none absolute text-xs px-1 -bottom-2 left-2">
+              {formik.errors.pemintaJasa}
+            </ErrorInputMessage>
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
           <Label htmlFor="tanggalOrderMasuk">Tanggal Order Masuk</Label>
           <Popover>
             <PopoverTrigger asChild>
@@ -175,48 +177,50 @@ export default function ProjectForm() {
           </Popover>
           {formik.touched.tanggalOrderMasuk &&
             formik.errors.tanggalOrderMasuk && (
-              <ErrorInputMessage>
+              <ErrorInputMessage className="text-red-600  bg-background pointer-events-none absolute text-xs px-1 -bottom-2 left-2">
                 {formik.errors.tanggalOrderMasuk}
               </ErrorInputMessage>
             )}
         </div>
       </div>
 
-      <Separator className="my-6" />
+      <Separator className="my-8" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Available Reviewers */}
-        <div className="bg-white/80 rounded-lg p-4 border border-slate-200">
+        <div className="bg-white/80 rounded-lg py-2 px-3.5 border border-slate-200">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center">
-                <Users className="w-5 h-5 text-white" />
+              <div className="size-9 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center">
+                <Users className="size-4 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900">Penguji Tersedia</h3>
-                <p className="text-sm text-slate-600">Siap untuk ditugaskan</p>
+                <h3 className="font-semibold text-sm text-foreground">Penguji Tersedia</h3>
+                <p className="text-xs text-muted-foreground">
+                  Siap untuk ditugaskan
+                </p>
               </div>
             </div>
             <Badge
               variant="secondary"
-              className="px-3 py-1 bg-slate-100 text-slate-700 font-semibold"
+              className="aspect-square w-8 grid place-content-center bg-slate-100 text-foreground/80 font-semibold"
             >
               {filteredTesters?.length ?? 0}
             </Badge>
           </div>
 
-          <div className="space-y-3 max-h-80 overflow-y-auto">
+          <div className="max-h-80 overflow-y-auto">
             {!filteredTesters ||
               (!filteredTesters.length && (
                 <div className="grid place-content-center gap-4 text-sm text-muted-foreground/70 py-10">
                   <UserRoundX className="mx-auto" />
-                  <div>Tidak ada penguji tersedia</div>
+                  <p>Tidak ada penguji tersedia</p>
                 </div>
               ))}
             {filteredTesters?.map((user, index) => (
               <div
                 key={index}
-                className="flex items-center space-x-2 py-2 px-4 hover:bg-slate-50 rounded-2xl transition-all duration-300 cursor-pointer group"
+                className="flex items-center space-x-2 py-2 group"
               >
                 <Avatar className="size-8 border-2 border-slate-200">
                   <AvatarFallback className="text-[10px] bg-gradient-to-br from-slate-500 to-slate-600 text-white font-semibold">
@@ -228,16 +232,16 @@ export default function ProjectForm() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-slate-900 group-hover:text-slate-700">
+                  <p className="text-sm font-semibold text-foreground group-hover:text-foreground/80">
                     {user.name}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     {getPositionLabel(user.jabatan)}
                   </p>
                 </div>
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => addTester(user)}
                 >
@@ -249,37 +253,37 @@ export default function ProjectForm() {
         </div>
 
         {/* Assigned Reviewers */}
-        <div className="bg-gradient-to-br from-blue-50/80 to-sky-50/80 rounded-xl p-4 border border-blue-200/50">
+        <div className="bg-gradient-to-br from-blue-50/80 to-sky-50/80 rounded-lg py-2 px-3.5 border border-blue-200/50">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-sky-600 rounded-xl flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-white" />
+              <div className="size-9 bg-gradient-to-br from-blue-500 to-sky-600 rounded-xl flex items-center justify-center">
+                <CheckCircle className="size-4 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-blue-900">Penguji Ditugaskan</h3>
-                <p className="text-sm text-blue-700">
-                  Sedang mengerjakan proyek
+                <h3 className="font-semibold text-sm text-blue-900">Penguji Ditugaskan</h3>
+                <p className="text-xs text-blue-700">
+                  Sudah ditugaskan
                 </p>
               </div>
             </div>
-            <Badge className="px-3 py-1 bg-blue-100 text-blue-800 font-semibold border border-blue-200">
+            <Badge className="aspect-square w-8 grid place-content-center bg-blue-100 text-blue-800 font-semibold border hover:bg-blue-100  border-blue-200">
               {selectedTesters.length}
             </Badge>
           </div>
 
-          <div className="space-y-3 max-h-80 overflow-y-auto">
+          <div className="max-h-80 overflow-y-auto">
             {!selectedTesters.length && (
               <div className="grid place-content-center gap-4 text-sm text-muted-foreground/70 py-10">
                 <UserRoundX className="mx-auto" />
-                <div>Belum ada penguji yang ditugaskan</div>
+                <p>Belum ada penguji yang ditugaskan</p>
               </div>
             )}
             {selectedTesters.map((user, index) => (
               <div
                 key={index}
-                className="flex items-center space-x-2 py-2 px-4 hover:bg-white/60 rounded-2xl transition-all duration-300 cursor-pointer group"
+                className="flex items-center space-x-2 py-2 group"
               >
-                <Avatar className="size-8 border-2 border-blue-200">
+                <Avatar className="size-9 border-2 border-blue-200">
                   <AvatarFallback className="text-[10px] bg-gradient-to-br from-blue-500 to-sky-600 text-white font-semibold">
                     {user.name
                       .split(" ")
@@ -298,7 +302,7 @@ export default function ProjectForm() {
                 </div>
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => removeTester(user)}
                 >
@@ -313,7 +317,7 @@ export default function ProjectForm() {
       <div className="mt-6 text-end">
         <Button type="submit">
           <Save />
-          Simpan Proyek
+          Simpan proyek
         </Button>
       </div>
 
