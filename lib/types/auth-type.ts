@@ -3,8 +3,10 @@ export type Profile = {
   nomorInduk: string;
   devisi: string;
   jabatan: string;
-  role: "superadmin" | "supervisor" | "user";
+  role: Role;
 };
+
+export type Role = "superadmin" | "supervisor" | "user";
 
 export type ProfileResponse = {
   message: Profile;

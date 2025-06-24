@@ -17,6 +17,7 @@ import { Project } from "@/lib/types/project-type";
 import { useQuery } from "@tanstack/react-query";
 import { QUERIES } from "@/lib/constants/queries";
 import useProject from "@/queries/use-project.query";
+import usePermission from "@/hooks/use-permission";
 
 export default function Page() {
   const { data, isLoading, isError } = useProject();

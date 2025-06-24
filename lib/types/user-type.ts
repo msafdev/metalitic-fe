@@ -1,3 +1,5 @@
+import { Role } from "./auth-type";
+
 export type User = {
   _id: string;
   username: string;
@@ -10,7 +12,7 @@ export type User = {
   alamat: string;
   filename: string;
   isVerify: boolean;
-  role: "superadmin" | "supervisor" | "user";
+  role: Role;
 };
 
 export type UserResponse = {
