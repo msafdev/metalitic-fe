@@ -1,6 +1,6 @@
 "use client";
 
-import ProjectEvaluationForm from "@/components/forms/project-evaluation-form";
+import CreateProjectEvaluationForm from "@/components/forms/create-project-evaluation-form";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -150,7 +150,7 @@ export default function ProjectDetailHeader({ idProject }: Props) {
             </DialogTitle>
           </DialogHeader>
 
-          <ProjectEvaluationForm
+          <CreateProjectEvaluationForm
             projectId={idProject}
             closeModal={closeModal}
           />

@@ -11,7 +11,7 @@ import { Separator } from "@radix-ui/react-separator";
 import React from "react";
 import UserDetail from "./components/user-detail";
 
-export default function ProjectDetailPage({
+export default function UserDetailPage({
   params
 }: {
   params: { id: string };

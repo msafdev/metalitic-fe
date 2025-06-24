@@ -15,10 +15,9 @@ import {
   Building,
   Briefcase,
   Hash,
-  Shield,
-  CheckCircle,
-  XCircle
+  Shield
 } from "lucide-react";
+import { getUpload } from "@/lib/utils";
 
 type Props = {
   idUser: string;
@@ -40,7 +39,7 @@ export default function UserDetail({ idUser }: Props) {
         <div className="flex items-center gap-3">
           <Avatar className="size-12 rounded">
             <AvatarImage
-              src={`https://github.com/${user.username}.png`}
+              src={getUpload(user.avatarUser)}
               alt={`${user.username}'s avatar`}
             />
             <AvatarFallback className="rounded capitalize">

@@ -29,7 +29,6 @@ import { Input } from "@/components/ui/input";
 import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Settings2 } from "lucide-react";
-import Link from "next/link";
 import useModal from "@/hooks/use-modal";
 import CreateUserForm from "@/components/forms/create-user-form";
 
@@ -81,7 +80,7 @@ export function DataTable<TData, TValue>({
   const canNextPage = table.getCanNextPage();
   const totalRows = table.getPrePaginationRowModel().rows.length;
 
-  const { isOpen, openModal, setIsOpen } = useModal();
+  const { isOpen, openModal, setIsOpen, closeModal } = useModal();
 
   return (
     <div className="space-y-4">
@@ -105,8 +104,8 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Table */}
-      <div className="px-4 space-y-4">
-        <div className="rounded-md border overflow-hidden">
+      <div className="px-4 space-y-4 max-w-full overflow-x-hidden">
+        <div className="rounded-md border overflow-x-scroll max-w-full">
           <Table>
             <TableHeader className="text-muted-foreground bg-muted">
               {headerGroups.map((headerGroup) => (
@@ -217,7 +216,7 @@ export function DataTable<TData, TValue>({
             </DialogTitle>
           </DialogHeader>
 
-          <CreateUserForm />
+          <CreateUserForm closeUserModal={closeModal} />
         </DialogContent>
       </Dialog>
     </div>

@@ -10,7 +10,7 @@ export type User = {
   email: string;
   noHp: string;
   alamat: string;
-  filename: string;
+  avatarUser: string;
   isVerify: boolean;
   role: Role;
 };

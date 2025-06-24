@@ -33,7 +33,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Separator } from "../ui/separator";
-import ServiceRequesterForm from "./service-requester-form";
+import CreateServiceRequesterForm from "./create-service-requester-form";
 import useServiceRequesterDropdown from "@/queries/dropdown/use-service.query.dropdown";
 import useUser from "@/queries/use-user.query";
 import { useState } from "react";
@@ -46,9 +46,13 @@ const projectSchema = z.object({
   tanggalOrderMasuk: z.string({ required_error: "Required" })
 });
 
-export default function CreateProjectForm() {
+export default function CreateProjectForm({
+  closeProjectModal
+}: {
+  closeProjectModal: () => void;
+}) {
   const { isOpen, openModal, setIsOpen, closeModal } = useModal();
-  const { createProjectMutation } = useProjectMutation();
+  const { createMutation } = useProjectMutation();
   const { serviceRequestersDropdownItems } = useServiceRequesterDropdown();
   const { data } = useUser();
   const [selectedTesters, setSelectedTesters] = useState<User[]>([]);
@@ -64,14 +68,23 @@ export default function CreateProjectForm() {
       tanggalOrderMasuk: ""
     },
     validationSchema: toFormikValidationSchema(projectSchema),
-    onSubmit: async (values) => {
+    onSubmit: async (values, { resetForm }) => {
       const pemintaJasa = getServiceRequesterById(values.pemintaJasa);
 
-      createProjectMutation.mutate({
-        ...values,
-        penguji: selectedTesters.map((tester) => tester.name),
-        pemintaJasa: pemintaJasa?.label as string
-      });
+      createMutation.mutate(
+        {
+          ...values,
+          penguji: selectedTesters.map((tester) => tester.name),
+          pemintaJasa: pemintaJasa?.label as string
+        },
+        {
+          onSuccess: () => {
+            resetForm();
+            closeProjectModal();
+          },
+          onError: () => console.error("Something wrong happened")
+        }
+      );
     }
   });
 
@@ -93,7 +106,10 @@ export default function CreateProjectForm() {
   };
 
   const filteredTesters = data?.data?.filter(
-    (user) => !selectedTesters.find((item) => item._id === user._id)
+    (user) =>
+      !selectedTesters.find((item) => item._id === user._id) &&
+      user.role === "user" &&
+      user.isVerify
   );
 
   return (
@@ -195,7 +211,9 @@ export default function CreateProjectForm() {
                 <Users className="size-4 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-sm text-foreground">Penguji Tersedia</h3>
+                <h3 className="font-semibold text-sm text-foreground">
+                  Penguji Tersedia
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   Siap untuk ditugaskan
                 </p>
@@ -214,7 +232,9 @@ export default function CreateProjectForm() {
               (!filteredTesters.length && (
                 <div className="grid place-content-center gap-4 text-sm text-muted-foreground/70 py-10">
                   <UserRoundX className="mx-auto" />
-                  <p>Tidak ada penguji tersedia</p>
+                  <p className="px-8 text-pretty text-center">
+                    Tidak ada penguji tersedia
+                  </p>
                 </div>
               ))}
             {filteredTesters?.map((user, index) => (
@@ -260,10 +280,10 @@ export default function CreateProjectForm() {
                 <CheckCircle className="size-4 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-sm text-blue-900">Penguji Ditugaskan</h3>
-                <p className="text-xs text-blue-700">
-                  Sudah ditugaskan
-                </p>
+                <h3 className="font-semibold text-sm text-blue-900">
+                  Penguji Ditugaskan
+                </h3>
+                <p className="text-xs text-blue-700">Sudah ditugaskan</p>
               </div>
             </div>
             <Badge className="aspect-square w-8 grid place-content-center bg-blue-100 text-blue-800 font-semibold border hover:bg-blue-100  border-blue-200">
@@ -275,7 +295,9 @@ export default function CreateProjectForm() {
             {!selectedTesters.length && (
               <div className="grid place-content-center gap-4 text-sm text-muted-foreground/70 py-10">
                 <UserRoundX className="mx-auto" />
-                <p>Belum ada penguji yang ditugaskan</p>
+                <p className="px-8 text-pretty text-center">
+                  Belum ada penguji yang ditugaskan
+                </p>
               </div>
             )}
             {selectedTesters.map((user, index) => (
@@ -332,7 +354,7 @@ export default function CreateProjectForm() {
             </DialogTitle>
           </DialogHeader>
 
-          <ServiceRequesterForm />
+          <CreateServiceRequesterForm />
 
           <DialogFooter>
             <Button type="button" variant="secondary" onClick={closeModal}>

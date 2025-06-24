@@ -16,7 +16,7 @@ type Props = {
   closeDialog?: () => void;
 };
 
-export default function ServiceRequesterForm({ closeDialog }: Props) {
+export default function CreateServiceRequesterForm({ closeDialog }: Props) {
   const { createServiceRequesterMutation } = useServiceRequesterMutation();
 
   const formik = useFormik({

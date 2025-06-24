@@ -6,9 +6,9 @@ import { getCookie } from "cookies-next";
 export default function usePermission() {
   const role = getCookie("role")?.toLocaleLowerCase() as Role;
 
-  const isSuperadmin = () => role === "superadmin";
-  const isSupervisor = () => role === "supervisor";
-  const isUser = () => role === "user";
+  const isSuperadmin = role === "superadmin";
+  const isSupervisor = role === "supervisor";
+  const isUser = role === "user";
 
   return {
     isSuperadmin,

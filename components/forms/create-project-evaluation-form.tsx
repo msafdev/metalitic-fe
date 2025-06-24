@@ -20,7 +20,7 @@ const projectEvaluationSchema = z.object({
   nama: z.string({ required_error: "Nama Pengujian harus diisi" })
 });
 
-export default function ProjectEvaluationForm({
+export default function CreateProjectEvaluationForm({
   projectId,
   closeModal
 }: Props) {
