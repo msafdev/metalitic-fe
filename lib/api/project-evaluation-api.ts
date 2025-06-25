@@ -81,6 +81,30 @@ export async function updateProjectEvaluation({
   return res.data;
 }
 
+export async function updateProjectEvaluationStatusToPending(id: string) {
+  const res = await api.put(
+    `${API_URL}/manager/projects/evaluation/${id}/status/pending`,
+    {},
+    {
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}
+
+export async function updateProjectEvaluationStatusToProcessing(id: string) {
+  const res = await api.put(
+    `${API_URL}/manager/projects/evaluation/${id}/status/processing`,
+    {},
+    {
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}
+
 export async function deleteProjectEvaluation(id: string) {
   const res = await api.delete(`${API_URL}/manager/projects/evaluation/${id}`, {
     withCredentials: true

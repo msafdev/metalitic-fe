@@ -4,7 +4,9 @@ import {
   deleteProjectEvaluationImageComponent1,
   deleteProjectEvaluationImageComponent2,
   deleteProjectEvaluationImageListMicroStructure,
-  updateProjectEvaluation
+  updateProjectEvaluation,
+  updateProjectEvaluationStatusToPending,
+  updateProjectEvaluationStatusToProcessing
 } from "@/lib/api/project-evaluation-api";
 import { QUERIES } from "@/lib/constants/queries";
 import { ErrorHandling } from "@/lib/error-handling";
@@ -42,6 +44,39 @@ export default function useProjectEvaluationMutation() {
 
       queryClient.invalidateQueries({
         queryKey: [QUERIES.PROJECTS_EVALUATION, variables.body.id]
+      });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      ErrorHandling.handle(error);
+    }
+  });
+
+  const updateProjectEvaluationStatusToPendingMutation = useMutation({
+    mutationFn: ({
+      projectId,
+      projectEvaluationId
+    }: {
+      projectId: string;
+      projectEvaluationId: string;
+    }) => updateProjectEvaluationStatusToPending(projectEvaluationId),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERIES.PROJECTS_EVALUATION, variables.projectEvaluationId]
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERIES.PROJECTS, variables.projectId]
+      });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      ErrorHandling.handle(error);
+    }
+  });
+
+  const updateProjectEvaluationStatusToProcessingMutation = useMutation({
+    mutationFn: updateProjectEvaluationStatusToProcessing,
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERIES.PROJECTS_EVALUATION, variables]
       });
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -116,6 +151,8 @@ export default function useProjectEvaluationMutation() {
   return {
     createProjectEvaluationMutation,
     updateProjectEvaluationMutation,
+    updateProjectEvaluationStatusToPendingMutation,
+    updateProjectEvaluationStatusToProcessingMutation,
     deleteProjectEvaluationMutation,
     deleteProjectEvaluationImageComponent1Mutation,
     deleteProjectEvaluationImageComponent2Mutation,

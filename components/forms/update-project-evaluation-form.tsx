@@ -1,13 +1,13 @@
 "use client";
 
+import useModal from "@/hooks/use-modal";
+import { getProjectEvaluationById } from "@/lib/api/project-evaluation-api";
+import { QUERIES } from "@/lib/constants/queries";
+import { cn } from "@/lib/utils";
 import useProjectEvaluationMutation from "@/mutation/use-project-evaluation-mutation";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { useFormik } from "formik";
-import { z } from "zod";
-import { toFormikValidationSchema } from "zod-formik-adapter";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import ErrorInputMessage from "../input/error-input-message";
-import { Button } from "../ui/button";
 import {
   CalendarIcon,
   Camera,
@@ -15,26 +15,27 @@ import {
   ImageUp,
   Microscope,
   Save,
-  TrashIcon,
-  XIcon
+  TrashIcon
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getProjectEvaluationById } from "@/lib/api/project-evaluation-api";
-import { QUERIES } from "@/lib/constants/queries";
-import { Badge } from "../ui/badge";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Calendar } from "../ui/calendar";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import FilesDropzone from "../input/files-dropzone";
-import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { z } from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
+import DeleteAlertDialog from "../dialog/delete-alert-dialog";
 import ComboboxGroup from "../input/combobox-group";
 import DropzoneContainer from "../input/dropzone-container";
-import useModal from "@/hooks/use-modal";
-import DeleteAlertDialog from "../dialog/delete-alert-dialog";
+import ErrorInputMessage from "../input/error-input-message";
+import FilesDropzone from "../input/files-dropzone";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Calendar } from "../ui/calendar";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 type Props = {
+  projectId: string;
   projectEvaluationId: string;
 };
 
@@ -60,6 +61,7 @@ const projectEvaluationSchema = z.object({
 });
 
 export default function UpdateProjectEvaluationForm({
+  projectId,
   projectEvaluationId
 }: Props) {
   const { data, isLoading } = useQuery({
@@ -71,7 +73,9 @@ export default function UpdateProjectEvaluationForm({
     updateProjectEvaluationMutation,
     deleteProjectEvaluationImageComponent1Mutation,
     deleteProjectEvaluationImageComponent2Mutation,
-    deleteProjectEvaluationImageListMicroStructureMutation
+    deleteProjectEvaluationImageListMicroStructureMutation,
+    updateProjectEvaluationStatusToProcessingMutation,
+    updateProjectEvaluationStatusToPendingMutation
   } = useProjectEvaluationMutation();
   const [gambarKomponent1, setGambarKomponent1] = useState<
     (File & { preview: string })[]
@@ -140,16 +144,20 @@ export default function UpdateProjectEvaluationForm({
     }
   });
 
-  async function convertUrlToFile(
-    url: string,
-    fileName: string
-  ): Promise<File> {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const contentType = response.headers.get("Content-Type") || "image/jpeg";
+  useEffect(() => {
+    updateProjectEvaluationStatusToProcessingMutation.mutate(
+      projectEvaluationId
+    );
 
-    return new File([blob], fileName, { type: contentType });
-  }
+    return () => {
+      if (projectEvaluation?.status === "COMPLETED") return;
+
+      updateProjectEvaluationStatusToPendingMutation.mutate({
+        projectId,
+        projectEvaluationId
+      });
+    };
+  }, []);
 
   if (!projectEvaluation || isLoading) return null;
 
@@ -177,6 +185,9 @@ export default function UpdateProjectEvaluationForm({
             </div>
           </div>
           <div className="text-right">
+            <div className="mb-3">
+              <Badge variant="secondary">{projectEvaluation.status}</Badge>
+            </div>
             <div className="text-4xl font-bold mb-2">
               {projectEvaluation.progress}%
             </div>
@@ -559,12 +570,12 @@ export default function UpdateProjectEvaluationForm({
 
               {projectEvaluation.listGambarStrukturMikro.length ? (
                 <DropzoneContainer>
-                  <div className="flex items-center gap-2 overflow-x-auto">
+                  <div className="flex flex-nowrap items-center gap-2 overflow-x-auto">
                     {projectEvaluation.listGambarStrukturMikro.map(
                       (image, index) => (
                         <div
                           key={image}
-                          className="relative w-[150px] h-[150px] overflow-hidden"
+                          className="relative min-w-[150px] min-h-[150px] overflow-hidden"
                         >
                           <Image
                             key={image}
@@ -710,9 +721,13 @@ export default function UpdateProjectEvaluationForm({
           </div>
 
           <div className="text-end mt-6">
-            <Button type="submit">
-              <Save />
-              Simpan
+            <Button type="submit" className="w-full" size="lg" asChild>
+              <Link
+                href={`/dashboard/projects/${projectId}/evaluation/${projectEvaluationId}/analysis-result`}
+              >
+                <Save />
+                Analisa Keseluruhan
+              </Link>
             </Button>
           </div>
         </div>

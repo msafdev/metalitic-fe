@@ -1,6 +1,5 @@
 "use client";
 
-import UpdateProjectEvaluationForm from "@/components/forms/update-project-evaluation-form";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,8 +11,9 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
 import Link from "next/link";
+import ProjectEvaluationAnalysisResult from "./components/project-evaluation-analysis-result";
 
-export default function DetailProjectEvaluationPage({
+export default function AnalysisResultPage({
   params
 }: {
   params: { id: string; evaluationId: string };
@@ -45,7 +45,17 @@ export default function DetailProjectEvaluationPage({
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>{params.evaluationId}</BreadcrumbPage>
+                <BreadcrumbLink asChild>
+                  <Link
+                    href={`/dashboard/projects/${params.id}/evaluation/${params.evaluationId}`}
+                  >
+                    {params.evaluationId}
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Analysis Result</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -53,7 +63,7 @@ export default function DetailProjectEvaluationPage({
       </header>
       <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
         <div className="space-y-3.5 px-4">
-          <UpdateProjectEvaluationForm
+          <ProjectEvaluationAnalysisResult
             projectId={params.id}
             projectEvaluationId={params.evaluationId}
           />

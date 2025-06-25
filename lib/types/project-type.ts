@@ -22,6 +22,8 @@ export type ProjectEvaluationSummary = {
   status: ProjectEvaluationStatus;
   progress: number;
   missingFields: (keyof ProjectEvaluation)[];
+  lokasi: string;
+  material: string;
   createdAt: string;
   updatedAt: string;
 };

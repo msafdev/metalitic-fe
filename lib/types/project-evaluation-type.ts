@@ -8,6 +8,14 @@ export type ProjectEvaluation = {
   _id: string;
   id: string;
   projectId: string;
+  project: {
+    _id: string;
+    idProject: string;
+    namaProject: string;
+    pemintaJasa: string;
+    tanggalOrderMasuk: string;
+    penguji: string[];
+  };
   nama: string;
   status: ProjectEvaluationStatus;
   tanggal: string;
@@ -78,4 +86,23 @@ export type UpdateProjectEvaluationRequest = {
   aiModelFasa: string;
   aiModelCrack: string;
   aiModelDegradasi: string;
+};
+
+export const missingFieldMapping: Record<MissingFieldKey, string> = {
+  tanggal: "Tanggal belum ditentukan",
+  lokasi: "Lokasi belum ditentukan",
+  area: "Area belum ditentukan",
+  posisi: "Posisi belum ditentukan",
+  material: "Material belum ditentukan",
+  gritSandWhell: "Grit Sand Whell belum ditentukan",
+  etsa: "ETSA belum ditentukan",
+  kamera: "Kamera belum ditentukan",
+  merkMikroskop: "Merk Mikrosop belum ditentukan",
+  perbesaranMikroskop: "Perbesaran Mikroskop belum ditentukan",
+  gambarKomponent1: "Gambar Komponent 1 belum diupload",
+  gambarKomponent2: "Gambar Komponent 2 belum diupload",
+  listGambarStrukturMikro: "Struktur Mikro belum diupload",
+  aiModelFasa: "AI Model Fasa belum ditentukan",
+  aiModelCrack: "AI Model Crack belum ditentukan",
+  aiModelDegradasi: "AI Model Degradasi belum ditentukan"
 };

@@ -9,6 +9,10 @@ import { Input } from "../ui/input";
 import ErrorInputMessage from "../input/error-input-message";
 import { Button } from "../ui/button";
 import { Save } from "lucide-react";
+import useProject from "@/queries/use-project.query";
+import { useQuery } from "@tanstack/react-query";
+import { getProjectDetail } from "@/lib/api/project-api";
+import { QUERIES } from "@/lib/constants/queries";
 
 type Props = {
   projectId: string;
@@ -25,12 +29,22 @@ export default function CreateProjectEvaluationForm({
   closeModal
 }: Props) {
   const { createProjectEvaluationMutation } = useProjectEvaluationMutation();
+  const { data, isLoading } = useQuery({
+    queryFn: () => getProjectDetail(projectId),
+    queryKey: [QUERIES.PROJECTS, projectId]
+  });
+
+  const totalProjectEvaluation = data?.data.pengujian.length || 0;
+
+  const generateId = () =>
+    `${projectId}-${(totalProjectEvaluation + 1).toString().padStart(3, "0")}`;
 
   const formik = useFormik({
     initialValues: {
-      id: "",
+      id: generateId(),
       nama: ""
     },
+    enableReinitialize: true,
     validationSchema: toFormikValidationSchema(projectEvaluationSchema),
     onSubmit: async (values) => {
       createProjectEvaluationMutation.mutate(
@@ -56,6 +70,7 @@ export default function CreateProjectEvaluationForm({
             name="id"
             onChange={formik.handleChange}
             value={formik.values.id}
+            disabled
           />
           {formik.touched.id && formik.errors.id && (
             <ErrorInputMessage>{formik.errors.id}</ErrorInputMessage>
