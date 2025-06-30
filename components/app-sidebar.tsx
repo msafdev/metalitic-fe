@@ -53,19 +53,19 @@ const data = {
       items: [
         {
           title: "Upload",
-          url: "/dashboard/data-upload"
+          url: "/dashboard/models/data-upload"
         },
         {
           title: "Data Anotation",
-          url: "/dashboard/data-anotation"
+          url: "/dashboard/models/data-anotation"
         },
         {
           title: "Dataset",
-          url: "/dashboard/dataset"
+          url: "/dashboard/models/dataset"
         },
         {
           title: "Training",
-          url: "/dashboard/training"
+          url: "/dashboard/models/training"
         }
       ]
     }
