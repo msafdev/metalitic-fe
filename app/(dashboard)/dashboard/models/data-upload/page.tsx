@@ -25,12 +25,14 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   ArrowRight,
   Brain,
+  ChevronLeft,
   FileImage,
   Folder,
   ImageOff,
   Trash2
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function ModelsDataUploadPage() {
@@ -274,9 +276,20 @@ export function UploadSection() {
 
           {/* Action Buttons */}
           <div className="flex justify-between pt-6 border-t border-slate-200 dark:border-slate-700">
-            <Button className="flex items-center space-x-2 w-full" size="lg">
-              <span>Simpan dan Lanjut</span>
-              <ArrowRight className="w-4 h-4" />
+            <Button
+              variant="outline"
+              className="flex items-center space-x-1"
+              size="lg"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>Kembali</span>
+            </Button>
+
+            <Button className="flex items-center space-x-1" size="lg" asChild>
+              <Link href={`/dashboard/models/data-anotation`}>
+                <span>Simpan dan Lanjut</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </Button>
           </div>
         </CardContent>
