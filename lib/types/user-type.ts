@@ -1,4 +1,5 @@
 import { Role } from "./auth-type";
+import { Project } from "./project-type";
 
 export type User = {
   _id: string;
@@ -11,6 +12,7 @@ export type User = {
   noHp: string;
   alamat: string;
   avatarUser: string;
+  projects: Partial<Project>[];
   isVerify: boolean;
   role: Role;
 };

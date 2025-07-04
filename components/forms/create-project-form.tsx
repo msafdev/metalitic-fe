@@ -74,7 +74,7 @@ export default function CreateProjectForm({
       createMutation.mutate(
         {
           ...values,
-          penguji: selectedTesters.map((tester) => tester.name),
+          penguji: selectedTesters.map((tester) => tester._id),
           pemintaJasa: pemintaJasa?.label as string
         },
         {

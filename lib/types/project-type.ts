@@ -2,6 +2,7 @@ import {
   ProjectEvaluation,
   ProjectEvaluationStatus
 } from "./project-evaluation-type";
+import { User } from "./user-type";
 
 export type Project = {
   _id: string;
@@ -9,7 +10,10 @@ export type Project = {
   namaProject: string;
   pemintaJasa: string;
   tanggalOrderMasuk: string;
-  penguji: string[];
+  penguji: {
+    _id: string;
+    name: string;
+  }[];
   pengujian: ProjectEvaluationSummary[];
   createdAt: string;
   updatedAt: string;

@@ -111,12 +111,12 @@ export default function ProjectDetailHeader({ idProject }: Props) {
             <div className="flex flex-wrap gap-2">
               {project.penguji.map((penguji, index) => (
                 <div
-                  key={index}
+                  key={penguji._id}
                   className="flex items-center gap-2 px-2 py-2 rounded-full border border-gray-200 shadow-sm transition-shadow"
                 >
                   <Avatar className="size-8 border-2 border-slate-200">
                     <AvatarFallback className="text-[10px] bg-gradient-to-br from-slate-500 to-slate-600 text-white font-semibold">
-                      {penguji
+                      {penguji.name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")
@@ -124,7 +124,7 @@ export default function ProjectDetailHeader({ idProject }: Props) {
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-sm font-medium text-gray-700">
-                    {penguji}
+                    {penguji.name}
                   </span>
                 </div>
               ))}
