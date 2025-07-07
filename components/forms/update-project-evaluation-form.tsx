@@ -1,7 +1,10 @@
 "use client";
 
 import useModal from "@/hooks/use-modal";
-import { getProjectEvaluationById } from "@/lib/api/project-evaluation-api";
+import {
+  getAiModelsList,
+  getProjectEvaluationById
+} from "@/lib/api/project-evaluation-api";
 import { QUERIES } from "@/lib/constants/queries";
 import { cn } from "@/lib/utils";
 import useProjectEvaluationMutation from "@/mutation/use-project-evaluation-mutation";
@@ -9,17 +12,20 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useFormik } from "formik";
 import {
+  BrainCircuit,
   CalendarIcon,
   Camera,
   FlaskConical,
   ImageUp,
+  Loader2,
   Microscope,
+  Play,
   Save,
   TrashIcon
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import DeleteAlertDialog from "../dialog/delete-alert-dialog";
@@ -69,13 +75,19 @@ export default function UpdateProjectEvaluationForm({
     queryKey: [QUERIES.PROJECTS_EVALUATION, projectEvaluationId]
   });
 
+  const { data: aiModelsList, isLoading: isLoadingAiModelsList } = useQuery({
+    queryFn: getAiModelsList,
+    queryKey: [QUERIES.AI_MODELS_LIST]
+  });
+
   const {
     updateProjectEvaluationMutation,
     deleteProjectEvaluationImageComponent1Mutation,
     deleteProjectEvaluationImageComponent2Mutation,
     deleteProjectEvaluationImageListMicroStructureMutation,
     updateProjectEvaluationStatusToProcessingMutation,
-    updateProjectEvaluationStatusToPendingMutation
+    updateProjectEvaluationStatusToPendingMutation,
+    analyzeProjectEvaluationMutation
   } = useProjectEvaluationMutation();
   const [gambarKomponent1, setGambarKomponent1] = useState<
     (File & { preview: string })[]
@@ -158,6 +170,61 @@ export default function UpdateProjectEvaluationForm({
       });
     };
   }, []);
+
+  const aiFasaModels = aiModelsList?.data.fasa || [];
+  const aiCrackModels = aiModelsList?.data.crack || [];
+  const aiDegradasiModels = aiModelsList?.data.degradasi || [];
+
+  const handleSubmitAnalyze = useCallback(() => {
+    updateProjectEvaluationMutation.mutate(
+      {
+        id: projectEvaluationId,
+        body: {
+          ...formik.values,
+          projectId: projectEvaluation?.projectId as string,
+          gambarKomponent1: gambarKomponent1[0],
+          gambarKomponent2: gambarKomponent2[0],
+          listGambarStrukturMikro: listGambarStrukturMikro
+        }
+      },
+      {
+        onSuccess: (data) => {
+          const projectEvaluation = data.data;
+
+          analyzeProjectEvaluationMutation.mutate({
+            id: projectEvaluationId,
+            body: {
+              projectEvaluationId: projectEvaluationId,
+              projectId: projectId,
+              nama: projectEvaluation.nama,
+              listGambarStrukturMikro:
+                projectEvaluation.listGambarStrukturMikro,
+              aiModelCrack: projectEvaluation.aiModelCrack,
+              aiModelDegradasi: projectEvaluation.aiModelDegradasi,
+              aiModelFasa: projectEvaluation.aiModelFasa,
+              area: projectEvaluation.area,
+              etsa: projectEvaluation.etsa,
+              gritSandWhell: projectEvaluation.gritSandWhell,
+              kamera: projectEvaluation.kamera,
+              lokasi: projectEvaluation.lokasi,
+              material: projectEvaluation.material,
+              merkMikroskop: projectEvaluation.merkMikroskop,
+              perbesaranMikroskop: projectEvaluation.perbesaranMikroskop,
+              posisi: projectEvaluation.posisi,
+              tanggal: projectEvaluation.tanggal,
+              gambarKomponent1: projectEvaluation.gambarKomponent1,
+              gambarKomponent2: projectEvaluation.gambarKomponent2
+            }
+          });
+        }
+      }
+    );
+
+    console.log("SEBELUM");
+    if (!projectEvaluation || !updateProjectEvaluationMutation.isSuccess)
+      return;
+    console.log("SESUDAH");
+  }, [projectEvaluation]);
 
   if (!projectEvaluation || isLoading) return null;
 
@@ -647,12 +714,10 @@ export default function UpdateProjectEvaluationForm({
                   <div className="flex gap-2">
                     <ComboboxGroup
                       value={formik.values.aiModelFasa}
-                      items={[
-                        {
-                          label: "Model 1",
-                          value: "model-1"
-                        }
-                      ]}
+                      items={aiFasaModels.map((model) => ({
+                        label: model,
+                        value: model
+                      }))}
                       onSelect={(value) =>
                         formik.setFieldValue("aiModelFasa", value)
                       }
@@ -671,12 +736,10 @@ export default function UpdateProjectEvaluationForm({
                   <div className="flex gap-2">
                     <ComboboxGroup
                       value={formik.values.aiModelCrack}
-                      items={[
-                        {
-                          label: "Model 1",
-                          value: "model-1"
-                        }
-                      ]}
+                      items={aiCrackModels.map((model) => ({
+                        label: model,
+                        value: model
+                      }))}
                       onSelect={(value) =>
                         formik.setFieldValue("aiModelCrack", value)
                       }
@@ -696,12 +759,10 @@ export default function UpdateProjectEvaluationForm({
                   <div className="flex gap-2">
                     <ComboboxGroup
                       value={formik.values.aiModelDegradasi}
-                      items={[
-                        {
-                          label: "Model 1",
-                          value: "model-1"
-                        }
-                      ]}
+                      items={aiDegradasiModels.map((model) => ({
+                        label: model,
+                        value: model
+                      }))}
                       onSelect={(value) =>
                         formik.setFieldValue("aiModelDegradasi", value)
                       }
@@ -720,16 +781,47 @@ export default function UpdateProjectEvaluationForm({
             </div>
           </div>
 
-          <div className="text-end mt-6">
-            <Button type="submit" className="w-full" size="lg" asChild>
-              <Link
-                href={`/dashboard/projects/${projectId}/evaluation/${projectEvaluationId}/analysis-result`}
+          {projectEvaluation.isAnalyzed ? (
+            <div className="flex justify-end gap-5 mt-6">
+              <Button type="submit" size="lg" asChild>
+                <Link
+                  href={`/dashboard/projects/${projectId}/evaluation/${projectEvaluationId}/analysis-result`}
+                >
+                  <Play />
+                  Lihat Hasil Pengujian
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-end gap-5 mt-6">
+              <Button
+                type="button"
+                size="lg"
+                onClick={handleSubmitAnalyze}
+                disabled={analyzeProjectEvaluationMutation.isPending}
+              >
+                {analyzeProjectEvaluationMutation.isPending ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Sedang Menganalisa...
+                  </>
+                ) : (
+                  <>
+                    <BrainCircuit />
+                    Analisa Keseluruhan
+                  </>
+                )}
+              </Button>
+              <Button
+                type="submit"
+                size="lg"
+                disabled={updateProjectEvaluationMutation.isPending}
               >
                 <Save />
-                Analisa Keseluruhan
-              </Link>
-            </Button>
-          </div>
+                Simpan Draft
+              </Button>
+            </div>
+          )}
         </div>
       </form>
 

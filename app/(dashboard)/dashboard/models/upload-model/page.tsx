@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,28 +6,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
-import {
-  ArrowRight,
-  BrainCircuit,
-  ChevronLeft,
-  Database,
-  Save
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { BrainCircuit, Save } from "lucide-react";
 
 export default function ModelsTraningPage() {
   return (
@@ -49,7 +32,7 @@ export default function ModelsTraningPage() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Training</BreadcrumbPage>
+                  <BreadcrumbPage>Upload Model</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -63,7 +46,7 @@ export default function ModelsTraningPage() {
             </h2>
           </div>
           <div className="space-y-3.5 p-4">
-            <TrainingSection />
+            <UploadModelSection />
           </div>
         </div>
       </div>
@@ -71,7 +54,7 @@ export default function ModelsTraningPage() {
   );
 }
 
-function TrainingSection() {
+function UploadModelSection() {
   return (
     <Card>
       <CardHeader>
@@ -79,37 +62,29 @@ function TrainingSection() {
           <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
             <BrainCircuit className="w-5 h-5 text-white" />
           </div>
-          <span>Training Model AI</span>
+          <span>Upload Model Jadi</span>
         </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-10">
         <div>
-          <h4 className="font-semibold mb-2">Proses Training</h4>
+          <h4 className="font-semibold mb-2">Pilih Model</h4>
 
           <div>
             <div className="flex gap-4">
+              <Input
+                placeholder="Upload Model AI"
+                type="file"
+                className="basis-4/12"
+              />
               <Input placeholder="Masukkan Nama File Model AI" />
-              <Button>
-                <BrainCircuit />
-                Mulai Training
-              </Button>
             </div>
           </div>
         </div>
 
         <div>
           {/* Action Buttons */}
-          <div className="flex justify-between pt-6 border-t border-slate-200 dark:border-slate-700">
-            <Button
-              variant="outline"
-              className="flex items-center space-x-1"
-              size="lg"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Kembali</span>
-            </Button>
-
+          <div className="flex justify-end pt-6 border-t border-slate-200 dark:border-slate-700">
             <Button className="flex items-center space-x-1" size="lg">
               <Save className="w-4 h-4" />
               <span>Simpan Model</span>

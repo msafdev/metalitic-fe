@@ -1,10 +1,15 @@
 import { api } from "../axios";
-import { DataTransformers } from "../data-transformer";
 import {
+  AnalyzedResultRequest,
+  AnalyzedResultResponse,
   CreateProjectEvaluationRequest,
   CreateProjectEvaluationResponse,
+  GetAiClasificationListResponse,
+  GetAiModelsListResponse,
   GetProjectEvaluationDetailResponse,
-  UpdateProjectEvaluationRequest
+  UpdateAnalyzedResultRequest,
+  UpdateProjectEvaluationRequest,
+  UpdateProjectEvaluationResponse
 } from "../types/project-evaluation-type";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -14,6 +19,28 @@ export async function getProjectEvaluationById(
 ): Promise<GetProjectEvaluationDetailResponse> {
   const res = await api.get<GetProjectEvaluationDetailResponse>(
     `${API_URL}/manager/projects/evaluation/${id}`,
+    {
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}
+
+export async function getAiModelsList(): Promise<GetAiModelsListResponse> {
+  const res = await api.get<GetAiModelsListResponse>(
+    `${API_URL}/manager/projects/evaluation/ai-model-list`,
+    {
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}
+
+export async function getAiClasificationList(): Promise<GetAiClasificationListResponse> {
+  const res = await api.get<GetAiClasificationListResponse>(
+    `${API_URL}/manager/projects/evaluation/ai-clasification-list`,
     {
       withCredentials: true
     }
@@ -67,13 +94,60 @@ export async function updateProjectEvaluation({
   formDataBody.append("aiModelCrack", body.aiModelCrack);
   formDataBody.append("aiModelDegradasi", body.aiModelDegradasi);
 
-  const res = await api.put(
+  const res = await api.put<UpdateProjectEvaluationResponse>(
     `${API_URL}/manager/projects/evaluation/${id}`,
     formDataBody,
     {
       headers: {
         "Content-Type": "multipart/form-data"
       },
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}
+
+export async function analyzeProjectEvaluation({
+  id,
+  body
+}: {
+  id: string;
+  body: AnalyzedResultRequest;
+}) {
+  const res = await api.post(
+    `${API_URL}/manager/projects/evaluation/${id}/analyze-with-ai`,
+    body,
+    {
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}
+
+export async function getAnalyzedResult(projectEvaluationId: string) {
+  const res = await api.get<AnalyzedResultResponse>(
+    `${API_URL}/manager/projects/evaluation/${projectEvaluationId}/analyzed-result`,
+    {
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}
+
+export async function updateAnalyzedResult({
+  id,
+  body
+}: {
+  id: string;
+  body: UpdateAnalyzedResultRequest;
+}) {
+  const res = await api.put<AnalyzedResultResponse>(
+    `${API_URL}/manager/projects/evaluation/${id}/analyzed-result`,
+    body,
+    {
       withCredentials: true
     }
   );

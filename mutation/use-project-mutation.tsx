@@ -1,4 +1,8 @@
-import { createProject, deleteProject } from "@/lib/api/project-api";
+import {
+  createProject,
+  deleteProject,
+  updateProject
+} from "@/lib/api/project-api";
 import { QUERIES } from "@/lib/constants/queries";
 import { ErrorHandling } from "@/lib/error-handling";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -26,6 +30,22 @@ export default function useProjectMutation() {
     }
   });
 
+  const updateMutation = useMutation({
+    mutationFn: updateProject,
+    onSuccess: (data, variables) => {
+      toast("✔️ Berhasil", {
+        description: `Proyek ${variables.body.namaProject} berhasil disimpan`
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [QUERIES.PROJECTS, variables.id]
+      });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      ErrorHandling.handle(error);
+    }
+  });
+
   const deleteMutation = useMutation({
     mutationFn: deleteProject,
     onSuccess: (data, variables) => {
@@ -44,6 +64,7 @@ export default function useProjectMutation() {
 
   return {
     createMutation,
+    updateMutation,
     deleteMutation
   };
 }

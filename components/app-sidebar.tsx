@@ -52,20 +52,20 @@ const data = {
       allowedRoles: ["supervisor", "superadmin"],
       items: [
         {
-          title: "Upload",
-          url: "/dashboard/models/data-upload"
+          title: "Model AI FASA",
+          url: "/dashboard/models/fasa"
         },
         {
-          title: "Data Anotation",
-          url: "/dashboard/models/data-anotation"
+          title: "Model AI CRACK",
+          url: "/dashboard/models/crack"
         },
         {
-          title: "Dataset",
-          url: "/dashboard/models/dataset"
+          title: "Model AI DEGRADASI",
+          url: "/dashboard/models/degradasi"
         },
         {
-          title: "Training",
-          url: "/dashboard/models/training"
+          title: "Upload Model",
+          url: "/dashboard/models/upload-model"
         }
       ]
     }

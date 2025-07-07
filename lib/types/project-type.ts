@@ -13,6 +13,7 @@ export type Project = {
   penguji: {
     _id: string;
     name: string;
+    jabatan: string;
   }[];
   pengujian: ProjectEvaluationSummary[];
   createdAt: string;
@@ -48,3 +49,5 @@ export type CreateProjectRequest = {
   tanggalOrderMasuk: string;
   penguji: string[];
 };
+
+export type UpdateProjectRequest = Partial<CreateProjectRequest>;

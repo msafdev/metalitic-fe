@@ -8,101 +8,64 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+import { ModelAnalyzedResult } from "@/lib/types/project-evaluation-type";
 import {
   AlertCircle,
-  Bot,
-  Calendar,
-  Camera,
   ChevronLeft,
   ChevronRight,
-  Download,
-  Eye,
-  Maximize2,
-  RotateCcw,
-  Save,
-  Settings,
   TrendingDown,
-  User,
   Zap
 } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ImageAnalysisCard from "./image-analysis-card";
 
 type AnalysisDialogProps = {
+  projectEvaluationId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  currentImage: number;
+  initialOrderListImage: number;
+  modelAnalyzedResultList: ModelAnalyzedResult[];
   totalImages: number;
 };
 
 type TypeMode = "AI" | "MANUAL";
 
 export function AnalysisDialog({
+  projectEvaluationId,
   open,
   onOpenChange,
-  currentImage,
+  initialOrderListImage,
+  modelAnalyzedResultList,
   totalImages
 }: AnalysisDialogProps) {
-  const [typeFasaMode, setTypeFasaMode] = useState<TypeMode>("AI");
-  const [typeCrackMode, setTypeCrackMode] = useState<TypeMode>("MANUAL");
-  const [typeDegradationMode, setTypeDegradationMode] =
-    useState<TypeMode>("AI");
+  const [modelAnalyzedResultOrder, setModelAnalyzedResultOrder] =
+    useState<number>(initialOrderListImage);
 
-  const [analysisData, setAnalysisData] = useState({
-    fasa: {
-      image: "http://localhost:1945/uploads/20250624_153939_0zz9t.jpg",
-      classification: "Austenite",
-      mode: "AI",
-      confidence: 90.3,
-      model: "Model_AI_FASA_12",
-      tester: "Samwell Tarley",
-      lastUpdate: "2025-01-15",
-      manualInput: ""
-    },
-    crack: {
-      image: "http://localhost:1945/uploads/20250624_153939_0zz9t.jpg",
-      detection: "Terdeteksi",
-      mode: "Manual",
-      confidence: 0,
-      model: "",
-      tester: "Samwell Tarley",
-      lastUpdate: "2025-01-15",
-      manualInput: ""
-    },
-    degradation: {
-      image: "http://localhost:1945/uploads/20250624_153939_0zz9t.jpg",
-      classification: "ERA A",
-      mode: "AI",
-      confidence: 91.5,
-      model: "Model_AI_DEGRAD",
-      tester: "Samwell Tarley",
-      lastUpdate: "2025-01-15",
-      manualInput: ""
-    }
-  });
+  const getSelectedModelAnalyzedResult = (): ModelAnalyzedResult => {
+    return modelAnalyzedResultList.find(
+      (item, index) => index + 1 === modelAnalyzedResultOrder
+    ) as ModelAnalyzedResult;
+  };
+
+  const [analysisData, setAnalysisData] = useState<ModelAnalyzedResult>(
+    getSelectedModelAnalyzedResult()
+  );
+
+  useEffect(() => {
+    const selectedModelAnalyzedResult = getSelectedModelAnalyzedResult();
+    setAnalysisData(selectedModelAnalyzedResult);
+  }, [modelAnalyzedResultOrder]);
 
   const handlePrevious = () => {
-    // Handle navigation to previous image
+    if (modelAnalyzedResultOrder > 1) {
+      setModelAnalyzedResultOrder(modelAnalyzedResultOrder - 1);
+    }
   };
 
   const handleNext = () => {
-    // Handle navigation to next image
-  };
-
-  const handleUpdate = (section: string) => {
-    // Handle update for specific section
-    console.log(`Updating ${section}`);
+    if (modelAnalyzedResultOrder < totalImages) {
+      setModelAnalyzedResultOrder(modelAnalyzedResultOrder + 1);
+    }
   };
 
   return (
@@ -124,23 +87,23 @@ export function AnalysisDialog({
                   variant="outline"
                   size="sm"
                   onClick={handlePrevious}
-                  disabled={currentImage === 1}
+                  disabled={modelAnalyzedResultOrder === 1}
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
                 <div className="flex items-center space-x-2">
                   <span className="text-lg font-bold text-slate-800">
-                    Gambar Struktur Mikro {currentImage}
+                    Struktur Mikro {modelAnalyzedResultOrder}
                   </span>
                   <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                    {currentImage}/{totalImages}
+                    {modelAnalyzedResultOrder}/{totalImages}
                   </Badge>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleNext}
-                  disabled={currentImage === totalImages}
+                  disabled={modelAnalyzedResultOrder === totalImages}
                 >
                   <ChevronRight className="w-4 h-4" />
                 </Button>
@@ -152,19 +115,14 @@ export function AnalysisDialog({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 py-6">
           {/* FASA Analysis Section */}
           <ImageAnalysisCard
+            analysisDataId={analysisData._id}
+            projectEvaluationId={projectEvaluationId}
+            modelAnalyzedResult={analysisData.fasa}
+            type="fasa"
             color="bg-gradient-to-r from-blue-600 to-purple-600 text-white"
             header={{
               icon: Zap,
               title: "Hasil Analisa FASA"
-            }}
-            image={analysisData.fasa.image}
-            initialTypeMode="AI"
-            result={{
-              clasification: analysisData.fasa.classification,
-              confidence: analysisData.fasa.confidence,
-              model: analysisData.fasa.model,
-              tester: analysisData.fasa.tester,
-              lastUpdate: analysisData.fasa.lastUpdate
             }}
             manualSelect={{
               placeholder: "Pilih Kelas FASA",
@@ -191,19 +149,14 @@ export function AnalysisDialog({
 
           {/* CRACK Detection Section */}
           <ImageAnalysisCard
+            analysisDataId={analysisData._id}
+            projectEvaluationId={projectEvaluationId}
+            modelAnalyzedResult={analysisData.crack}
+            type="crack"
             color="bg-gradient-to-r from-red-500 to-orange-500 text-white"
             header={{
               icon: AlertCircle,
               title: "Hasil Deteksi CRACK"
-            }}
-            image={analysisData.crack.image}
-            initialTypeMode="MANUAL"
-            result={{
-              clasification: analysisData.crack.detection,
-              confidence: analysisData.crack.confidence,
-              model: analysisData.crack.model,
-              tester: analysisData.crack.tester,
-              lastUpdate: analysisData.crack.lastUpdate
             }}
             manualSelect={{
               placeholder: "Pilih Deteksi CRACK",
@@ -222,19 +175,14 @@ export function AnalysisDialog({
 
           {/* DEGRADATION Analysis Section */}
           <ImageAnalysisCard
+            analysisDataId={analysisData._id}
+            projectEvaluationId={projectEvaluationId}
+            modelAnalyzedResult={analysisData.degradasi}
+            type="degradasi"
             color="bg-gradient-to-r from-amber-500 to-yellow-500 text-white"
             header={{
               icon: TrendingDown,
               title: "Hasil Analisa DEGRADASI"
-            }}
-            image={analysisData.degradation.image}
-            initialTypeMode="AI"
-            result={{
-              clasification: analysisData.degradation.classification,
-              confidence: analysisData.degradation.confidence,
-              model: analysisData.degradation.model,
-              tester: analysisData.degradation.tester,
-              lastUpdate: analysisData.degradation.lastUpdate
             }}
             manualSelect={{
               placeholder: "Pilih Kelas DEGRADASI",

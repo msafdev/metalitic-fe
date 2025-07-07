@@ -11,28 +11,37 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { SelectItem as SelectItemType } from "@/lib/types/common-type";
-import { ModelResult } from "@/lib/types/project-evaluation-type";
 import { cn } from "@/lib/utils";
 import useProjectEvaluationMutation from "@/mutation/use-project-evaluation-mutation";
-import { format, formatDate } from "date-fns";
+import { format } from "date-fns";
 import { Bot, Calendar, Save, User } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 type Props = {
-  analysisDataId: string;
   projectEvaluationId: string;
+  analysisDataId: string;
   type: "fasa" | "crack" | "degradasi";
-  modelAnalyzedResult: ModelResult;
-  color?: string;
   header: {
     icon: React.ElementType;
     title: string;
+  };
+  initialTypeMode?: TypeMode;
+  image: string;
+  result: {
+    mode: "AI" | "MANUAL";
+    aiClasification: string;
+    manualClasification: string | null;
+    confidence: number;
+    model: string;
+    tester: string;
+    lastUpdate: string;
   };
   manualSelect: {
     placeholder: string;
     items: SelectItemType[];
   };
+  color?: string;
 };
 
 type TypeMode = "AI" | "MANUAL";
@@ -40,20 +49,20 @@ type TypeMode = "AI" | "MANUAL";
 export default function ImageAnalysisCard({
   projectEvaluationId,
   analysisDataId,
-  modelAnalyzedResult,
   type,
   header: { icon: Icon, title },
+  image,
+  initialTypeMode = "AI",
+  result,
   color = "bg-gradient-to-r from-green-500 to-emerald-500",
   manualSelect
 }: Props) {
   const { updateAnalyzedResultMutation } = useProjectEvaluationMutation();
-  const [typeMode, setTypeMode] = useState<TypeMode>(modelAnalyzedResult.mode);
-  const [analyzedResult, setAnalyzedResult] =
-    useState<ModelResult>(modelAnalyzedResult);
+  const [typeMode, setTypeMode] = useState<TypeMode>(initialTypeMode);
+  const [analyzedResult, setAnalyzedResult] = useState(result);
   const [selectedManualResult, setSelectedManualResult] = useState<string>(
-    modelAnalyzedResult.hasilKlasifikasiManual || "not-set"
+    analyzedResult.manualClasification || "not-set"
   );
-
   const [isErrorSelectedManualResult, setisErrorSelectedManualResult] =
     useState("");
 
@@ -70,11 +79,6 @@ export default function ImageAnalysisCard({
       setisErrorSelectedManualResult("");
     }
   }, [selectedManualResult]);
-
-  useEffect(() => {
-    setAnalyzedResult(modelAnalyzedResult);
-    setTypeMode(modelAnalyzedResult.mode);
-  }, [modelAnalyzedResult]);
 
   const handleUpdateAnalyzedResult = () => {
     if (typeMode === "MANUAL" && selectedManualResult === "not-set") {
@@ -102,18 +106,17 @@ export default function ImageAnalysisCard({
           if (!selectedModelResult) return;
 
           setAnalyzedResult({
-            confidence: selectedModelResult[type].confidence,
-            hasilKlasifikasiAI: selectedModelResult[type].hasilKlasifikasiAI,
-            hasilKlasifikasiManual:
+            aiClasification: selectedModelResult[type].hasilKlasifikasiAI,
+            manualClasification:
               selectedModelResult[type].hasilKlasifikasiManual,
-            modelAI: selectedModelResult[type].modelAI,
-            penguji: selectedModelResult[type].penguji,
-            tanggalUpdate: formatDate(
+            confidence: selectedModelResult[type].confidence,
+            model: selectedModelResult[type].modelAI,
+            tester: selectedModelResult[type].penguji,
+            lastUpdate: format(
               new Date(selectedModelResult[type].tanggalUpdate),
               "yyyy-MM-dd"
             ),
-            mode: selectedModelResult[type].mode,
-            image: selectedModelResult[type].image
+            mode: selectedModelResult[type].mode
           });
         }
       }
@@ -133,11 +136,15 @@ export default function ImageAnalysisCard({
       <div className="p-6">
         <div className="aspect-[16/12] rounded-2xl mb-6 flex items-center justify-center relative group">
           <Image
-            src={analyzedResult.image}
+            src={image}
             alt={`Gambar ${title}`}
             fill
             className="rounded-2xl object-cover"
           />
+        </div>
+
+        <div>
+          <pre>{JSON.stringify(analyzedResult, null, 2)}</pre>
         </div>
 
         {/* Analysis Form */}
@@ -155,8 +162,8 @@ export default function ImageAnalysisCard({
                 )}
               >
                 {analyzedResult.mode === "AI"
-                  ? analyzedResult.hasilKlasifikasiAI
-                  : analyzedResult.hasilKlasifikasiManual}
+                  ? analyzedResult.aiClasification
+                  : analyzedResult.manualClasification}
               </Badge>
             </div>
           </div>
@@ -222,7 +229,7 @@ export default function ImageAnalysisCard({
                       Model AI
                     </Label>
                     <span className="text-sm font-semibold text-slate-800">
-                      {analyzedResult.modelAI}
+                      {analyzedResult.model}
                     </span>
                   </div>
                 </div>
@@ -239,7 +246,7 @@ export default function ImageAnalysisCard({
               <div className="flex items-center space-x-3">
                 <User className="w-4 h-4 text-slate-600" />
                 <span className="text-sm font-medium text-slate-800">
-                  {analyzedResult.penguji}
+                  {analyzedResult.tester}
                 </span>
               </div>
             </div>
@@ -254,10 +261,7 @@ export default function ImageAnalysisCard({
               <div className="flex items-center space-x-3">
                 <Calendar className="w-4 h-4 text-slate-600" />
                 <span className="text-sm font-medium text-slate-800">
-                  {formatDate(
-                    new Date(analyzedResult.tanggalUpdate),
-                    "yyyy-MM-dd"
-                  )}
+                  {analyzedResult.lastUpdate}
                 </span>
               </div>
             </div>

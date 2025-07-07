@@ -1,6 +1,7 @@
 "use client";
 
 import CreateProjectEvaluationForm from "@/components/forms/create-project-evaluation-form";
+import CreateProjectForm from "@/components/forms/create-project-form";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,8 +18,10 @@ import { QUERIES } from "@/lib/constants/queries";
 import { useQuery } from "@tanstack/react-query";
 import {
   CalendarDays,
+  Pencil,
   Plus,
   Settings,
+  Settings2,
   User,
   UserRoundX,
   Users
@@ -34,7 +37,19 @@ export default function ProjectDetailHeader({ idProject }: Props) {
     queryKey: [QUERIES.PROJECTS, idProject]
   });
 
-  const { isOpen, openModal, setIsOpen, closeModal } = useModal();
+  const {
+    isOpen: isOpenProjectEvaluation,
+    openModal: openModalProjectEvaluation,
+    setIsOpen: setIsOpenProjectEvaluation,
+    closeModal: closeModalProjectEvaluation
+  } = useModal();
+
+  const {
+    isOpen: isOpenEdit,
+    openModal: openModalEdit,
+    setIsOpen: setIsOpenEdit,
+    closeModal: closeModalEdit
+  } = useModal();
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("id-ID", {
@@ -59,6 +74,9 @@ export default function ProjectDetailHeader({ idProject }: Props) {
               <div className="space-y-3">
                 <div className="flex items-center gap-3 flex-wrap">
                   <h1 className="text-2xl font-bold">{project.namaProject}</h1>
+                  <Button size="icon" variant="ghost" onClick={openModalEdit}>
+                    <Pencil />
+                  </Button>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -92,7 +110,7 @@ export default function ProjectDetailHeader({ idProject }: Props) {
               </div>
             </div>
 
-            <Button size="lg" onClick={openModal}>
+            <Button size="lg" onClick={openModalProjectEvaluation}>
               <Plus className="w-5 h-5 mr-2" />
               Tambah Pengujian
             </Button>
@@ -139,7 +157,10 @@ export default function ProjectDetailHeader({ idProject }: Props) {
         </CardContent>
       </Card>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog
+        open={isOpenProjectEvaluation}
+        onOpenChange={setIsOpenProjectEvaluation}
+      >
         <DialogContent
           aria-describedby="Modal Dialog untuk Buat Pengujian Baru"
           className="max-w-sm overflow-y-auto"
@@ -152,7 +173,26 @@ export default function ProjectDetailHeader({ idProject }: Props) {
 
           <CreateProjectEvaluationForm
             projectId={idProject}
-            closeModal={closeModal}
+            closeModal={closeModalProjectEvaluation}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isOpenEdit} onOpenChange={setIsOpenEdit}>
+        <DialogContent
+          aria-describedby="Modal Dialog untuk Edit Proyek"
+          className="w-auto max-w-2xl h-[80vh] lg:h-auto max-h-[90svh] overflow-y-auto"
+        >
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Settings2 size={20} /> Edit Proyek
+            </DialogTitle>
+          </DialogHeader>
+
+          <CreateProjectForm
+            isEditForm
+            projectId={idProject}
+            closeProjectModal={closeModalEdit}
           />
         </DialogContent>
       </Dialog>

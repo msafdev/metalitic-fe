@@ -1,9 +1,11 @@
 import {
+  analyzeProjectEvaluation,
   createProjectEvaluation,
   deleteProjectEvaluation,
   deleteProjectEvaluationImageComponent1,
   deleteProjectEvaluationImageComponent2,
   deleteProjectEvaluationImageListMicroStructure,
+  updateAnalyzedResult,
   updateProjectEvaluation,
   updateProjectEvaluationStatusToPending,
   updateProjectEvaluationStatusToProcessing
@@ -44,6 +46,38 @@ export default function useProjectEvaluationMutation() {
 
       queryClient.invalidateQueries({
         queryKey: [QUERIES.PROJECTS_EVALUATION, variables.body.id]
+      });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      ErrorHandling.handle(error);
+    }
+  });
+
+  const analyzeProjectEvaluationMutation = useMutation({
+    mutationFn: analyzeProjectEvaluation,
+    onSuccess: (data, variables) => {
+      toast("✔️ Berhasil", {
+        description: `Pengujian proyek berhasil dianalisa`
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [QUERIES.PROJECTS_EVALUATION, variables.id]
+      });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      ErrorHandling.handle(error);
+    }
+  });
+
+  const updateAnalyzedResultMutation = useMutation({
+    mutationFn: updateAnalyzedResult,
+    onSuccess: (data, variables) => {
+      toast("✔️ Berhasil", {
+        description: `Hasil Analisa Berhasil Diperbarui`
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [QUERIES.ANALYZED_RESULT, variables.id]
       });
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -156,6 +190,8 @@ export default function useProjectEvaluationMutation() {
     deleteProjectEvaluationMutation,
     deleteProjectEvaluationImageComponent1Mutation,
     deleteProjectEvaluationImageComponent2Mutation,
-    deleteProjectEvaluationImageListMicroStructureMutation
+    deleteProjectEvaluationImageListMicroStructureMutation,
+    analyzeProjectEvaluationMutation,
+    updateAnalyzedResultMutation
   };
 }

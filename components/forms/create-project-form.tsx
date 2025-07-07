@@ -36,9 +36,12 @@ import { Separator } from "../ui/separator";
 import CreateServiceRequesterForm from "./create-service-requester-form";
 import useServiceRequesterDropdown from "@/queries/dropdown/use-service.query.dropdown";
 import useUser from "@/queries/use-user.query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "@/lib/types/user-type";
 import ErrorInputMessage from "../input/error-input-message";
+import { useQuery } from "@tanstack/react-query";
+import { getProjectDetail } from "@/lib/api/project-api";
+import { QUERIES } from "@/lib/constants/queries";
 
 const projectSchema = z.object({
   namaProject: z.string({ required_error: "Required" }),
@@ -46,45 +49,103 @@ const projectSchema = z.object({
   tanggalOrderMasuk: z.string({ required_error: "Required" })
 });
 
-export default function CreateProjectForm({
-  closeProjectModal
-}: {
+type EditProps = {
+  isEditForm: true;
+  projectId: string; // required
   closeProjectModal: () => void;
-}) {
+};
+
+type CreateProps = {
+  isEditForm?: false | undefined;
+  projectId?: undefined; // optional / not needed
+  closeProjectModal: () => void;
+};
+
+type Props = EditProps | CreateProps;
+
+export default function CreateProjectForm({
+  isEditForm = false,
+  projectId,
+  closeProjectModal
+}: Props) {
   const { isOpen, openModal, setIsOpen, closeModal } = useModal();
-  const { createMutation } = useProjectMutation();
+  const { createMutation, updateMutation } = useProjectMutation();
   const { serviceRequestersDropdownItems } = useServiceRequesterDropdown();
   const { data } = useUser();
   const [selectedTesters, setSelectedTesters] = useState<User[]>([]);
+
+  const { data: projectDetail, isLoading } = useQuery({
+    queryFn: () => getProjectDetail(projectId as string),
+    queryKey: [QUERIES.PROJECTS, projectId],
+    enabled: isEditForm && !!projectId
+  });
 
   const getServiceRequesterById = (id: string) => {
     return serviceRequestersDropdownItems.find((item) => item.value === id);
   };
 
+  const getServiceRequesterByName = (name: string) => {
+    return serviceRequestersDropdownItems.find((item) => item.label === name);
+  };
+
+  useEffect(() => {
+    if (!projectDetail || isLoading) return;
+
+    setSelectedTesters(projectDetail.data.penguji as User[]);
+  }, [projectDetail, isLoading]);
+
   const formik = useFormik({
-    initialValues: {
-      namaProject: "",
-      pemintaJasa: "",
-      tanggalOrderMasuk: ""
-    },
+    initialValues: projectDetail?.data
+      ? {
+          namaProject: projectDetail.data.namaProject,
+          pemintaJasa: getServiceRequesterByName(projectDetail.data.pemintaJasa)
+            ?.value as string,
+          tanggalOrderMasuk: projectDetail.data.tanggalOrderMasuk
+        }
+      : {
+          namaProject: "",
+          pemintaJasa: "",
+          tanggalOrderMasuk: ""
+        },
     validationSchema: toFormikValidationSchema(projectSchema),
+    enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       const pemintaJasa = getServiceRequesterById(values.pemintaJasa);
 
-      createMutation.mutate(
-        {
-          ...values,
-          penguji: selectedTesters.map((tester) => tester._id),
-          pemintaJasa: pemintaJasa?.label as string
-        },
-        {
-          onSuccess: () => {
-            resetForm();
-            closeProjectModal();
+      if (isEditForm) {
+        updateMutation.mutate(
+          {
+            id: projectId as string,
+            body: {
+              ...values,
+              penguji: selectedTesters.map((tester) => tester._id),
+              pemintaJasa: pemintaJasa?.label as string
+            }
           },
-          onError: () => console.error("Something wrong happened")
-        }
-      );
+          {
+            onSuccess: () => {
+              resetForm();
+              closeProjectModal();
+            },
+            onError: () => console.error("Something wrong happened")
+          }
+        );
+      } else {
+        createMutation.mutate(
+          {
+            ...values,
+            penguji: selectedTesters.map((tester) => tester._id),
+            pemintaJasa: pemintaJasa?.label as string
+          },
+          {
+            onSuccess: () => {
+              resetForm();
+              closeProjectModal();
+            },
+            onError: () => console.error("Something wrong happened")
+          }
+        );
+      }
     }
   });
 
@@ -142,7 +203,12 @@ export default function CreateProjectForm({
               placeholder="Pilih Peminta Jasa"
             />
 
-            <Button variant="outline" size="icon" onClick={openModal}>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={openModal}
+              type="button"
+            >
               <Plus />
             </Button>
           </div>
@@ -158,6 +224,7 @@ export default function CreateProjectForm({
           <Popover>
             <PopoverTrigger asChild>
               <Button
+                type="button"
                 variant={"outline"}
                 className={cn(
                   "w-full pl-3 text-left font-normal",
@@ -262,6 +329,7 @@ export default function CreateProjectForm({
                 <Button
                   variant="ghost"
                   size="icon"
+                  type="button"
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => addTester(user)}
                 >
@@ -325,6 +393,7 @@ export default function CreateProjectForm({
                 <Button
                   variant="ghost"
                   size="icon"
+                  type="button"
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => removeTester(user)}
                 >
@@ -339,7 +408,7 @@ export default function CreateProjectForm({
       <div className="mt-6 text-end">
         <Button type="submit">
           <Save />
-          Simpan proyek
+          {isEditForm ? "Edit Proyek" : "Simpan Proyek"}
         </Button>
       </div>
 

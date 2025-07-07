@@ -12,28 +12,41 @@ import {
   Zap
 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnalysisDialog } from "./image-analysis-dialog";
 import { Label } from "@/components/ui/label";
+import { ModelAnalyzedResult } from "@/lib/types/project-evaluation-type";
+import { useQueryClient } from "@tanstack/react-query";
+import { QUERIES } from "@/lib/constants/queries";
 
 type Props = {
-  image: string;
+  modelAnalyzedResult: ModelAnalyzedResult;
+  modelAnalyzedResultList: ModelAnalyzedResult[];
+  totalImage: number;
   number: number;
+  projectEvaluationId: string;
 };
 
-export default function ImageResultCard({ image, number }: Props) {
+export default function ImageResultCard({
+  modelAnalyzedResult,
+  modelAnalyzedResultList,
+  totalImage,
+  number,
+  projectEvaluationId
+}: Props) {
+  const queryClient = useQueryClient();
   const { isOpen, openModal, setIsOpen } = useModal();
-  const [aiStatus, setAiStatus] = useState({
-    fasa: true,
-    crack: true,
-    degradasi: true
-  });
+  const aiStatus = {
+    fasa: modelAnalyzedResult.fasa.mode === "AI",
+    crack: modelAnalyzedResult.crack.mode === "AI",
+    degradasi: modelAnalyzedResult.degradasi.mode === "AI"
+  };
   const [isIncludedInReport, setIsIncludedInReport] = useState(false);
+  const [initialOrderListImage, setInitialOrderListImage] = useState(number);
 
   return (
     <>
       <div
-        key={image}
         className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
         onClick={openModal}
       >
@@ -45,7 +58,7 @@ export default function ImageResultCard({ image, number }: Props) {
             </div>
             <div>
               <h4 className="font-semibold text-slate-800">
-                Gambar Struktur Mikro {number}
+                Struktur Mikro {number}
               </h4>
               <p className="text-xs text-slate-500">Sample #{number}</p>
             </div>
@@ -62,7 +75,7 @@ export default function ImageResultCard({ image, number }: Props) {
         <div className="aspect-video flex items-center justify-center relative">
           <div className="w-full aspect-[16/12] relative">
             <Image
-              src={image}
+              src={modelAnalyzedResult.image}
               alt={`Gambar komponen ${number}`}
               className="object-cover overflow-hidden bg-secondary cursor-pointer border border-secondary min-w-14 aspect-square rounded-xl"
               fill
@@ -70,6 +83,10 @@ export default function ImageResultCard({ image, number }: Props) {
               style={{ objectPosition: "top" }}
             />
           </div>
+        </div>
+
+        <div>
+          <pre>{JSON.stringify(aiStatus, null, 2)}</pre>
         </div>
 
         {/* Controls */}
@@ -127,7 +144,7 @@ export default function ImageResultCard({ image, number }: Props) {
           onClick={(e) => e.stopPropagation()}
         >
           <Label
-            htmlFor="isIncludedInReport"
+            htmlFor={`isIncludedInReport-${number}`}
             className="flex items-center space-x-2 w-full"
           >
             {isIncludedInReport ? (
@@ -140,7 +157,7 @@ export default function ImageResultCard({ image, number }: Props) {
             </span>
           </Label>
           <Switch
-            id="isIncludedInReport"
+            id={`isIncludedInReport-${number}`}
             checked={isIncludedInReport}
             onCheckedChange={(checked) => setIsIncludedInReport(checked)}
           />
@@ -148,10 +165,12 @@ export default function ImageResultCard({ image, number }: Props) {
       </div>
 
       <AnalysisDialog
+        projectEvaluationId={projectEvaluationId}
         open={isOpen}
         onOpenChange={setIsOpen}
-        currentImage={number}
-        totalImages={10}
+        modelAnalyzedResultList={modelAnalyzedResultList}
+        initialOrderListImage={initialOrderListImage}
+        totalImages={totalImage}
       />
     </>
   );

@@ -1,14 +1,6 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -20,8 +12,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { AiModelClasification } from "@/lib/types/common-type";
 import {
   ArrowRight,
   Brain,
@@ -29,59 +20,29 @@ import {
   FileImage,
   Folder,
   ImageOff,
+  Loader2,
   Trash2
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { ActiveStep } from "./stepper-navigation";
+import { useTab } from "../context/tab-context";
+import useAIConfigurationMutation from "@/mutation/use-ai-configuration-mutation";
+import { useAIConfiguration } from "../context/ai-configuration-context";
 
-export default function ModelsDataUploadPage() {
-  return (
-    <>
-      <div>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="#">Models</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Upload</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
+type Props = {
+  aiModelClasification: AiModelClasification;
+};
 
-        <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
-          <div className="space-y-2 px-4">
-            <h2 className="text-2xl font-semibold">
-              Pengaturan Artificial Intelligence
-            </h2>
-          </div>
-          <div className="space-y-3.5 p-4">
-            <UploadSection />
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-export function UploadSection() {
-  const [selectedModel, setSelectedModel] = useState("");
+export function UploadSection({ aiModelClasification }: Props) {
+  const { setActiveTab } = useTab();
+  const { aiModelUploadImageMutation } = useAIConfigurationMutation();
+  const { config, setConfig } = useAIConfiguration();
 
   const [uploadedFiles, setUploadedFiles] = useState<
     (File & { preview: string })[]
-  >([]);
+  >((config.imageList as (File & { preview: string })[]) || []);
 
   const removeFile = (index: number) => {
     const updatedFiles = [...uploadedFiles];
@@ -89,58 +50,40 @@ export function UploadSection() {
     setUploadedFiles(updatedFiles);
   };
 
+  const handleNext = () => {
+    aiModelUploadImageMutation.mutate(
+      {
+        imageList: uploadedFiles,
+        type: aiModelClasification
+      },
+      {
+        onSuccess: (data) => {
+          setConfig({
+            imageList: uploadedFiles,
+            aiRecommendationResult: data.data.aiRecommendationResult.map(
+              (item) => ({
+                ...item,
+                useRecommendation: true
+              })
+            ),
+            useOlderDatasetImage: true,
+            aiFileModelName: "",
+            type: aiModelClasification
+          });
+
+          setActiveTab("data-annotation");
+        }
+      }
+    );
+  };
+
   return (
     <>
-      {/* AI Model Selection Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-              <Brain className="w-5 h-5 text-white" />
-            </div>
-            <span>Model AI Configuration</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                Pilih Model AI
-              </label>
-              <Select value={selectedModel} onValueChange={setSelectedModel}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Model AI" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="fasa">FASA</SelectItem>
-                  <SelectItem value="crack">CRACK</SelectItem>
-                  <SelectItem value="degradasi">DEGRADASI</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            {selectedModel && (
-              // <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              //   <p className="text-sm text-blue-800 dark:text-blue-200">
-              //     Model terpilih:{" "}
-              //     <span className="font-semibold">{selectedModel}</span>
-              //   </p>
-              // </div>
-              <div className="p-4 bg-primary rounded-lg border border-primary">
-                <p className="text-sm">
-                  Model terpilih:{" "}
-                  <span className="font-semibold">{selectedModel}</span>
-                </p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Upload Data Card */}
       <Card className="">
         <CardHeader className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
-            <CardTitle className="flex items-center justify-between mb-2">
+            <CardTitle className="text-lg flex items-center justify-between">
               <span>Upload Data Baru</span>
             </CardTitle>
             <p className="text-muted-foreground text-sm">
@@ -148,7 +91,9 @@ export function UploadSection() {
             </p>
           </div>
 
-          <Badge variant="primary-outline">10/10 teranotasi</Badge>
+          <Badge variant="primary-outline">
+            0/{uploadedFiles.length} teranotasi
+          </Badge>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Upload Buttons */}
@@ -275,21 +220,18 @@ export function UploadSection() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-between pt-6 border-t border-slate-200 dark:border-slate-700">
+          <div className="flex justify-end pt-6 border-t border-slate-200 dark:border-slate-700">
             <Button
-              variant="outline"
               className="flex items-center space-x-1"
               size="lg"
+              onClick={handleNext}
+              disabled={aiModelUploadImageMutation.isPending}
             >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Kembali</span>
-            </Button>
-
-            <Button className="flex items-center space-x-1" size="lg" asChild>
-              <Link href={`/dashboard/models/data-anotation`}>
-                <span>Simpan dan Lanjut</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              {aiModelUploadImageMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              <span>Simpan dan Lanjut</span>
+              <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
         </CardContent>

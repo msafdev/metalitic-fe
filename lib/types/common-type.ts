@@ -5,3 +5,5 @@ export type SelectItem = {
 export type CommonResponse = {
   message: string;
 };
+
+export type AiModelClasification = "fasa" | "crack" | "degradasi";
