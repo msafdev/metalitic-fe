@@ -34,25 +34,25 @@ export default function ImageResultCard({ image, number }: Props) {
     <>
       <div
         key={image}
-        className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+        className="bg-background/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-border"
         onClick={openModal}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-100">
+        <div className="flex items-center justify-between p-4 bg-muted/50 border-b border-border">
           <div className="flex items-center space-x-3">
             <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
               <Microscope className="w-3 h-3 text-white" />
             </div>
             <div>
-              <h4 className="font-semibold text-slate-800">
+              <h4 className="font-semibold text-foreground">
                 Gambar Struktur Mikro {number}
               </h4>
-              <p className="text-xs text-slate-500">Sample #{number}</p>
+              <p className="text-xs text-muted-foreground">Sample #{number}</p>
             </div>
           </div>
           <Badge
             variant="outline"
-            className="text-xs bg-green-50 text-green-700 border-green-200"
+            className="text-xs bg-green-100 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300 dark:border-green-600"
           >
             AI Analyzed
           </Badge>
@@ -64,7 +64,7 @@ export default function ImageResultCard({ image, number }: Props) {
             <Image
               src={image}
               alt={`Gambar komponen ${number}`}
-              className="object-cover overflow-hidden bg-secondary cursor-pointer border border-secondary min-w-14 aspect-square rounded-xl"
+              className="object-cover overflow-hidden bg-secondary cursor-pointer border border-secondary min-w-14 aspect-square"
               fill
               tabIndex={0}
               style={{ objectPosition: "top" }}
@@ -74,58 +74,55 @@ export default function ImageResultCard({ image, number }: Props) {
 
         {/* Controls */}
         <div className="p-4 space-y-1">
-          <div className="flex items-center justify-between p-2 bg-blue-50/50 rounded-lg">
+          <div className="flex items-center justify-between p-2 rounded-lg bg-muted">
             <div className="flex items-center space-x-2">
-              <Zap className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium">FASA Austenite</span>
+              <Zap className="w-4 h-4 text-blue-500" />
+              <span className="text-sm font-medium text-foreground">
+                FASA Austenite
+              </span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Badge
-                variant="outline"
-                className="bg-orange-100 text-orange-700 text-xs"
-              >
-                {aiStatus.fasa ? "AI" : <User size={16} />}
-              </Badge>
-            </div>
+            <Badge
+              variant="outline"
+              className="bg-orange-100 text-orange-700 text-xs border-orange-300 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-600"
+            >
+              {aiStatus.fasa ? "AI" : <User size={16} />}
+            </Badge>
           </div>
 
-          <div className="flex items-center justify-between p-2 bg-red-50/50 rounded-lg">
+          <div className="flex items-center justify-between p-2 rounded-lg bg-muted">
             <div className="flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 text-red-600" />
-              <span className="text-sm font-medium">CRACK Terdeteksi</span>
+              <AlertCircle className="w-4 h-4 text-red-500" />
+              <span className="text-sm font-medium text-foreground">
+                CRACK Terdeteksi
+              </span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Badge
-                variant="outline"
-                className="bg-orange-100 text-orange-700 text-xs"
-              >
-                {aiStatus.crack ? "AI" : <User size={16} />}
-              </Badge>
-            </div>
+            <Badge
+              variant="outline"
+              className="bg-orange-100 text-orange-700 text-xs border-orange-300 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-600"
+            >
+              {aiStatus.crack ? "AI" : <User size={16} />}
+            </Badge>
           </div>
 
-          <div className="flex items-center justify-between p-2 bg-amber-50/50 rounded-lg">
+          <div className="flex items-center justify-between p-2 rounded-lg bg-muted">
             <div className="flex items-center space-x-2">
               <TrendingDown className="w-4 h-4 text-amber-600" />
-              <span className="text-sm font-medium">Degradasi ERA 1</span>
+              <span className="text-sm font-medium text-foreground">
+                Degradasi ERA 1
+              </span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Badge
-                variant="outline"
-                className="bg-orange-100 text-orange-700 text-xs"
-              >
-                {aiStatus.degradasi ? "AI" : <User size={16} />}
-              </Badge>
-            </div>
+            <Badge
+              variant="outline"
+              className="bg-orange-100 text-orange-700 text-xs border-orange-300 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-600"
+            >
+              {aiStatus.degradasi ? "AI" : <User size={16} />}
+            </Badge>
           </div>
         </div>
 
         <Separator />
 
-        <div
-          className="flex items-center justify-between py-4 px-6 bg-slate-50/50 rounded-lg cursor-pointer"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="flex items-center justify-between py-4 px-6 rounded-lg" onClick={(e)=>{e.stopPropagation()}}>
           <Label
             htmlFor="isIncludedInReport"
             className="flex items-center space-x-2 w-full"
@@ -133,13 +130,14 @@ export default function ImageResultCard({ image, number }: Props) {
             {isIncludedInReport ? (
               <BookCheck className="w-4 h-4 text-green-500" />
             ) : (
-              <EyeOff className="w-4 h-4 text-slate-600" />
+              <EyeOff className="w-4 h-4 text-muted-foreground" />
             )}
-            <span className="text-sm font-medium">
+            <span className="text-sm font-medium text-foreground">
               {isIncludedInReport ? `Masuk Laporan` : `Tidak Masuk Laporan`}
             </span>
           </Label>
           <Switch
+            className="border-border"
             id="isIncludedInReport"
             checked={isIncludedInReport}
             onCheckedChange={(checked) => setIsIncludedInReport(checked)}

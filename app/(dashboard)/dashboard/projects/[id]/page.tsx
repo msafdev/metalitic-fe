@@ -43,10 +43,11 @@ export default function ProjectDetailPage({
         </div>
       </header>
       <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
-        <div className="px-4">
-          <ProjectDetailHeader idProject={params.id} />
-          <ProjectEvaluationList idProject={params.id} />
+        <div className="space-y-2 px-4">
+          <h2 className="text-2xl font-semibold">Detail proyek</h2>
         </div>
+        <ProjectDetailHeader idProject={params.id} />
+        <ProjectEvaluationList idProject={params.id} />
       </div>
     </>
   );

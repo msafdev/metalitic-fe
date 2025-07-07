@@ -13,6 +13,8 @@ import { Eye, Trash, MoreHorizontal, Download, Check } from "lucide-react";
 import { User } from "@/lib/types/user-type";
 import useUserMutation from "@/mutation/use-user-mutation";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getUpload } from "@/lib/utils";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -20,15 +22,24 @@ export const columns: ColumnDef<User>[] = [
     header: "Nama",
     cell: ({ row }) => {
       const item = row.original;
-      return <span className="text-nowrap">{item.name}</span>;
-    }
-  },
-  {
-    accessorKey: "nomorInduk",
-    header: "NIK",
-    cell: ({ row }) => {
-      const item = row.original;
-      return <span className="">{item.nomorInduk}</span>;
+      return (
+        <div className="flex items-center gap-2">
+          <Avatar className="size-8 rounded">
+            <AvatarImage
+              src={getUpload(item.avatarUser)}
+              alt={`${item.username}'s avatar`}
+            />
+            <AvatarFallback className="capitalize rounded">
+              {item.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .slice(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-nowrap font-medium">{item.name}</span>
+        </div>
+      );
     }
   },
   {
@@ -52,15 +63,16 @@ export const columns: ColumnDef<User>[] = [
     header: "Divisi",
     cell: ({ row }) => {
       const item = row.original;
-      return <span className="">{item.devisi}</span>;
-    }
-  },
-  {
-    accessorKey: "jabatan",
-    header: "Jabatan",
-    cell: ({ row }) => {
-      const item = row.original;
-      return <span className="">{item.jabatan}</span>;
+      return (
+        <div className="">
+          <p className="text-nowrap font-medium text-foreground">
+            {item.devisi}
+          </p>
+          <span className="text-nowrap text-xs text-muted-foreground">
+            {item.jabatan}
+          </span>
+        </div>
+      );
     }
   },
   {

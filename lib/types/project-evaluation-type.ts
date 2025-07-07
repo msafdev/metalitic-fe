@@ -45,7 +45,8 @@ type IgnoredKeys =
   | "nama"
   | "status"
   | "progress"
-  | "missingFields";
+  | "missingFields"
+  | "project";
 export type MissingFieldKey = Exclude<keyof ProjectEvaluation, IgnoredKeys>;
 
 export type GetProjectEvaluationDetailResponse = {

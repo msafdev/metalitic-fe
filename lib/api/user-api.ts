@@ -1,6 +1,12 @@
 import { api } from "../axios";
+import { DataTransformers } from "../data-transformer";
+import { Register } from "../types/auth-type";
 import { CommonResponse } from "../types/common-type";
-import { DetailUserResponse, UserResponse } from "../types/user-type";
+import {
+  DetailUserResponse,
+  UpdateuserRequest,
+  UserResponse
+} from "../types/user-type";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -14,7 +20,7 @@ export async function getUsers() {
 
 export async function getUserDetail(idUser: string) {
   const res = await api.get<DetailUserResponse>(
-    `${API_URL}/manager/users/${idUser}`,
+    `${API_URL}/manager/user/${idUser}`,
     {
       withCredentials: true
     }
@@ -40,6 +46,25 @@ export async function verifyUser({
       withCredentials: true
     }
   );
+
+  return res.data;
+}
+
+export async function updateUser({
+  id,
+  body
+}: {
+  id: string;
+  body: UpdateuserRequest;
+}): Promise<CommonResponse> {
+  const formData = DataTransformers.objectToFormData(body);
+
+  const res = await api.put(`${API_URL}/manager/user/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    },
+    withCredentials: true
+  });
 
   return res.data;
 }

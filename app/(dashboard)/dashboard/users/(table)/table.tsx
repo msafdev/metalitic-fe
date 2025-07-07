@@ -45,6 +45,7 @@ export function DataTable<TData, TValue>({
   isLoading,
   isError
 }: DataTableProps<TData, TValue>) {
+  const { isOpen, openModal, setIsOpen, closeModal } = useModal();
   const [filter, setFilter] = useState("");
 
   const tableState = useMemo(
@@ -79,8 +80,6 @@ export function DataTable<TData, TValue>({
   const canPreviousPage = table.getCanPreviousPage();
   const canNextPage = table.getCanNextPage();
   const totalRows = table.getPrePaginationRowModel().rows.length;
-
-  const { isOpen, openModal, setIsOpen, closeModal } = useModal();
 
   return (
     <div className="space-y-4">
@@ -205,9 +204,10 @@ export function DataTable<TData, TValue>({
         )}
       </div>
 
+      {/* Dialog Tambah User */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent
-          aria-describedby="Modal Dialog untuk Buat Proyek Baru"
+          aria-describedby="Modal untuk buat proyek baru"
           className="w-auto max-w-2xl h-[80vh] lg:h-auto max-h-[90svh] overflow-y-auto"
         >
           <DialogHeader>

@@ -18,7 +18,7 @@ import {
   TrashIcon
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
@@ -68,6 +68,8 @@ export default function UpdateProjectEvaluationForm({
     queryFn: () => getProjectEvaluationById(projectEvaluationId),
     queryKey: [QUERIES.PROJECTS_EVALUATION, projectEvaluationId]
   });
+
+  const router = useRouter();
 
   const {
     updateProjectEvaluationMutation,
@@ -140,6 +142,10 @@ export default function UpdateProjectEvaluationForm({
           gambarKomponent2: gambarKomponent2[0],
           listGambarStrukturMikro: listGambarStrukturMikro
         }
+      },{
+        onSuccess: () => {
+          router.push(`/dashboard/projects/${projectId}/evaluation/${projectEvaluationId}/analysis-result`)
+        }
       });
     }
   });
@@ -162,574 +168,569 @@ export default function UpdateProjectEvaluationForm({
   if (!projectEvaluation || isLoading) return null;
 
   return (
-    <div className="max-w-4xl mx-auto bg-background border border-slate-200/50 rounded-xl">
-      <div className="rounded-t-xl bg-gradient-to-r from-slate-900 to-slate-700 p-8 text-white">
+    <div className="space-y-8">
+      <div className="rounded bg-gradient-to-r from-secondary to-muted p-8 text-secondary-foreground">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold mb-2">
               {projectEvaluation.nama}
             </h2>
             <div className="flex items-center space-x-4 mt-4">
-              <Badge
-                variant="outline"
-                className="border-white/30 text-white bg-white/10"
-              >
-                {projectEvaluation.projectId}
-              </Badge>
-              <Badge
-                variant="outline"
-                className="border-white/30 text-white bg-white/10"
-              >
-                {projectEvaluation.id}
-              </Badge>
+              <Badge variant="default">{projectEvaluation.projectId}</Badge>
+              <Badge variant="default">{projectEvaluation.id}</Badge>
             </div>
           </div>
           <div className="text-right">
             <div className="mb-3">
               <Badge variant="secondary">{projectEvaluation.status}</Badge>
             </div>
-            <div className="text-4xl font-bold mb-2">
+            <div className="text-4xl font-bold mb-1">
               {projectEvaluation.progress}%
             </div>
-            <div className="text-slate-200">Progress</div>
+            <div className="text-muted-foreground">Progress</div>
           </div>
         </div>
       </div>
 
-      <form onSubmit={formik.handleSubmit} noValidate>
-        <div className="p-6">
-          <div className="bg-slate-50/80 rounded-xl p-6 border border-slate-200/50">
-            <h3 className="text-xl font-bold text-slate-900 mb-8 flex items-center space-x-3">
-              <FlaskConical className="size-5 text-purple-500" />
-              <span>Detail Pengujian</span>
-            </h3>
+      <form onSubmit={formik.handleSubmit} noValidate className="space-y-8">
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold flex items-center space-x-3">
+            <FlaskConical className="size-5 text-purple-500" />
+            <span>Detail Pengujian</span>
+          </h3>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Tanggal */}
+            <div className="space-y-2">
+              <Label htmlFor="tanggal">Tanggal</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full pl-3 text-left font-normal bg-transparent",
+                      !formik.values.tanggal && "text-muted-foreground"
+                    )}
+                  >
+                    {formik.values.tanggal ? (
+                      format(formik.values.tanggal, "dd/MM/yyyy")
+                    ) : (
+                      <span>Pilih Tanggal Pengujian</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={new Date(formik.values.tanggal)}
+                    onSelect={(date) => {
+                      if (date) {
+                        formik.setFieldValue(
+                          "tanggal",
+                          format(date, "yyyy-MM-dd")
+                        );
+                      }
+                    }}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
+                    captionLayout="dropdown"
+                  />
+                </PopoverContent>
+              </Popover>
+              {formik.touched.tanggal && formik.errors.tanggal && (
+                <ErrorInputMessage>{formik.errors.tanggal}</ErrorInputMessage>
+              )}
+            </div>
+
+            {/* Lokasi */}
+            <div className="space-y-2">
+              <Label htmlFor="lokasi">Lokasi</Label>
+              <Input
+                placeholder="Lokasi Pengujian"
+                id="lokasi"
+                name="lokasi"
+                onChange={formik.handleChange}
+                value={formik.values.lokasi}
+              />
+              {formik.touched.lokasi && formik.errors.lokasi && (
+                <ErrorInputMessage>{formik.errors.lokasi}</ErrorInputMessage>
+              )}
+            </div>
+
+            {/* Area */}
+            <div className="space-y-2">
+              <Label htmlFor="area">Area</Label>
+              <Input
+                placeholder="Area Pengujian"
+                id="area"
+                name="area"
+                onChange={formik.handleChange}
+                value={formik.values.area}
+              />
+              {formik.touched.area && formik.errors.area && (
+                <ErrorInputMessage>{formik.errors.area}</ErrorInputMessage>
+              )}
+            </div>
+
+            {/* Posisi */}
+            <div className="space-y-2">
+              <Label htmlFor="posisi">Posisi</Label>
+              <Input
+                placeholder="Posisi Pengujian"
+                id="posisi"
+                name="posisi"
+                onChange={formik.handleChange}
+                value={formik.values.posisi}
+              />
+              {formik.touched.posisi && formik.errors.posisi && (
+                <ErrorInputMessage>{formik.errors.posisi}</ErrorInputMessage>
+              )}
+            </div>
+
+            {/* Material */}
+            <div className="space-y-2">
+              <Label htmlFor="material">Material</Label>
+              <Input
+                placeholder="Material"
+                id="material"
+                name="material"
+                onChange={formik.handleChange}
+                value={formik.values.material}
+              />
+              {formik.touched.material && formik.errors.material && (
+                <ErrorInputMessage>{formik.errors.material}</ErrorInputMessage>
+              )}
+            </div>
+
+            {/* Grit Sand Whell */}
+            <div className="space-y-2">
+              <Label htmlFor="gritSandWhell">Grit Sand Wheel</Label>
+              <Input
+                placeholder="Grit Sand Wheel"
+                id="gritSandWhell"
+                name="gritSandWhell"
+                onChange={formik.handleChange}
+                value={formik.values.gritSandWhell}
+              />
+              {formik.touched.gritSandWhell && formik.errors.gritSandWhell && (
+                <ErrorInputMessage>
+                  {formik.errors.gritSandWhell}
+                </ErrorInputMessage>
+              )}
+            </div>
+
+            {/* ETSA */}
+            <div className="space-y-2">
+              <Label htmlFor="etsa">ETSA</Label>
+              <Input
+                placeholder="ETSA"
+                id="etsa"
+                name="etsa"
+                onChange={formik.handleChange}
+                value={formik.values.etsa}
+              />
+              {formik.touched.etsa && formik.errors.etsa && (
+                <ErrorInputMessage>{formik.errors.etsa}</ErrorInputMessage>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold flex items-center space-x-3">
+            <Camera className="size-5 text-blue-500" />
+            <span>Kamera & Gambar</span>
+          </h3>
+
+          <div className="grid grid-cols-1 gap-4">
+            {/* Kamera */}
+            <div className="space-y-2">
+              <Label htmlFor="kamera">Kamera</Label>
+              <Input
+                placeholder="Kamera"
+                id="kamera"
+                name="kamera"
+                onChange={formik.handleChange}
+                value={formik.values.kamera}
+              />
+              {formik.touched.kamera && formik.errors.kamera && (
+                <ErrorInputMessage>{formik.errors.kamera}</ErrorInputMessage>
+              )}
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Tanggal */}
+              {/* Merk Mikroskop */}
               <div className="space-y-2">
-                <Label htmlFor="tanggal">Tanggal</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left font-normal bg-transparent",
-                        !formik.values.tanggal && "text-muted-foreground"
-                      )}
-                    >
-                      {formik.values.tanggal ? (
-                        format(formik.values.tanggal, "dd/MM/yyyy")
-                      ) : (
-                        <span>Pilih Tanggal Pengujian</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={new Date(formik.values.tanggal)}
-                      onSelect={(date) => {
-                        if (date) {
-                          formik.setFieldValue(
-                            "tanggal",
-                            format(date, "yyyy-MM-dd")
-                          );
-                        }
-                      }}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
+                <Label htmlFor="merkMikroskop">Merk Mikroskop</Label>
+                <Input
+                  placeholder="Merk Mikroskop"
+                  id="merkMikroskop"
+                  name="merkMikroskop"
+                  onChange={formik.handleChange}
+                  value={formik.values.merkMikroskop}
+                />
+                {formik.touched.merkMikroskop &&
+                  formik.errors.merkMikroskop && (
+                    <ErrorInputMessage>
+                      {formik.errors.merkMikroskop}
+                    </ErrorInputMessage>
+                  )}
+              </div>
+
+              {/* Perbesaran Mikroskop */}
+              <div className="space-y-2">
+                <Label htmlFor="perbesaranMikroskop">
+                  Perbesaran Mikroskop
+                </Label>
+                <Input
+                  placeholder="Perbesaran Mikroskop"
+                  id="perbesaranMikroskop"
+                  name="perbesaranMikroskop"
+                  onChange={formik.handleChange}
+                  value={formik.values.perbesaranMikroskop}
+                />
+                {formik.touched.perbesaranMikroskop &&
+                  formik.errors.perbesaranMikroskop && (
+                    <ErrorInputMessage>
+                      {formik.errors.perbesaranMikroskop}
+                    </ErrorInputMessage>
+                  )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="perbesaranMikroskop">Gambar Komponen</Label>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {projectEvaluation.gambarKomponent1 ? (
+                  <DropzoneContainer>
+                    <Image
+                      src={projectEvaluation.gambarKomponent1}
+                      alt={`Gambar komponen 1`}
+                      width={200}
+                      height={200}
+                      className="object-cover rounded overflow-hidden bg-secondary cursor-pointer border border-secondary min-w-14 aspect-square"
+                      onClick={() =>
+                        window.open(
+                          projectEvaluation.gambarKomponent1,
+                          "_blank"
+                        )
                       }
-                      captionLayout="dropdown"
+                      tabIndex={0}
+                      style={{ objectPosition: "top" }}
                     />
-                  </PopoverContent>
-                </Popover>
-                {formik.touched.tanggal && formik.errors.tanggal && (
-                  <ErrorInputMessage>{formik.errors.tanggal}</ErrorInputMessage>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      type="button"
+                      onClick={openModalDeleteGambarKomponen1}
+                      className="absolute top-0 right-0 rounded-full"
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </DropzoneContainer>
+                ) : (
+                  <div>
+                    <FilesDropzone
+                      files={gambarKomponent1}
+                      setFiles={setGambarKomponent1}
+                    />
+                    {formik.touched.gambarKomponent1 &&
+                      formik.errors.gambarKomponent1 && (
+                        <ErrorInputMessage>
+                          {formik.errors.gambarKomponent1}
+                        </ErrorInputMessage>
+                      )}
+                  </div>
+                )}
+
+                {projectEvaluation.gambarKomponent2 ? (
+                  <DropzoneContainer>
+                    <Image
+                      src={projectEvaluation.gambarKomponent2}
+                      alt={`Gambar komponen 2`}
+                      width={200}
+                      height={200}
+                      className="object-cover rounded overflow-hidden bg-secondary cursor-pointer border border-secondary min-w-14 aspect-square"
+                      onClick={() =>
+                        window.open(
+                          projectEvaluation.gambarKomponent2,
+                          "_blank"
+                        )
+                      }
+                      tabIndex={0}
+                      style={{ objectPosition: "top" }}
+                    />
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      type="button"
+                      onClick={openModalDeleteGambarKomponen2}
+                      className="absolute top-0 right-0 rounded-full"
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </DropzoneContainer>
+                ) : (
+                  <div>
+                    <FilesDropzone
+                      files={gambarKomponent2}
+                      setFiles={setGambarKomponent2}
+                    />
+                    {formik.touched.gambarKomponent2 &&
+                      formik.errors.gambarKomponent2 && (
+                        <ErrorInputMessage>
+                          {formik.errors.gambarKomponent2}
+                        </ErrorInputMessage>
+                      )}
+                  </div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Lokasi */}
-              <div className="space-y-2">
-                <Label htmlFor="lokasi">Lokasi</Label>
-                <Input
-                  placeholder="Lokasi Pengujian"
-                  id="lokasi"
-                  name="lokasi"
-                  onChange={formik.handleChange}
-                  value={formik.values.lokasi}
-                />
-                {formik.touched.lokasi && formik.errors.lokasi && (
-                  <ErrorInputMessage>{formik.errors.lokasi}</ErrorInputMessage>
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold flex items-center space-x-3">
+            <Microscope className="size-5 text-green-500" />
+            <span>Struktur Mikro</span>
+          </h3>
+
+          <div>
+            <div className="flex flex-col md:flex-row gap-4 justify-between md:items-center mb-4">
+              <Label>Data Gambar Keseluruhan</Label>
+
+              <div className="flex gap-3 items-center">
+                <span className="text-sm text-muted-foreground">
+                  {projectEvaluation.listGambarStrukturMikro.length ||
+                    listGambarStrukturMikro.length}{" "}
+                  Gambar
+                </span>
+
+                {projectEvaluation.listGambarStrukturMikro.length ? (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={openModalDeleteGambarStrukturMikro}
+                  >
+                    Hapus Semua
+                  </Button>
+                ) : (
+                  <Button asChild type="button">
+                    <Label
+                      htmlFor="listGambarStrukturMikro"
+                      className="cursor-pointer"
+                    >
+                      Upload
+                    </Label>
+                  </Button>
                 )}
               </div>
+              <Input
+                multiple
+                className="hidden"
+                type="file"
+                name="listGambarStrukturMikro"
+                id="listGambarStrukturMikro"
+                accept="image/*"
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (!files) return;
 
-              {/* Area */}
-              <div className="space-y-2">
-                <Label htmlFor="area">Area</Label>
-                <Input
-                  placeholder="Area Pengujian"
-                  id="area"
-                  name="area"
-                  onChange={formik.handleChange}
-                  value={formik.values.area}
-                />
-                {formik.touched.area && formik.errors.area && (
-                  <ErrorInputMessage>{formik.errors.area}</ErrorInputMessage>
+                  const fileArray = Array.from(files); // Sekarang jadi File[]
+
+                  const filesWithPreview = fileArray.map((file) =>
+                    Object.assign(file, {
+                      preview: URL.createObjectURL(file)
+                    })
+                  );
+
+                  // const fileArray = Array.from(files).map((file) => ({
+                  //   ...file,
+                  //   preview: URL.createObjectURL(file)
+                  // }));
+
+                  setListGambarStrukturMikro((prev) => [
+                    ...prev,
+                    ...filesWithPreview
+                  ]);
+                }}
+              />
+            </div>
+
+            {projectEvaluation.listGambarStrukturMikro.length ? (
+              <DropzoneContainer>
+                <div className="flex flex-nowrap items-center gap-2 overflow-x-auto">
+                  {projectEvaluation.listGambarStrukturMikro.map(
+                    (image, index) => (
+                      <div
+                        key={image}
+                        className="relative min-w-[150px] min-h-[150px] overflow-hidden"
+                      >
+                        <Image
+                          key={image}
+                          src={image}
+                          className="object-cover rounded-md"
+                          alt={`Gambar struktur mikro ${index + 1}`}
+                          fill
+                        />
+                      </div>
+                    )
+                  )}
+                </div>
+              </DropzoneContainer>
+            ) : (
+              <>
+                {!listGambarStrukturMikro.length && (
+                  <DropzoneContainer>
+                    <ImageUp
+                      size={50}
+                      className="mx-auto text-muted-foreground mb-5"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Belum ada gambar yang di pilih
+                    </p>
+                  </DropzoneContainer>
                 )}
-              </div>
 
-              {/* Posisi */}
-              <div className="space-y-2">
-                <Label htmlFor="posisi">Posisi</Label>
-                <Input
-                  placeholder="Posisi Pengujian"
-                  id="posisi"
-                  name="posisi"
-                  onChange={formik.handleChange}
-                  value={formik.values.posisi}
-                />
-                {formik.touched.posisi && formik.errors.posisi && (
-                  <ErrorInputMessage>{formik.errors.posisi}</ErrorInputMessage>
-                )}
-              </div>
+                <div className="flex gap-5 overflow-x-auto">
+                  {listGambarStrukturMikro.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-2 mt-2"
+                    >
+                      <div className="relative w-[150px] h-[150px] overflow-hidden">
+                        <Image
+                          src={file.preview}
+                          className="object-cover rounded-md"
+                          alt={file.name}
+                          fill
+                        />
 
-              {/* Material */}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute top-1 right-1"
+                          onClick={() => {
+                            // Revoke URL to prevent memory leaks
+                            URL.revokeObjectURL(file.preview);
+
+                            // Remove file from state
+                            setListGambarStrukturMikro((prev) =>
+                              prev.filter((_, i) => i !== index)
+                            );
+                          }}
+                        >
+                          <TrashIcon className="text-red-500" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
               <div className="space-y-2">
-                <Label htmlFor="material">Material</Label>
-                <Input
-                  placeholder="Material"
-                  id="material"
-                  name="material"
-                  onChange={formik.handleChange}
-                  value={formik.values.material}
-                />
-                {formik.touched.material && formik.errors.material && (
+                <Label htmlFor="aiModelFasa">AI Model Fasa</Label>
+                <div className="flex gap-2">
+                  <ComboboxGroup
+                    value={formik.values.aiModelFasa}
+                    items={[
+                      {
+                        label: "Model FASA 1",
+                        value: "fasa-1"
+                      },
+                      {
+                        label: "Model FASA 2",
+                        value: "fasa-2"
+                      }
+                      // TODO: ADD MORE USING ENDPOINT HERE
+                    ]}
+                    onSelect={(value) =>
+                      formik.setFieldValue("aiModelFasa", value)
+                    }
+                    noItemsFallbackText="Tidak Ditemukan"
+                    placeholder="Pilih Model"
+                  />
+                </div>
+                {formik.touched.aiModelFasa && formik.errors.aiModelFasa && (
                   <ErrorInputMessage>
-                    {formik.errors.material}
+                    {formik.errors.aiModelFasa}
                   </ErrorInputMessage>
                 )}
               </div>
-
-              {/* Grit Sand Whell */}
               <div className="space-y-2">
-                <Label htmlFor="gritSandWhell">Grit Sand Wheel</Label>
-                <Input
-                  placeholder="Grit Sand Wheel"
-                  id="gritSandWhell"
-                  name="gritSandWhell"
-                  onChange={formik.handleChange}
-                  value={formik.values.gritSandWhell}
-                />
-                {formik.touched.gritSandWhell &&
-                  formik.errors.gritSandWhell && (
+                <Label htmlFor="aiModelCrack">AI Model Crack</Label>
+                <div className="flex gap-2">
+                  <ComboboxGroup
+                    value={formik.values.aiModelCrack}
+                    items={[
+                      {
+                        label: "Model CRACK 1",
+                        value: "crack-1"
+                      },
+                      {
+                        label: "Model CRACK 2",
+                        value: "crack-2"
+                      }
+                      // TODO: ADD MORE USING ENDPOINT HERE
+                    ]}
+                    onSelect={(value) =>
+                      formik.setFieldValue("aiModelCrack", value)
+                    }
+                    noItemsFallbackText="Tidak Ditemukan"
+                    placeholder="Pilih Model"
+                  />
+                </div>
+                {formik.touched.aiModelCrack && formik.errors.aiModelCrack && (
+                  <ErrorInputMessage>
+                    {formik.errors.aiModelCrack}
+                  </ErrorInputMessage>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="aiModelDegradasi">AI Model Degradasi</Label>
+                <div className="flex gap-2">
+                  <ComboboxGroup
+                    value={formik.values.aiModelDegradasi}
+                    items={[
+                      {
+                        label: "Model DEGRADASI 1",
+                        value: "degradasi-1"
+                      },
+                      {
+                        label: "Model DEGRADASI 2",
+                        value: "degradasi-2"
+                      }
+                      // TODO: ADD MORE USING ENDPOINT HERE
+                    ]}
+                    onSelect={(value) =>
+                      formik.setFieldValue("aiModelDegradasi", value)
+                    }
+                    noItemsFallbackText="Tidak Ditemukan"
+                    placeholder="Pilih Model"
+                  />
+                </div>
+                {formik.touched.aiModelDegradasi &&
+                  formik.errors.aiModelDegradasi && (
                     <ErrorInputMessage>
-                      {formik.errors.gritSandWhell}
+                      {formik.errors.aiModelDegradasi}
                     </ErrorInputMessage>
                   )}
               </div>
-
-              {/* ETSA */}
-              <div className="space-y-2">
-                <Label htmlFor="etsa">ETSA</Label>
-                <Input
-                  placeholder="ETSA"
-                  id="etsa"
-                  name="etsa"
-                  onChange={formik.handleChange}
-                  value={formik.values.etsa}
-                />
-                {formik.touched.etsa && formik.errors.etsa && (
-                  <ErrorInputMessage>{formik.errors.etsa}</ErrorInputMessage>
-                )}
-              </div>
             </div>
           </div>
+        </div>
 
-          <div className="bg-slate-50/80 rounded-xl p-6 border border-slate-200/50 mt-6">
-            <h3 className="text-xl font-bold text-slate-900 mb-8 flex items-center space-x-3">
-              <Camera className="size-5 text-blue-500" />
-              <span>Kamera & Gambar</span>
-            </h3>
-
-            <div className="grid grid-cols-1 gap-4">
-              {/* Kamera */}
-              <div className="space-y-2">
-                <Label htmlFor="kamera">Kamera</Label>
-                <Input
-                  placeholder="Kamera"
-                  id="kamera"
-                  name="kamera"
-                  onChange={formik.handleChange}
-                  value={formik.values.kamera}
-                />
-                {formik.touched.kamera && formik.errors.kamera && (
-                  <ErrorInputMessage>{formik.errors.kamera}</ErrorInputMessage>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* Merk Mikroskop */}
-                <div className="space-y-2">
-                  <Label htmlFor="merkMikroskop">Merk Mikroskop</Label>
-                  <Input
-                    placeholder="Merk Mikroskop"
-                    id="merkMikroskop"
-                    name="merkMikroskop"
-                    onChange={formik.handleChange}
-                    value={formik.values.merkMikroskop}
-                  />
-                  {formik.touched.merkMikroskop &&
-                    formik.errors.merkMikroskop && (
-                      <ErrorInputMessage>
-                        {formik.errors.merkMikroskop}
-                      </ErrorInputMessage>
-                    )}
-                </div>
-
-                {/* Perbesaran Mikroskop */}
-                <div className="space-y-2">
-                  <Label htmlFor="perbesaranMikroskop">
-                    Perbesaran Mikroskop
-                  </Label>
-                  <Input
-                    placeholder="Perbesaran Mikroskop"
-                    id="perbesaranMikroskop"
-                    name="perbesaranMikroskop"
-                    onChange={formik.handleChange}
-                    value={formik.values.perbesaranMikroskop}
-                  />
-                  {formik.touched.perbesaranMikroskop &&
-                    formik.errors.perbesaranMikroskop && (
-                      <ErrorInputMessage>
-                        {formik.errors.perbesaranMikroskop}
-                      </ErrorInputMessage>
-                    )}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="perbesaranMikroskop">Gambar Komponen</Label>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {projectEvaluation.gambarKomponent1 ? (
-                    <DropzoneContainer>
-                      <Image
-                        src={projectEvaluation.gambarKomponent1}
-                        alt={`Gambar komponen 1`}
-                        width={200}
-                        height={200}
-                        className="object-cover rounded overflow-hidden bg-secondary cursor-pointer border border-secondary min-w-14 aspect-square"
-                        onClick={() =>
-                          window.open(
-                            projectEvaluation.gambarKomponent1,
-                            "_blank"
-                          )
-                        }
-                        tabIndex={0}
-                        style={{ objectPosition: "top" }}
-                      />
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        type="button"
-                        onClick={openModalDeleteGambarKomponen1}
-                        className="absolute top-0 right-0 rounded-full"
-                      >
-                        <TrashIcon />
-                      </Button>
-                    </DropzoneContainer>
-                  ) : (
-                    <div>
-                      <FilesDropzone
-                        files={gambarKomponent1}
-                        setFiles={setGambarKomponent1}
-                      />
-                      {formik.touched.gambarKomponent1 &&
-                        formik.errors.gambarKomponent1 && (
-                          <ErrorInputMessage>
-                            {formik.errors.gambarKomponent1}
-                          </ErrorInputMessage>
-                        )}
-                    </div>
-                  )}
-
-                  {projectEvaluation.gambarKomponent2 ? (
-                    <DropzoneContainer>
-                      <Image
-                        src={projectEvaluation.gambarKomponent2}
-                        alt={`Gambar komponen 2`}
-                        width={200}
-                        height={200}
-                        className="object-cover rounded overflow-hidden bg-secondary cursor-pointer border border-secondary min-w-14 aspect-square"
-                        onClick={() =>
-                          window.open(
-                            projectEvaluation.gambarKomponent2,
-                            "_blank"
-                          )
-                        }
-                        tabIndex={0}
-                        style={{ objectPosition: "top" }}
-                      />
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        type="button"
-                        onClick={openModalDeleteGambarKomponen2}
-                        className="absolute top-0 right-0 rounded-full"
-                      >
-                        <TrashIcon />
-                      </Button>
-                    </DropzoneContainer>
-                  ) : (
-                    <div>
-                      <FilesDropzone
-                        files={gambarKomponent2}
-                        setFiles={setGambarKomponent2}
-                      />
-                      {formik.touched.gambarKomponent2 &&
-                        formik.errors.gambarKomponent2 && (
-                          <ErrorInputMessage>
-                            {formik.errors.gambarKomponent2}
-                          </ErrorInputMessage>
-                        )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-slate-50/80 rounded-xl p-6 border border-slate-200/50 mt-6">
-            <h3 className="text-xl font-bold text-slate-900 mb-8 flex items-center space-x-3">
-              <Microscope className="size-5 text-green-500" />
-              <span>Struktur Mikro</span>
-            </h3>
-
-            <div>
-              <div className="flex flex-col md:flex-row gap-4 justify-between md:items-center mb-4">
-                <Label>Data Gambar Keseluruhan</Label>
-
-                <div className="flex gap-3 items-center">
-                  <span className="text-sm text-muted-foreground">
-                    {projectEvaluation.listGambarStrukturMikro.length ||
-                      listGambarStrukturMikro.length}{" "}
-                    Gambar
-                  </span>
-
-                  {projectEvaluation.listGambarStrukturMikro.length ? (
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={openModalDeleteGambarStrukturMikro}
-                    >
-                      Hapus Semua
-                    </Button>
-                  ) : (
-                    <Button asChild type="button">
-                      <Label
-                        htmlFor="listGambarStrukturMikro"
-                        className="cursor-pointer"
-                      >
-                        Upload
-                      </Label>
-                    </Button>
-                  )}
-                </div>
-                <Input
-                  multiple
-                  className="hidden"
-                  type="file"
-                  name="listGambarStrukturMikro"
-                  id="listGambarStrukturMikro"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const files = e.target.files;
-                    if (!files) return;
-
-                    const fileArray = Array.from(files); // Sekarang jadi File[]
-
-                    const filesWithPreview = fileArray.map((file) =>
-                      Object.assign(file, {
-                        preview: URL.createObjectURL(file)
-                      })
-                    );
-
-                    // const fileArray = Array.from(files).map((file) => ({
-                    //   ...file,
-                    //   preview: URL.createObjectURL(file)
-                    // }));
-
-                    setListGambarStrukturMikro((prev) => [
-                      ...prev,
-                      ...filesWithPreview
-                    ]);
-                  }}
-                />
-              </div>
-
-              {projectEvaluation.listGambarStrukturMikro.length ? (
-                <DropzoneContainer>
-                  <div className="flex flex-nowrap items-center gap-2 overflow-x-auto">
-                    {projectEvaluation.listGambarStrukturMikro.map(
-                      (image, index) => (
-                        <div
-                          key={image}
-                          className="relative min-w-[150px] min-h-[150px] overflow-hidden"
-                        >
-                          <Image
-                            key={image}
-                            src={image}
-                            className="object-cover rounded-md"
-                            alt={`Gambar struktur mikro ${index + 1}`}
-                            fill
-                          />
-                        </div>
-                      )
-                    )}
-                  </div>
-                </DropzoneContainer>
-              ) : (
-                <>
-                  {!listGambarStrukturMikro.length && (
-                    <DropzoneContainer>
-                      <ImageUp
-                        size={50}
-                        className="mx-auto text-muted-foreground mb-5"
-                      />
-                      <p className="text-sm text-muted-foreground">
-                        Belum ada gambar yang di pilih
-                      </p>
-                    </DropzoneContainer>
-                  )}
-
-                  <div className="flex gap-5 overflow-x-auto">
-                    {listGambarStrukturMikro.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center space-x-2 mt-2"
-                      >
-                        <div className="relative w-[150px] h-[150px] overflow-hidden">
-                          <Image
-                            src={file.preview}
-                            className="object-cover rounded-md"
-                            alt={file.name}
-                            fill
-                          />
-
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute top-1 right-1"
-                            onClick={() => {
-                              // Revoke URL to prevent memory leaks
-                              URL.revokeObjectURL(file.preview);
-
-                              // Remove file from state
-                              setListGambarStrukturMikro((prev) =>
-                                prev.filter((_, i) => i !== index)
-                              );
-                            }}
-                          >
-                            <TrashIcon className="text-red-500" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
-                <div className="space-y-2">
-                  <Label htmlFor="aiModelFasa">AI Model Fasa</Label>
-                  <div className="flex gap-2">
-                    <ComboboxGroup
-                      value={formik.values.aiModelFasa}
-                      items={[
-                        {
-                          label: "Model 1",
-                          value: "model-1"
-                        }
-                      ]}
-                      onSelect={(value) =>
-                        formik.setFieldValue("aiModelFasa", value)
-                      }
-                      noItemsFallbackText="Tidak Ditemukan"
-                      placeholder="Pilih Model"
-                    />
-                  </div>
-                  {formik.touched.aiModelFasa && formik.errors.aiModelFasa && (
-                    <ErrorInputMessage>
-                      {formik.errors.aiModelFasa}
-                    </ErrorInputMessage>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="aiModelCrack">AI Model Crack</Label>
-                  <div className="flex gap-2">
-                    <ComboboxGroup
-                      value={formik.values.aiModelCrack}
-                      items={[
-                        {
-                          label: "Model 1",
-                          value: "model-1"
-                        }
-                      ]}
-                      onSelect={(value) =>
-                        formik.setFieldValue("aiModelCrack", value)
-                      }
-                      noItemsFallbackText="Tidak Ditemukan"
-                      placeholder="Pilih Model"
-                    />
-                  </div>
-                  {formik.touched.aiModelCrack &&
-                    formik.errors.aiModelCrack && (
-                      <ErrorInputMessage>
-                        {formik.errors.aiModelCrack}
-                      </ErrorInputMessage>
-                    )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="aiModelDegradasi">AI Model Degradasi</Label>
-                  <div className="flex gap-2">
-                    <ComboboxGroup
-                      value={formik.values.aiModelDegradasi}
-                      items={[
-                        {
-                          label: "Model 1",
-                          value: "model-1"
-                        }
-                      ]}
-                      onSelect={(value) =>
-                        formik.setFieldValue("aiModelDegradasi", value)
-                      }
-                      noItemsFallbackText="Tidak Ditemukan"
-                      placeholder="Pilih Model"
-                    />
-                  </div>
-                  {formik.touched.aiModelDegradasi &&
-                    formik.errors.aiModelDegradasi && (
-                      <ErrorInputMessage>
-                        {formik.errors.aiModelDegradasi}
-                      </ErrorInputMessage>
-                    )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-end mt-6">
-            <Button type="submit" className="w-full" size="lg" asChild>
-              <Link
-                href={`/dashboard/projects/${projectId}/evaluation/${projectEvaluationId}/analysis-result`}
-              >
-                <Save />
-                Analisa Keseluruhan
-              </Link>
-            </Button>
-          </div>
+        <div className="text-end">
+          <Button type="submit" className="w-full" size="lg">
+            <Save />
+            Analisa Keseluruhan
+          </Button>
         </div>
       </form>
 

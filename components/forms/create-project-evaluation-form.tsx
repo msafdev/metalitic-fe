@@ -63,21 +63,6 @@ export default function CreateProjectEvaluationForm({
     <form onSubmit={formik.handleSubmit} noValidate>
       <div className="grid grid-cols-1 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="id">ID Pengujian</Label>
-          <Input
-            placeholder="ID Pengujian"
-            id="id"
-            name="id"
-            onChange={formik.handleChange}
-            value={formik.values.id}
-            disabled
-          />
-          {formik.touched.id && formik.errors.id && (
-            <ErrorInputMessage>{formik.errors.id}</ErrorInputMessage>
-          )}
-        </div>
-
-        <div className="space-y-2">
           <Label htmlFor="nama">Nama</Label>
           <Input
             placeholder="Nama Pengujian"

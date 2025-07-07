@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { ErrorHandling } from "@/lib/error-handling";
-import { verifyUser } from "@/lib/api/user-api";
+import { updateUser, verifyUser } from "@/lib/api/user-api";
 import { QUERIES } from "@/lib/constants/queries";
 import { deleteUser } from "@/lib/api/auth-api";
 
@@ -21,6 +21,22 @@ export default function useUserMutation() {
 
       router.push("/dashboard/users");
       queryClient.invalidateQueries({ queryKey: [QUERIES.USERS] });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      ErrorHandling.handle(error);
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateUser,
+    onSuccess: (data, variables) => {
+      toast("✔️ Berhasil", {
+        description: "User berhasil diubah"
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [QUERIES.USERS, variables.id]
+      });
     },
     onError: (error: AxiosError<{ message: string }>) => {
       ErrorHandling.handle(error);
@@ -45,6 +61,7 @@ export default function useUserMutation() {
 
   return {
     verifyMutation,
-    deleteMutation
+    deleteMutation,
+    updateMutation
   };
 }

@@ -233,7 +233,7 @@ export default function CreateProjectForm({
                 <div className="grid place-content-center gap-4 text-sm text-muted-foreground/70 py-10">
                   <UserRoundX className="mx-auto" />
                   <p className="px-8 text-pretty text-center">
-                    Tidak ada penguji tersedia
+                    Tidak ada penguji yang tersedia
                   </p>
                 </div>
               ))}

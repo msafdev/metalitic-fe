@@ -11,11 +11,7 @@ import { Separator } from "@radix-ui/react-separator";
 import React from "react";
 import UserDetail from "./components/user-detail";
 
-export default function UserDetailPage({
-  params
-}: {
-  params: { id: string };
-}) {
+export default function UserDetailPage({ params }: { params: { id: string } }) {
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -31,10 +27,6 @@ export default function UserDetailPage({
               <BreadcrumbItem>
                 <BreadcrumbLink href="/dashboard/projects">User</BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{params.id}</BreadcrumbPage>
-              </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
@@ -43,7 +35,7 @@ export default function UserDetailPage({
         <div className="space-y-2 px-4">
           <h2 className="text-2xl font-semibold">Detail pengguna</h2>
         </div>
-        <UserDetail idUser={params.id}/>
+        <UserDetail idUser={params.id} />
       </div>
     </>
   );
