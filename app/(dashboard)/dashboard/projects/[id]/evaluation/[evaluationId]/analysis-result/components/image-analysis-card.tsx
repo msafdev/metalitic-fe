@@ -121,39 +121,31 @@ export default function ImageAnalysisCard({
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg h-fit">
-      <div className={cn("py-4 px-6 text-white", color)}>
-        <div className="flex items-center space-x-3">
-          <Icon className="w-6 h-6" />
-          <h3 className="text-xl font-bold">{title}</h3>
+    <div className="bg-background rounded-lg overflow-hidden shadow-sm h-fit border">
+      <div className={cn("py-2.5 px-4 text-primary-foreground", color)}>
+        <div className="flex items-center space-x-2">
+          <Icon className="w-5 h-5" />
+          <h3 className="text-sm font-semibold">{title}</h3>
         </div>
       </div>
 
-      {/* Image Section */}
-      <div className="p-6">
-        <div className="aspect-[16/12] rounded-2xl mb-6 flex items-center justify-center relative group">
+      <div className="p-4">
+        <div className="aspect-[16/12] rounded-md mb-4 relative">
           <Image
             src={analyzedResult.image}
             alt={`Gambar ${title}`}
             fill
-            className="rounded-2xl object-cover"
+            className="rounded-md object-cover"
           />
         </div>
 
-        {/* Analysis Form */}
-        <div className="space-y-4">
-          {/* Hasil Klasifikasi */}
+        <div className="space-y-3">
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-semibold text-slate-700">
+              <Label className="text-sm font-medium text-foreground">
                 Hasil Klasifikasi
               </Label>
-              <Badge
-                className={cn(
-                  "text-white px-4 py-2 text-sm font-medium",
-                  color
-                )}
-              >
+              <Badge className={cn("text-xs px-3 py-1", color)}>
                 {analyzedResult.mode === "AI"
                   ? analyzedResult.hasilKlasifikasiAI
                   : analyzedResult.hasilKlasifikasiManual}
@@ -161,67 +153,52 @@ export default function ImageAnalysisCard({
             </div>
           </div>
 
-          {/* Mode Klasifikasi */}
           <div className="space-y-1">
-            <Label className="text-sm font-semibold text-slate-700">
+            <Label className="text-sm font-medium text-foreground">
               Mode Klasifikasi
             </Label>
-
-            <div className="bg-slate-50/80 rounded-xl p-4">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  {typeMode === "AI" && (
+            <div className="bg-muted/40 rounded p-3">
+              <div className="flex items-center justify-between mb-2.5">
+                <div className="flex items-center space-x-2">
+                  {typeMode === "AI" ? (
                     <>
-                      <Bot className="w-4 h-4 text-slate-600" />
-                      <span className="text-sm font-medium text-slate-700">
-                        AI Mode
-                      </span>
+                      <Bot className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-foreground">AI Mode</span>
                     </>
-                  )}
-
-                  {typeMode === "MANUAL" && (
+                  ) : (
                     <>
-                      <User className="w-4 h-4 text-slate-600" />
-                      <span className="text-sm font-medium text-slate-700">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-foreground">
                         Manual Mode
                       </span>
                     </>
                   )}
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <Switch
                     checked={typeMode === "AI"}
                     onCheckedChange={(checked) =>
                       setTypeMode(checked ? "AI" : "MANUAL")
                     }
                   />
-
-                  {typeMode === "AI" && (
-                    <Badge
-                      variant="outline"
-                      className="bg-green-50 text-green-700 border-green-200"
-                    >
-                      {analyzedResult.confidence}%
-                    </Badge>
-                  )}
-
-                  {typeMode === "MANUAL" && (
-                    <Badge
-                      variant="outline"
-                      className="bg-orange-50 text-orange-700 border-orange-200"
-                    >
-                      Manual
-                    </Badge>
-                  )}
+                  <Badge
+                    variant={typeMode === "AI" ? "default" : "destructive"}
+                    className="text-xs px-2"
+                  >
+                    {typeMode === "AI"
+                      ? `${analyzedResult.confidence}%`
+                      : "Manual"}
+                  </Badge>
                 </div>
               </div>
               {typeMode === "AI" && (
-                <div className="bg-white/80 rounded-lg p-3 border border-slate-200">
+                <div className="bg-background rounded border border-border p-2">
                   <div className="flex items-center justify-between">
-                    <Label className="text-xs font-medium text-slate-600">
+                    <Label className="text-xs font-medium text-muted-foreground">
                       Model AI
                     </Label>
-                    <span className="text-sm font-semibold text-slate-800">
+
+                    <span className="text-sm font-semibold text-foreground">
                       {analyzedResult.modelAI}
                     </span>
                   </div>
@@ -230,30 +207,30 @@ export default function ImageAnalysisCard({
             </div>
           </div>
 
-          {/* Penguji */}
           <div className="space-y-1">
-            <Label className="text-sm font-semibold text-slate-700">
+            <Label className="text-sm font-medium text-foreground">
               Penguji
             </Label>
-            <div className="bg-slate-50/80 rounded-xl p-4">
-              <div className="flex items-center space-x-3">
-                <User className="w-4 h-4 text-slate-600" />
-                <span className="text-sm font-medium text-slate-800">
+
+            <div className="bg-muted/40 rounded p-3">
+              <div className="flex items-center space-x-2">
+                <User className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-foreground">
                   {analyzedResult.penguji}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Tanggal Update */}
           <div className="space-y-1">
-            <Label className="text-sm font-semibold text-slate-700">
+            <Label className="text-sm font-medium text-foreground">
               Tanggal Update
             </Label>
-            <div className="bg-slate-50/80 rounded-xl p-4">
-              <div className="flex items-center space-x-3">
-                <Calendar className="w-4 h-4 text-slate-600" />
-                <span className="text-sm font-medium text-slate-800">
+
+            <div className="bg-muted/40 rounded p-3">
+              <div className="flex items-center space-x-2">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-foreground">
                   {formatDate(
                     new Date(analyzedResult.tanggalUpdate),
                     "yyyy-MM-dd"
@@ -263,21 +240,20 @@ export default function ImageAnalysisCard({
             </div>
           </div>
 
-          {/* Input Hasil Manual */}
           <div className="space-y-1">
-            <Label className="text-sm font-semibold text-slate-700">
+            <Label className="text-sm font-medium text-foreground">
               Input Hasil Manual
             </Label>
-            <div className="bg-slate-50/80 rounded-xl p-4">
+            <div className="bg-muted/40 rounded p-2">
               <Select
                 onValueChange={(value) => setSelectedManualResult(value)}
                 value={selectedManualResult}
               >
-                <SelectTrigger className="border-0 h-10">
+                <SelectTrigger className="border-0 h-9">
                   <SelectValue placeholder={manualSelect.placeholder} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={"not-set"}>
+                  <SelectItem value="not-set">
                     {manualSelect.placeholder}
                   </SelectItem>
                   {manualSelect.items.map((item) => (
@@ -296,12 +272,10 @@ export default function ImageAnalysisCard({
             </div>
           </div>
 
-          {/* Update Button */}
           <Button
-            variant="secondary"
-            className={cn("w-full h-11", color)}
             onClick={handleUpdateAnalyzedResult}
             disabled={updateAnalyzedResultMutation.isPending}
+            className={cn("w-full h-10 text-sm font-medium", color)}
           >
             <Save className="w-4 h-4 mr-2" />
             Update Analisis

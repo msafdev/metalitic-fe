@@ -42,7 +42,7 @@ export default function Page() {
       </header>
       <div className="flex-1 flex flex-col py-4 pt-0 gap-4">
         <div className="space-y-2 px-4">
-          <h2 className="text-2xl font-semibold">Daftar Project</h2>
+          <h2 className="text-2xl font-semibold">Daftar Proyek</h2>
         </div>
         <div className="space-y-3.5">
           <DataTable

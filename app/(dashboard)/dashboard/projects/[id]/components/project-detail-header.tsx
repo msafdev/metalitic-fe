@@ -5,7 +5,6 @@ import CreateProjectForm from "@/components/forms/create-project-form";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -23,8 +22,10 @@ import {
   Settings,
   Settings2,
   User,
-  UserRoundX,
-  Users
+  Users,
+  FolderOpen,
+  Building,
+  UserRoundX
 } from "lucide-react";
 
 type Props = {
@@ -64,99 +65,147 @@ export default function ProjectDetailHeader({ idProject }: Props) {
   const project = data.data;
 
   return (
-    <>
-      <Card className="relative border border-gray-50">
-        <CardContent className="p-8">
-          {/* Header Section */}
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-            <div className="space-y-4">
-              {/* Project Title & Status */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 flex-wrap">
-                  <h1 className="text-2xl font-bold">{project.namaProject}</h1>
-                  <Button size="icon" variant="ghost" onClick={openModalEdit}>
-                    <Pencil />
-                  </Button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Badge
-                    variant="outline"
-                    className="text-sm font-mono bg-gray-50 border-gray-200"
-                  >
-                    {project.idProject}
-                  </Badge>
-                  <div className="h-1 w-1 bg-gray-300 rounded-full" />
-                  <span className="text-sm text-gray-500">
-                    Dibuat {formatDate(project.createdAt)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Project Info */}
-              <div className="flex flex-wrap items-center gap-6 text-gray-600 text-sm">
-                <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-lg border border-gray-100">
-                  <User className="w-4 h-4 text-blue-500" />
-                  <span className="font-medium">{project.pemintaJasa}</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-lg border border-gray-100">
-                  <CalendarDays className="w-4 h-4 text-green-500" />
-                  <span>{formatDate(project.tanggalOrderMasuk)}</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/60 px-3 py-2 rounded-lg border border-gray-100">
-                  <Users className="w-4 h-4 text-purple-500" />
-                  <span>{project.penguji.length} Tim Penguji</span>
-                </div>
-              </div>
-            </div>
-
-            <Button size="lg" onClick={openModalProjectEvaluation}>
-              <Plus className="w-5 h-5 mr-2" />
-              Tambah Pengujian
-            </Button>
-          </div>
-
-          {/* Tim Penguji */}
-          <div className="mt-4 py-4 px-6 bg-white/60 rounded-xl border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Tim Penguji
-              </h3>
-              <Badge variant="secondary" className="bg-gray-100">
-                {project.penguji.length} Anggota
+    <div className="flex flex-col gap-8 w-full">
+      {/* Header Section */}
+      <div className="flex items-center justify-between gap-6 py-4 px-4 border-y border-border">
+        <div className="flex items-center gap-3">
+          <Avatar className="size-16 rounded">
+            <AvatarFallback className="rounded capitalize bg-muted text-foreground font-semibold">
+              {project.namaProject.slice(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-3">
+              <p className="text-base font-medium text-foreground">
+                {project.namaProject}
+              </p>
+              <Badge variant="secondary" className="font-mono text-xs">
+                {project.idProject}
               </Badge>
+              <Button size="icon" variant="ghost" onClick={openModalEdit}>
+                <Pencil />
+              </Button>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {project.penguji.map((penguji, index) => (
-                <div
-                  key={penguji._id}
-                  className="flex items-center gap-2 px-2 py-2 rounded-full border border-gray-200 shadow-sm transition-shadow"
-                >
-                  <Avatar className="size-8 border-2 border-slate-200">
-                    <AvatarFallback className="text-[10px] bg-gradient-to-br from-slate-500 to-slate-600 text-white font-semibold">
-                      {penguji.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                        .slice(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium text-gray-700">
-                    {penguji.name}
-                  </span>
-                </div>
-              ))}
-            </div>
-            {!project.penguji.length && (
-              <div className="text-muted-foreground/70 text-center">
-                <UserRoundX className="mx-auto mb-3" />
-                <div>Belum ada penguji yang ditugaskan</div>
-              </div>
-            )}
+            <span className="text-xs font-medium text-muted-foreground">
+              Dibuat {formatDate(project.createdAt)}
+            </span>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        <Button
+          className="has-[>svg]:pl-2"
+          onClick={openModalProjectEvaluation}
+        >
+          <Plus size={12} /> Tambah Pengujian
+        </Button>
+      </div>
 
+      {/* Main Info Grid */}
+      <div className="px-4 grid gap-6 md:grid-cols-2">
+        {/* Informasi Proyek */}
+        <div>
+          <div className="flex items-center gap-3 text-lg font-semibold mb-4">
+            <FolderOpen className="size-5 text-primary" />
+            Informasi Proyek
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <User className="w-4 h-4 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  Peminta Jasa
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {project.pemintaJasa}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <CalendarDays className="w-4 h-4 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  Tanggal Order Masuk
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {formatDate(project.tanggalOrderMasuk)}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Users className="w-4 h-4 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium text-foreground">
+                  Tim Penguji
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {project.penguji.length} Anggota
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tim Penguji */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 text-lg font-semibold">
+            <Users className="size-5 text-amber-500" />
+            Tim Penguji
+          </div>
+
+          {!project.penguji.length ? (
+            <div className="text-center bg-muted text-muted-foreground rounded-md p-4 border border-dashed">
+              <UserRoundX className="mx-auto mb-2 text-foreground" />
+              <p className="text-sm">Belum ada penguji yang ditugaskan</p>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-foreground">
+                  Anggota Tim
+                </h3>
+                <Badge variant="secondary">
+                  {project.penguji.length} Anggota
+                </Badge>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {project.penguji.map((penguji) => (
+                  <div key={penguji._id} className="flex items-center gap-3">
+                    <Avatar className="size-8 border">
+                      <AvatarFallback className="text-[10px] bg-muted text-foreground font-semibold">
+                        {penguji.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .slice(0, 2)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm text-muted-foreground">
+                      {penguji.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Informasi Sistem */}
+      <div className="px-4">
+        <div className="flex items-center gap-3 text-lg font-semibold mb-4">
+          <Building className="size-5 text-purple-500" />
+          Informasi Sistem
+        </div>
+        <div className="space-y-2">
+          <div>
+            <p className="text-sm font-medium text-foreground">Project ID</p>
+            <p className="text-sm text-muted-foreground border bg-muted px-2 py-1 w-fit rounded font-mono">
+              {project._id}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Dialog */}
       <Dialog
         open={isOpenProjectEvaluation}
         onOpenChange={setIsOpenProjectEvaluation}
@@ -167,10 +216,9 @@ export default function ProjectDetailHeader({ idProject }: Props) {
         >
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Settings size={20} /> Tambah Pengujian Baru
+              <Settings size={18} /> Tambah Pengujian Baru
             </DialogTitle>
           </DialogHeader>
-
           <CreateProjectEvaluationForm
             projectId={idProject}
             closeModal={closeModalProjectEvaluation}
@@ -196,6 +244,6 @@ export default function ProjectDetailHeader({ idProject }: Props) {
           />
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

@@ -41,7 +41,7 @@ export default function useProjectEvaluationMutation() {
     mutationFn: updateProjectEvaluation,
     onSuccess: (data, variables) => {
       toast("✔️ Berhasil", {
-        description: `Pengujian proyek berhasil diubah`
+        description: "Pengujian proyek berhasil diubah"
       });
 
       queryClient.invalidateQueries({

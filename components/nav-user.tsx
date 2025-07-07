@@ -27,6 +27,7 @@ import {
 import useAuthMutation from "@/mutation/use-auth-mutation";
 import { useQuery } from "@tanstack/react-query";
 import { getProfile } from "@/lib/api/auth-api";
+import { useTheme } from "next-themes";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -36,6 +37,8 @@ export function NavUser() {
     queryKey: ["get-profile"],
     queryFn: getProfile
   });
+
+  const { setTheme, theme } = useTheme();
 
   return (
     <SidebarMenu>
@@ -87,24 +90,11 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              >
                 <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
+                Change theme
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

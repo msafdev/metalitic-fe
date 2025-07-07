@@ -26,3 +26,16 @@ export type DetailUserResponse = {
   message: string;
   data: User;
 };
+
+export type UpdateuserRequest = {
+  username: string;
+  name: string;
+  nomorInduk: string;
+  devisi: string;
+  jabatan: string;
+  email: string;
+  noHp: string;
+  alamat: string;
+  avatarUser: File;
+  isAdmin: boolean;
+};

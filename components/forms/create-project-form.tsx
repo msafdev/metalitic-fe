@@ -271,11 +271,11 @@ export default function CreateProjectForm({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Available Reviewers */}
-        <div className="bg-white/80 rounded-lg py-2 px-3.5 border border-slate-200">
+        <div className="rounded-lg py-2 px-3.5 border">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <div className="size-9 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center">
-                <Users className="size-4 text-white" />
+                <Users className="size-4" />
               </div>
               <div>
                 <h3 className="font-semibold text-sm text-foreground">
@@ -288,7 +288,7 @@ export default function CreateProjectForm({
             </div>
             <Badge
               variant="secondary"
-              className="aspect-square w-8 grid place-content-center bg-slate-100 text-foreground/80 font-semibold"
+              className="aspect-square w-8 grid place-content-center text-foreground/80 font-semibold"
             >
               {filteredTesters?.length ?? 0}
             </Badge>
@@ -300,7 +300,7 @@ export default function CreateProjectForm({
                 <div className="grid place-content-center gap-4 text-sm text-muted-foreground/70 py-10">
                   <UserRoundX className="mx-auto" />
                   <p className="px-8 text-pretty text-center">
-                    Tidak ada penguji tersedia
+                    Tidak ada penguji yang tersedia
                   </p>
                 </div>
               ))}
@@ -341,20 +341,20 @@ export default function CreateProjectForm({
         </div>
 
         {/* Assigned Reviewers */}
-        <div className="bg-gradient-to-br from-blue-50/80 to-sky-50/80 rounded-lg py-2 px-3.5 border border-blue-200/50">
+        <div className="rounded-lg py-2 px-3.5 border">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
-              <div className="size-9 bg-gradient-to-br from-blue-500 to-sky-600 rounded-xl flex items-center justify-center">
+              <div className="size-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
                 <CheckCircle className="size-4 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-sm text-blue-900">
+                <h3 className="font-semibold text-sm text-green-600">
                   Penguji Ditugaskan
                 </h3>
-                <p className="text-xs text-blue-700">Sudah ditugaskan</p>
+                <p className="text-xs text-green-700">Sudah ditugaskan</p>
               </div>
             </div>
-            <Badge className="aspect-square w-8 grid place-content-center bg-blue-100 text-blue-800 font-semibold border hover:bg-blue-100  border-blue-200">
+            <Badge className="aspect-square w-8 grid place-content-center bg-green-100 text-green-800 font-semibold border hover:bg-green-100  border-green-200">
               {selectedTesters.length}
             </Badge>
           </div>
@@ -373,8 +373,8 @@ export default function CreateProjectForm({
                 key={index}
                 className="flex items-center space-x-2 py-2 group"
               >
-                <Avatar className="size-9 border-2 border-blue-200">
-                  <AvatarFallback className="text-[10px] bg-gradient-to-br from-blue-500 to-sky-600 text-white font-semibold">
+                <Avatar className="size-9 border-2 border-green-200">
+                  <AvatarFallback className="text-[10px] bg-gradient-to-br from-green-500 to-emerald-600 text-white font-semibold">
                     {user.name
                       .split(" ")
                       .map((n) => n[0])
@@ -383,10 +383,10 @@ export default function CreateProjectForm({
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-blue-900 group-hover:text-blue-700">
+                  <p className="text-sm font-semibold text-green-700 group-hover:text-green-700">
                     {user.name}
                   </p>
-                  <p className="text-xs text-blue-600">
+                  <p className="text-xs text-green-700">
                     {getPositionLabel(user.jabatan)}
                   </p>
                 </div>

@@ -141,31 +141,24 @@ export default function ImageResultList({ projectEvaluationId }: Props) {
         return (
           <div
             key={modelAnalyzedResult._id}
-            className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+            className="backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-border"
             onClick={() => {
               setInitialOrderListImage(order);
               openModal();
             }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-100">
+            <div className="flex items-center justify-between p-4">
               <div className="flex items-center space-x-3">
                 <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center">
                   <Microscope className="w-3 h-3 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-slate-800">
-                    Struktur Mikro {order}
-                  </h4>
+                  <h4 className="font-semibold">Struktur Mikro {order}</h4>
                   <p className="text-xs text-slate-500">Sample #{order}</p>
                 </div>
               </div>
-              <Badge
-                variant="outline"
-                className="text-xs bg-green-50 text-green-700 border-green-200"
-              >
-                AI Analyzed
-              </Badge>
+              <Badge variant="primary-outline">AI Analyzed</Badge>
             </div>
 
             {/* Image */}
@@ -184,10 +177,15 @@ export default function ImageResultList({ projectEvaluationId }: Props) {
 
             {/* Controls */}
             <div className="p-4 space-y-1">
-              <div className="flex items-center justify-between p-2 bg-blue-50/50 rounded-lg">
+              <div className="flex items-center justify-between p-2 bg-blue-50/50 dark:bg-blue-950/50 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <Zap className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-medium">FASA Austenite</span>
+                  <span className="text-sm font-medium">
+                    FASA{" "}
+                    {modelAnalyzedResult.fasa.mode === "AI"
+                      ? modelAnalyzedResult.fasa.hasilKlasifikasiAI
+                      : modelAnalyzedResult.fasa.hasilKlasifikasiManual}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge
@@ -203,10 +201,15 @@ export default function ImageResultList({ projectEvaluationId }: Props) {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-2 bg-red-50/50 rounded-lg">
+              <div className="flex items-center justify-between p-2 bg-red-50/50 dark:bg-red-950/50 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <AlertCircle className="w-4 h-4 text-red-600" />
-                  <span className="text-sm font-medium">CRACK Terdeteksi</span>
+                  <span className="text-sm font-medium">
+                    CRACK{" "}
+                    {modelAnalyzedResult.crack.mode === "AI"
+                      ? modelAnalyzedResult.crack.hasilKlasifikasiAI
+                      : modelAnalyzedResult.crack.hasilKlasifikasiManual}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge
@@ -222,10 +225,15 @@ export default function ImageResultList({ projectEvaluationId }: Props) {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-2 bg-amber-50/50 rounded-lg">
+              <div className="flex items-center justify-between p-2 bg-amber-50/50 dark:bg-amber-950/50 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <TrendingDown className="w-4 h-4 text-amber-600" />
-                  <span className="text-sm font-medium">Degradasi ERA 1</span>
+                  <span className="text-sm font-medium">
+                    Degradasi{" "}
+                    {modelAnalyzedResult.degradasi.mode === "AI"
+                      ? modelAnalyzedResult.degradasi.hasilKlasifikasiAI
+                      : modelAnalyzedResult.degradasi.hasilKlasifikasiManual}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Badge
@@ -245,7 +253,7 @@ export default function ImageResultList({ projectEvaluationId }: Props) {
             <Separator />
 
             <div
-              className="flex items-center justify-between py-4 px-6 bg-slate-50/50 rounded-lg cursor-pointer"
+              className="flex items-center justify-between py-4 px-6 rounded-lg cursor-pointer"
               onClick={(e) => e.stopPropagation()}
             >
               <Label
@@ -272,14 +280,14 @@ export default function ImageResultList({ projectEvaluationId }: Props) {
       })}
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-slate-50 to-blue-50">
+        <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="border-b border-slate-200 pb-6">
             <div className="flex items-center justify-between">
               <div>
-                <DialogTitle className="text-2xl font-bold text-slate-800">
+                <DialogTitle className="text-2xl font-bold">
                   Hasil Pengujian Pergambar
                 </DialogTitle>
-                <p className="text-slate-600 mt-1">
+                <p className="text-muted-foreground mt-1">
                   Detailed analysis results and manual adjustments
                 </p>
               </div>
@@ -295,13 +303,10 @@ export default function ImageResultList({ projectEvaluationId }: Props) {
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
                   <div className="flex items-center space-x-2">
-                    <span className="text-lg font-bold text-slate-800">
+                    <span className="text-lg font-bold">
                       Gambar Struktur Mikro {initialOrderListImage}
                     </span>
-                    <Badge
-                      variant="outline"
-                      className="bg-blue-50 text-blue-700"
-                    >
+                    <Badge variant="primary-outline">
                       {initialOrderListImage}/{totalImage}
                     </Badge>
                   </div>
@@ -372,7 +377,7 @@ export default function ImageResultList({ projectEvaluationId }: Props) {
           </div>
 
           {/* Footer Actions */}
-          <div className="border-t border-slate-200 pt-6 flex justify-end">
+          <div className="border-t border-border pt-6 flex justify-end">
             <Button size="lg" variant="outline" onClick={closeModal}>
               Selesai
             </Button>
