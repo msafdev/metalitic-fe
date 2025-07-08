@@ -37,6 +37,7 @@ export type ProjectEvaluation = {
   progress: number;
   isAnalyzed: boolean;
   missingFields: (keyof ProjectEvaluation)[];
+  lastActive: string;
 };
 
 type IgnoredKeys =
@@ -48,6 +49,7 @@ type IgnoredKeys =
   | "status"
   | "progress"
   | "missingFields"
+  | "lastActive"
   | "project";
 export type MissingFieldKey = Exclude<keyof ProjectEvaluation, IgnoredKeys>;
 

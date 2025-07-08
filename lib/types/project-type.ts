@@ -31,6 +31,7 @@ export type ProjectEvaluationSummary = {
   material: string;
   createdAt: string;
   updatedAt: string;
+  lastActive: string;
 };
 
 export type ProjectResponse = {

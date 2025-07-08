@@ -33,8 +33,6 @@ export default function ProjectEvaluationList({ idProject }: Props) {
     (evaluation) => evaluation.status === "DRAFT"
   );
 
-  console.log(projectEvaluations);
-
   return (
     <>
       {!projectEvaluationsInProgress.length &&

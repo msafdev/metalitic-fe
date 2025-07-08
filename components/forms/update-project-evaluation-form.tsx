@@ -162,7 +162,15 @@ export default function UpdateProjectEvaluationForm({
       projectEvaluationId
     );
 
+    const interval = setInterval(() => {
+      updateProjectEvaluationStatusToProcessingMutation.mutate(
+        projectEvaluationId
+      );
+    }, 5 * 60 * 1000); // 5 menit = 300000 ms
+
     return () => {
+      clearInterval(interval);
+
       if (projectEvaluation?.status === "COMPLETED") return;
 
       updateProjectEvaluationStatusToPendingMutation.mutate({

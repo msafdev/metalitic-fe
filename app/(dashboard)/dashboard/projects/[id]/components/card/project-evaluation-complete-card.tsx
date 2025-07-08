@@ -48,6 +48,16 @@ export default function ProjectEvaluationCompleteCard({ evaluation }: Props) {
     }
   }, [evaluation.status, evaluation.progress]);
 
+  const isStillActive = useMemo(() => {
+    if (!evaluation.lastActive) return false;
+
+    const lastActiveDate = new Date(evaluation.lastActive).getTime();
+    const now = Date.now();
+
+    const diffInMs = now - lastActiveDate;
+    return diffInMs < 5 * 60 * 1000; // kurang dari 5 menit
+  }, [evaluation.lastActive]);
+
   return (
     <Link
       href={`/dashboard/projects/${evaluation.projectId}/evaluation/${evaluation.id}`}
@@ -133,7 +143,7 @@ export default function ProjectEvaluationCompleteCard({ evaluation }: Props) {
         </div>
 
         {/* Lock Overlay */}
-        {evaluation.status === "PROCESSING" && (
+        {evaluation.status === "PROCESSING" && isStillActive && (
           <div className="hidden group-hover:grid absolute inset-0 bg-muted/70 backdrop-blur-sm place-content-center text-center text-primary">
             <TriangleAlert className="mx-auto mb-2" size={80} />
             <div className="font-medium">
