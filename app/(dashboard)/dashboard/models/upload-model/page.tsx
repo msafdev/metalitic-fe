@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +13,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import useAIConfigurationMutation from "@/mutation/use-ai-configuration-mutation";
+import { useFormik } from "formik";
 import { BrainCircuit, Save } from "lucide-react";
+import { z } from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
 export default function ModelsTraningPage() {
   return (
@@ -54,7 +60,33 @@ export default function ModelsTraningPage() {
   );
 }
 
+const saveAiCompletedModelSchema = z.object({
+  aiModelName: z.string({ required_error: "Required" }),
+  aiModelFile: z.any({ required_error: "Required" })
+});
+
 function UploadModelSection() {
+  const { saveAiCompletedModelMutation } = useAIConfigurationMutation();
+
+  const formik = useFormik({
+    initialValues: {
+      aiModelName: "",
+      aiModelFile: null
+    },
+    enableReinitialize: true,
+    validationSchema: toFormikValidationSchema(saveAiCompletedModelSchema),
+    onSubmit: async (values) => {
+      if (!values.aiModelFile) return;
+
+      saveAiCompletedModelMutation.mutate({
+        aiModelName: values.aiModelName,
+        aiModelFile: values.aiModelFile as File
+      });
+    }
+  });
+
+  console.log(formik.values);
+
   return (
     <Card>
       <CardHeader>
@@ -67,30 +99,61 @@ function UploadModelSection() {
       </CardHeader>
 
       <CardContent className="space-y-10">
-        <div>
-          <h4 className="font-semibold mb-2">Pilih Model</h4>
+        <form onSubmit={formik.handleSubmit}>
+          <div className="mb-6">
+            <h4 className="font-semibold mb-2">Pilih Model</h4>
 
-          <div>
             <div className="flex gap-4">
+              {/* Input File */}
               <Input
-                placeholder="Upload Model AI"
+                id="aiModelFile"
+                name="aiModelFile"
                 type="file"
                 className="basis-4/12"
+                onChange={(e) =>
+                  formik.setFieldValue(
+                    "aiModelFile",
+                    e.currentTarget.files?.[0] || null
+                  )
+                }
               />
-              <Input placeholder="Masukkan Nama File Model AI" />
+
+              {/* Input Text */}
+              <Input
+                id="aiModelName"
+                name="aiModelName"
+                placeholder="Masukkan Nama File Model AI"
+                value={formik.values.aiModelName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="basis-8/12"
+              />
+            </div>
+
+            {/* Optional: Show error messages */}
+            <div className="text-sm text-red-500 mt-1">
+              {formik.touched.aiModelFile && formik.errors.aiModelFile && (
+                <div>{formik.errors.aiModelFile}</div>
+              )}
+              {formik.touched.aiModelName && formik.errors.aiModelName && (
+                <div>{formik.errors.aiModelName}</div>
+              )}
             </div>
           </div>
-        </div>
 
-        <div>
           {/* Action Buttons */}
-          <div className="flex justify-end pt-6 border-t border-slate-200 dark:border-slate-700">
-            <Button className="flex items-center space-x-1" size="lg">
+          <div className="flex justify-end pt-6 border-t border-border">
+            <Button
+              className="flex items-center space-x-1"
+              size="lg"
+              type="submit"
+              disabled={saveAiCompletedModelMutation.isPending}
+            >
               <Save className="w-4 h-4" />
               <span>Simpan Model</span>
             </Button>
           </div>
-        </div>
+        </form>
       </CardContent>
     </Card>
   );

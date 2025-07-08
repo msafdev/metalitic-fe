@@ -25,6 +25,7 @@ import ProfileAvatar from "@/components/profile-avatar";
 import { Button } from "@/components/ui/button";
 import { useMemo } from "react";
 import ImageResultList from "./image-result-list";
+import useProjectEvaluationMutation from "@/mutation/use-project-evaluation-mutation";
 
 type Props = {
   projectId: string;
@@ -40,11 +41,21 @@ export default function ProjectEvaluationAnalysisResult({
     queryKey: [QUERIES.ANALYZED_RESULT, projectEvaluationId]
   });
 
+  const { createReportProjectEvaluationMutation } =
+    useProjectEvaluationMutation();
+
   const analyzedResult = useMemo(() => {
     return data?.data;
   }, [data]);
 
   if (!analyzedResult || isLoading) return null;
+
+  const handleCreateReport = () => {
+    createReportProjectEvaluationMutation.mutate({
+      id: projectEvaluationId,
+      body: analyzedResult
+    });
+  };
 
   return (
     <div className="space-y-8">
@@ -220,7 +231,12 @@ export default function ProjectEvaluationAnalysisResult({
 
       {/* CTA */}
       <div className="mt-4">
-        <Button className="w-full" size={"lg"}>
+        <Button
+          className="w-full"
+          size={"lg"}
+          onClick={handleCreateReport}
+          disabled={createReportProjectEvaluationMutation.isPending}
+        >
           <NotepadText className="mr-2" />
           Buat Laporan
         </Button>

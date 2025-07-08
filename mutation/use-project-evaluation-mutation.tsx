@@ -1,6 +1,7 @@
 import {
   analyzeProjectEvaluation,
   createProjectEvaluation,
+  createReportProjectEvaluation,
   deleteProjectEvaluation,
   deleteProjectEvaluationImageComponent1,
   deleteProjectEvaluationImageComponent2,
@@ -134,6 +135,22 @@ export default function useProjectEvaluationMutation() {
     }
   });
 
+  const createReportProjectEvaluationMutation = useMutation({
+    mutationFn: createReportProjectEvaluation,
+    onSuccess: (data, variables) => {
+      toast("✔️ Berhasil", {
+        description: `Report Pengujian proyek berhasil dibuat`
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [QUERIES.PROJECTS_EVALUATION, variables.id]
+      });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      ErrorHandling.handle(error);
+    }
+  });
+
   const deleteProjectEvaluationImageComponent1Mutation = useMutation({
     mutationFn: deleteProjectEvaluationImageComponent1,
     onSuccess: (data, variables) => {
@@ -192,6 +209,7 @@ export default function useProjectEvaluationMutation() {
     deleteProjectEvaluationImageComponent2Mutation,
     deleteProjectEvaluationImageListMicroStructureMutation,
     analyzeProjectEvaluationMutation,
-    updateAnalyzedResultMutation
+    updateAnalyzedResultMutation,
+    createReportProjectEvaluationMutation
   };
 }

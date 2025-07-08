@@ -4,6 +4,7 @@ import {
   AnalyzedResultResponse,
   CreateProjectEvaluationRequest,
   CreateProjectEvaluationResponse,
+  CreateReportProjectEvaluationRequest,
   GetAiClasificationListResponse,
   GetAiModelsListResponse,
   GetProjectEvaluationDetailResponse,
@@ -146,6 +147,24 @@ export async function updateAnalyzedResult({
 }) {
   const res = await api.put<AnalyzedResultResponse>(
     `${API_URL}/manager/projects/evaluation/${id}/analyzed-result`,
+    body,
+    {
+      withCredentials: true
+    }
+  );
+
+  return res.data;
+}
+
+export async function createReportProjectEvaluation({
+  id,
+  body
+}: {
+  id: string;
+  body: CreateReportProjectEvaluationRequest;
+}) {
+  const res = await api.post(
+    `${API_URL}/manager/projects/evaluation/${id}/create-report`,
     body,
     {
       withCredentials: true

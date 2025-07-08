@@ -193,6 +193,8 @@ export type AnalyzedResult = {
   __v: number;
 };
 
+export type CreateReportProjectEvaluationRequest = AnalyzedResult;
+
 type Conclusion = {
   strukturMikro: string;
   fiturMikroskopik: string;

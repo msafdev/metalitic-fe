@@ -1,6 +1,7 @@
 import {
   aiModelUploadImage,
   aiStartTraining,
+  saveAiCompletedModel,
   saveAiModel
 } from "@/lib/api/ai-configuation.api";
 import { ErrorHandling } from "@/lib/error-handling";
@@ -41,9 +42,22 @@ export default function useAIConfigurationMutation() {
     }
   });
 
+  const saveAiCompletedModelMutation = useMutation({
+    mutationFn: saveAiCompletedModel,
+    onSuccess: (data, variables) => {
+      toast("✔️ Berhasil", {
+        description: "Model AI telah berhasil disimpan"
+      });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      ErrorHandling.handle(error);
+    }
+  });
+
   return {
     aiModelUploadImageMutation,
     aiStartTrainingMutation,
-    saveAiModelMutation
+    saveAiModelMutation,
+    saveAiCompletedModelMutation
   };
 }
