@@ -64,6 +64,10 @@ export default function TrainingSection({ aiModelClasification }: Props) {
                 value={config.aiFileModelName}
                 onChange={(e) => setConfig({ aiFileModelName: e.target.value })}
               />
+              {/* 
+              // TODO === UBAH TOMBOL UNTUK INTEGRASI DENGAN AI
+              // GUNAKAN TANSTACK-QUERY UNTUK MELAKUKAN REQUEST KE API
+              */}
               <Button
                 type="button"
                 onClick={handleStartTraining}

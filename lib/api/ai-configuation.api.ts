@@ -29,6 +29,8 @@ export async function aiModelUploadImage(body: AiModelUploadImageRequest) {
 
   return res.data;
 }
+
+// TODO === API UNTUK MULAI AI TRAINING
 export async function aiStartTraining(body: AiStartTrainingRequest) {
   const res = await api.post(
     `${API_URL}/manager/ai-configuration/start-training`,
@@ -41,6 +43,7 @@ export async function aiStartTraining(body: AiStartTrainingRequest) {
   return res.data;
 }
 
+// TODO === MASIH STATIK
 export async function saveAiModel(body: AiStartTrainingRequest) {
   const res = await api.post(
     `${API_URL}/manager/ai-configuration/save-model`,
