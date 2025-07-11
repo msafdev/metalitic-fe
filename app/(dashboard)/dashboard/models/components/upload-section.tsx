@@ -247,7 +247,10 @@ export function UploadSection({ aiModelClasification }: Props) {
               className="flex items-center space-x-1"
               size="lg"
               onClick={handleNext}
-              disabled={getAiRecommendationFromSampleMutation.isPending}
+              disabled={
+                getAiRecommendationFromSampleMutation.isPending ||
+                !config.imageList.size
+              }
             >
               {getAiRecommendationFromSampleMutation.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -271,26 +274,6 @@ export function UploadSection({ aiModelClasification }: Props) {
           <DriveView onClose={closeModalStorageFile} />
         </DialogContent>
       </Dialog>
-
-      {/* <div className="fixed top-0 left-0 right-0 bottom-0 z-50 bg-black/80 grid place-content-center"> */}
-      {/* <div
-        className={`fixed top-0 left-0 right-0 bottom-0 z-50 bg-black/80 grid place-content-center ${
-          isOpenStorageFile ? "" : "hidden"
-        }`}
-      >
-        <div className="relative bg-background p-5 rounded-lg max-w-screen-sm sm:max-w-screen-lg md:max-w-screen-xl">
-          <div>
-            <CardTitle>Pilih File dari Server</CardTitle>
-            <button className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </button>
-          </div>
-          <div className="relative max-h-[80vh] overflow-y-auto w-[900px] max-w-full">
-            <DriveView onClose={closeModalStorageFile} />
-          </div>
-        </div> */}
-      {/* </div> */}
     </>
   );
 }
