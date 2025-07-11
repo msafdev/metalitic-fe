@@ -8,6 +8,7 @@ import { ArrowRight, ChevronLeft, Database } from "lucide-react";
 import Image from "next/image";
 import { useTab } from "../context/tab-context";
 import { useAIConfiguration } from "../context/ai-configuration-context";
+import { getAssetImage } from "@/lib/utils";
 
 type Props = {
   aiModelClasification: AiModelClasification;
@@ -51,8 +52,8 @@ export default function DatasetSection({ aiModelClasification }: Props) {
           </div>
 
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {config.imageList.map((item, index) => {
-              const imageFile = item as File & { preview: string };
+            {Array.from(config.imageList).map((item, index) => {
+              const imageFile = item;
 
               return (
                 <div
@@ -60,7 +61,7 @@ export default function DatasetSection({ aiModelClasification }: Props) {
                   className="aspect-[4/3] bg-muted-foreground/20 rounded-lg overflow-hidden relative"
                 >
                   <Image
-                    src={imageFile.preview}
+                    src={getAssetImage(imageFile)}
                     alt={"Placeholder"}
                     className="w-full h-full object-cover"
                     fill

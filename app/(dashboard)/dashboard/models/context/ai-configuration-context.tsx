@@ -3,12 +3,18 @@
 
 import { AiRecommendationResult } from "@/lib/types/ai-configuration.type";
 import { AiModelClasification } from "@/lib/types/common-type";
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect
+} from "react";
 
 type AIMode = "AI" | "MANUAL";
 
 type AIConfiguration = {
-  imageList: string[] | (File & { preview: string })[];
+  imageList: Set<string>;
   aiRecommendationResult: (AiRecommendationResult & {
     useRecommendation: boolean;
   })[];
@@ -18,7 +24,7 @@ type AIConfiguration = {
 };
 
 const defaultConfig: AIConfiguration = {
-  imageList: [],
+  imageList: new Set(),
   aiRecommendationResult: [],
   useOlderDatasetImage: true,
   aiFileModelName: "",

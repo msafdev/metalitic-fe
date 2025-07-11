@@ -195,7 +195,9 @@ export type AnalyzedResult = {
   __v: number;
 };
 
-export type CreateReportProjectEvaluationRequest = AnalyzedResult;
+export type CreateReportProjectEvaluationRequest = AnalyzedResult & {
+  hasilAnalisaIdForReport: string[];
+};
 
 type Conclusion = {
   strukturMikro: string;

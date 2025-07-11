@@ -51,8 +51,6 @@ export default function TrainingSection({ aiModelClasification }: Props) {
         </CardTitle>
       </CardHeader>
 
-      <pre>{JSON.stringify(config, null, 2)}</pre>
-
       <CardContent className="space-y-10">
         <div>
           <h4 className="font-semibold mb-2">Proses Training</h4>

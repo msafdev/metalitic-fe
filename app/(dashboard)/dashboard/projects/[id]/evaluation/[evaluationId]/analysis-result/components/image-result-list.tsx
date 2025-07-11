@@ -36,11 +36,16 @@ import { toast } from "sonner";
 
 type Props = {
   projectEvaluationId: string;
+  includedResultIds: string[];
+  setIncludedResultIds: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-export default function ImageResultList({ projectEvaluationId }: Props) {
+export default function ImageResultList({
+  projectEvaluationId,
+  includedResultIds,
+  setIncludedResultIds
+}: Props) {
   const { isOpen, openModal, setIsOpen, closeModal } = useModal();
-  const [includedResultIds, setIncludedResultIds] = useState<string[]>([]);
   const [initialOrderListImage, setInitialOrderListImage] = useState(1);
 
   const { data, isLoading } = useQuery({

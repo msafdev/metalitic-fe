@@ -1,5 +1,5 @@
 import {
-  aiModelUploadImage,
+  getAiRecommendationFromSample,
   aiStartTraining,
   saveAiCompletedModel,
   saveAiModel
@@ -10,8 +10,8 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 export default function useAIConfigurationMutation() {
-  const aiModelUploadImageMutation = useMutation({
-    mutationFn: aiModelUploadImage,
+  const getAiRecommendationFromSampleMutation = useMutation({
+    mutationFn: getAiRecommendationFromSample,
     onSuccess: (data, variables) => {},
     onError: (error: AxiosError<{ message: string }>) => {
       ErrorHandling.handle(error);
@@ -55,7 +55,7 @@ export default function useAIConfigurationMutation() {
   });
 
   return {
-    aiModelUploadImageMutation,
+    getAiRecommendationFromSampleMutation,
     aiStartTrainingMutation,
     saveAiModelMutation,
     saveAiCompletedModelMutation

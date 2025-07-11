@@ -23,7 +23,7 @@ import {
 import Image from "next/image";
 import ProfileAvatar from "@/components/profile-avatar";
 import { Button } from "@/components/ui/button";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import ImageResultList from "./image-result-list";
 import useProjectEvaluationMutation from "@/mutation/use-project-evaluation-mutation";
 
@@ -41,6 +41,8 @@ export default function ProjectEvaluationAnalysisResult({
     queryKey: [QUERIES.ANALYZED_RESULT, projectEvaluationId]
   });
 
+  const [includedResultIds, setIncludedResultIds] = useState<string[]>([]);
+
   const { createReportProjectEvaluationMutation } =
     useProjectEvaluationMutation();
 
@@ -53,7 +55,10 @@ export default function ProjectEvaluationAnalysisResult({
   const handleCreateReport = () => {
     createReportProjectEvaluationMutation.mutate({
       id: projectEvaluationId,
-      body: analyzedResult
+      body: {
+        ...analyzedResult,
+        hasilAnalisaIdForReport: includedResultIds
+      }
     });
   };
 
@@ -177,7 +182,11 @@ export default function ProjectEvaluationAnalysisResult({
           Hasil Analisa Gambar
         </h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          <ImageResultList projectEvaluationId={projectEvaluationId} />
+          <ImageResultList
+            projectEvaluationId={projectEvaluationId}
+            includedResultIds={includedResultIds}
+            setIncludedResultIds={setIncludedResultIds}
+          />
         </div>
       </section>
 

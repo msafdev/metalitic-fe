@@ -11,13 +11,16 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import StepperNavigation from "../components/stepper-navigation";
+import { AIConfigurationProvider } from "../context/ai-configuration-context";
 import { TabProvider } from "../context/tab-context";
 import MainContent from "./main-content";
-import { AIConfigurationProvider } from "../context/ai-configuration-context";
+import { usePathname } from "next/navigation";
 
 export default function ModelsDataUploadPage() {
+  const pathname = usePathname();
+
   return (
-    <AIConfigurationProvider>
+    <AIConfigurationProvider key={pathname}>
       <TabProvider>
         <div>
           <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">

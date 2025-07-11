@@ -11,12 +11,12 @@ export type AiRecommendationResult = {
   useRecommendation: boolean;
 };
 
-export type AiModelUploadImageRequest = {
+export type GetAiRecommendationFromSampleRequest = {
   type: "fasa" | "crack" | "degradasi";
-  imageList: File[];
+  imageList: string[];
 };
 
-export type AiModelUploadImageResponse = {
+export type GetAiRecommendationFromSampleResponse = {
   status: boolean;
   message: string;
   data: {

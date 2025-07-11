@@ -1,39 +1,13 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { getAiClasificationList } from "@/lib/api/project-evaluation-api";
-import { QUERIES } from "@/lib/constants/queries";
+import { AiRecommendationResult } from "@/lib/types/ai-configuration.type";
 import { AiModelClasification } from "@/lib/types/common-type";
-import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
-import {
-  ArrowRight,
-  Brain,
-  Calendar,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  Eye,
-  User
-} from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { ArrowRight, ChevronLeft } from "lucide-react";
+import { useState } from "react";
 import { useAIConfiguration } from "../context/ai-configuration-context";
 import { useTab } from "../context/tab-context";
 import DataAnotationItem from "./data-anotation.item";
-import { AiRecommendationResult } from "@/lib/types/ai-configuration.type";
 
 type Props = {
   aiModelClasification: AiModelClasification;

@@ -1,28 +1,20 @@
 import { api } from "../axios";
 import {
-  AiModelUploadImageRequest,
-  AiModelUploadImageResponse,
   AiSaveCompletedRequest,
-  AiStartTrainingRequest
+  AiStartTrainingRequest,
+  GetAiRecommendationFromSampleRequest,
+  GetAiRecommendationFromSampleResponse
 } from "../types/ai-configuration.type";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export async function aiModelUploadImage(body: AiModelUploadImageRequest) {
-  const formDataBody = new FormData();
-
-  formDataBody.append("type", body.type);
-  body.imageList.forEach((file) => {
-    formDataBody.append("imageList", file); // TANPA [0], [1], dst
-  });
-
-  const res = await api.post<AiModelUploadImageResponse>(
-    `${API_URL}/manager/ai-configuration/upload-image`,
-    formDataBody,
+export async function getAiRecommendationFromSample(
+  body: GetAiRecommendationFromSampleRequest
+) {
+  const res = await api.post<GetAiRecommendationFromSampleResponse>(
+    `${API_URL}/manager/ai-configuration/get-recommendation-from-sample`,
+    body,
     {
-      headers: {
-        "Content-Type": "multipart/form-data"
-      },
       withCredentials: true
     }
   );

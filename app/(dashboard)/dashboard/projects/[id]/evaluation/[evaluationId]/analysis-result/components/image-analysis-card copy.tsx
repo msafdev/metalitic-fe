@@ -143,10 +143,6 @@ export default function ImageAnalysisCard({
           />
         </div>
 
-        <div>
-          <pre>{JSON.stringify(analyzedResult, null, 2)}</pre>
-        </div>
-
         {/* Analysis Form */}
         <div className="space-y-4">
           {/* Hasil Klasifikasi */}

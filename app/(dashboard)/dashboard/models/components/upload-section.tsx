@@ -21,7 +21,8 @@ import {
   Folder,
   ImageOff,
   Loader2,
-  Trash2
+  Trash2,
+  X
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,6 +31,17 @@ import { ActiveStep } from "./stepper-navigation";
 import { useTab } from "../context/tab-context";
 import useAIConfigurationMutation from "@/mutation/use-ai-configuration-mutation";
 import { useAIConfiguration } from "../context/ai-configuration-context";
+import useModal from "@/hooks/use-modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
+import { AlertDialogHeader } from "@/components/ui/alert-dialog";
+import DriveView from "./drive-view";
+import { getAssetImage } from "@/lib/utils";
 
 type Props = {
   aiModelClasification: AiModelClasification;
@@ -37,29 +49,38 @@ type Props = {
 
 export function UploadSection({ aiModelClasification }: Props) {
   const { setActiveTab } = useTab();
-  const { aiModelUploadImageMutation } = useAIConfigurationMutation();
+  const { getAiRecommendationFromSampleMutation } =
+    useAIConfigurationMutation();
   const { config, setConfig } = useAIConfiguration();
+  const {
+    isOpen: isOpenStorageFile,
+    setIsOpen: setIsOpenStorageFile,
+    openModal: openModalStorageFile,
+    closeModal: closeModalStorageFile
+  } = useModal();
 
-  const [uploadedFiles, setUploadedFiles] = useState<
-    (File & { preview: string })[]
-  >((config.imageList as (File & { preview: string })[]) || []);
+  // const [uploadedFiles, setUploadedFiles] = useState<Set<string>>(
+  //   config.imageList
+  // );
 
   const removeFile = (index: number) => {
-    const updatedFiles = [...uploadedFiles];
-    updatedFiles.splice(index, 1);
-    setUploadedFiles(updatedFiles);
+    const arrayFiles = Array.from(config.imageList);
+    arrayFiles.splice(index, 1); // hapus berdasarkan index
+    setConfig({
+      imageList: new Set(arrayFiles)
+    }); // konversi kembali ke Set
   };
 
   const handleNext = () => {
-    aiModelUploadImageMutation.mutate(
+    getAiRecommendationFromSampleMutation.mutate(
       {
-        imageList: uploadedFiles,
+        imageList: Array.from(config.imageList),
         type: aiModelClasification
       },
       {
         onSuccess: (data) => {
           setConfig({
-            imageList: uploadedFiles,
+            imageList: config.imageList,
             aiRecommendationResult: data.data.aiRecommendationResult.map(
               (item) => ({
                 ...item,
@@ -91,14 +112,15 @@ export function UploadSection({ aiModelClasification }: Props) {
             </p>
           </div>
 
-          <Badge variant="primary-outline">
+          {/* <Badge variant="primary-outline">
             0/{uploadedFiles.length} teranotasi
-          </Badge>
+          </Badge> */}
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Upload Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <Button
+              onClick={openModalStorageFile}
               asChild
               variant="outline"
               className="h-24 border border-dashed border-muted-foreground hover:border-primary transition-colors bg-transparent hover:bg-primary/10 cursor-pointer"
@@ -107,7 +129,7 @@ export function UploadSection({ aiModelClasification }: Props) {
                 <div className="text-center">
                   <FileImage className="w-8 h-8 mx-auto mb-1 text-muted-foreground" />
                   <span className="text-sm font-medium">Pilih File</span>
-                  <Input
+                  {/* <Input
                     accept="image/*"
                     id="fileUpload"
                     className="hidden"
@@ -133,7 +155,7 @@ export function UploadSection({ aiModelClasification }: Props) {
                         ]);
                       }
                     }}
-                  />
+                  /> */}
                 </div>
               </Label>
             </Button>
@@ -143,7 +165,7 @@ export function UploadSection({ aiModelClasification }: Props) {
               variant="outline"
               className="h-24 border border-dashed border-muted-foreground hover:border-primary transition-colors bg-transparent hover:bg-primary/10 cursor-pointer"
             >
-              <Label htmlFor="folderUpload">
+              {/* <Label htmlFor="folderUpload">
                 <div className="text-center">
                   <Folder className="w-8 h-8 mx-auto mb-1 text-muted-foreground" />
                   <span className="text-sm font-medium">Pilih Folder</span>
@@ -175,17 +197,17 @@ export function UploadSection({ aiModelClasification }: Props) {
                     }}
                   />
                 </div>
-              </Label>
+              </Label> */}
             </Button>
           </div>
 
           {/* File Grid */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">
-              Gambar dipilih ({uploadedFiles.length})
+              Gambar dipilih ({config.imageList.size})
             </h3>
 
-            {!uploadedFiles.length && (
+            {!config.imageList.size && (
               <div className="grid place-content-center gap-4 text-center text-muted-foreground text-sm min-h-60">
                 <ImageOff className="w-8 h-8 mx-auto text-muted-foreground" />
                 <div>Belum ada gambar dipilih</div>
@@ -193,12 +215,12 @@ export function UploadSection({ aiModelClasification }: Props) {
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {uploadedFiles.map((file, index) => (
-                <div key={file.name + index} className="relative group">
+              {Array.from(config.imageList).map((file, index) => (
+                <div key={file + index} className="relative group">
                   <div className="aspect-[4/3] bg-muted-foreground/20 rounded-lg overflow-hidden relative">
                     <Image
-                      src={file.preview || "/placeholder.svg"}
-                      alt={file.name}
+                      src={getAssetImage(file) || "/placeholder.svg"}
+                      alt={file}
                       className="w-full h-full object-cover"
                       fill
                     />
@@ -212,7 +234,7 @@ export function UploadSection({ aiModelClasification }: Props) {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2 truncate">
-                    {file.name}
+                    {file}
                   </p>
                 </div>
               ))}
@@ -225,9 +247,9 @@ export function UploadSection({ aiModelClasification }: Props) {
               className="flex items-center space-x-1"
               size="lg"
               onClick={handleNext}
-              disabled={aiModelUploadImageMutation.isPending}
+              disabled={getAiRecommendationFromSampleMutation.isPending}
             >
-              {aiModelUploadImageMutation.isPending && (
+              {getAiRecommendationFromSampleMutation.isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
               <span>Simpan dan Lanjut</span>
@@ -236,6 +258,39 @@ export function UploadSection({ aiModelClasification }: Props) {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={isOpenStorageFile} onOpenChange={setIsOpenStorageFile}>
+        <DialogTrigger asChild>
+          <Button variant="outline">Pilih File</Button>
+        </DialogTrigger>
+
+        <DialogContent className="max-h-[80vh] overflow-y-auto w-[900px] max-w-full">
+          <DialogHeader>
+            <DialogTitle>Pilih File dari Server</DialogTitle>
+          </DialogHeader>
+          <DriveView onClose={closeModalStorageFile} />
+        </DialogContent>
+      </Dialog>
+
+      {/* <div className="fixed top-0 left-0 right-0 bottom-0 z-50 bg-black/80 grid place-content-center"> */}
+      {/* <div
+        className={`fixed top-0 left-0 right-0 bottom-0 z-50 bg-black/80 grid place-content-center ${
+          isOpenStorageFile ? "" : "hidden"
+        }`}
+      >
+        <div className="relative bg-background p-5 rounded-lg max-w-screen-sm sm:max-w-screen-lg md:max-w-screen-xl">
+          <div>
+            <CardTitle>Pilih File dari Server</CardTitle>
+            <button className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </button>
+          </div>
+          <div className="relative max-h-[80vh] overflow-y-auto w-[900px] max-w-full">
+            <DriveView onClose={closeModalStorageFile} />
+          </div>
+        </div> */}
+      {/* </div> */}
     </>
   );
 }

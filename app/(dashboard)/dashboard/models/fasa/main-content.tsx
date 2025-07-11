@@ -1,10 +1,8 @@
-import React from "react";
-import { useTab } from "../context/tab-context";
 import DataAnotationSection from "../components/data-anotation-section";
 import DatasetSection from "../components/dataset-section";
 import TrainingSection from "../components/training-section";
 import { UploadSection } from "../components/upload-section";
-import { useAIConfiguration } from "../context/ai-configuration-context";
+import { useTab } from "../context/tab-context";
 
 export default function MainContent() {
   const { activeTab } = useTab();

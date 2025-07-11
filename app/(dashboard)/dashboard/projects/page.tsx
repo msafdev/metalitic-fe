@@ -1,10 +1,5 @@
 "use client";
 
-import { DataTable } from "./(table)/table";
-import { columns } from "./(table)/column";
-import { getProjects } from "@/lib/api/project-api";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,8 +8,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Project } from "@/lib/types/project-type";
 import useProject from "@/queries/use-project.query";
+import { columns } from "./(table)/column";
+import { DataTable } from "./(table)/table";
 
 export default function Page() {
   const { data, isLoading, isError } = useProject();

@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const STORAGE_BASE_URL = process.env.NEXT_PUBLIC_STORAGE_BASE_URL;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -44,4 +45,10 @@ export function getUpload(pathname?: string): string {
   if (!pathname) return `${API_URL}/uploads/avatar/placeholder.png`;
 
   return `${API_URL}${pathname}`;
+}
+
+export function getAssetImage(pathname: string): string {
+  if (pathname.startsWith("http")) return pathname;
+
+  return `${STORAGE_BASE_URL}/${pathname}`;
 }
