@@ -263,10 +263,6 @@ export function UploadSection({ aiModelClasification }: Props) {
       </Card>
 
       <Dialog open={isOpenStorageFile} onOpenChange={setIsOpenStorageFile}>
-        <DialogTrigger asChild>
-          <Button variant="outline">Pilih File</Button>
-        </DialogTrigger>
-
         <DialogContent className="max-h-[80vh] overflow-y-auto w-[900px] max-w-full">
           <DialogHeader>
             <DialogTitle>Pilih File dari Server</DialogTitle>
